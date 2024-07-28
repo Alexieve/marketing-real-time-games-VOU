@@ -16,11 +16,11 @@ spec:
               service:
                 name: auth-srv
                 port: 
-                  number: 3000
+                  number: 3000 
           - path: /?(.*)
-            pathType: ImplementationSpecific
+            pathType: Exact
             backend:
               service:
                 name: web-app-srv
                 port: 
-                  number: 3000
+                  number: 3000                                                    
