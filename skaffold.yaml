@@ -1,0 +1,26 @@
+apiVersion: skaffold/v2beta3
+kind: Config
+deploy:
+  kubectl:
+    manifests:
+    - ./infra/k8s/*
+build:
+  local:
+    push: false
+  artifacts:
+  - image: vmquynh/auth
+    context: backend/auth-service
+    docker:
+      dockerfile: Dockerfile
+    sync:
+      manual:
+      - src: "src/**/*.ts"
+        dest: .
+  # - image: vmquynh/web-app
+  #   context: frontend/web-app
+  #   docker:
+  #     dockerfile: Dockerfile
+  #   sync:
+  #     manual:
+  #     - src: "src/**/*.js"
+  #       dest: .

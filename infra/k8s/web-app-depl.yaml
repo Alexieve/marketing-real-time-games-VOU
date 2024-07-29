@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-app-depl
+spec: 
+  replicas: 1
+  selector:
+    matchLabels:
+      app: web-app
+  template:
+    metadata:
+      labels:
+        app: web-app
+    spec:
+      containers:
+        - name: web-app
+          image: vmquynh/web-app
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: web-app-srv
+spec:
+  selector:
+    app: web-app
+  ports:
+    - name: web-app
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
