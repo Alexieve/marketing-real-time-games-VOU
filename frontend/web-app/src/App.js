@@ -1,22 +1,28 @@
-import React, { Suspense, useEffect } from 'react'
-import { BrowserRouter, HashRouter, Route, Routes } from 'react-router-dom'
-import { useSelector } from 'react-redux'
+import React, { Suspense, useEffect } from "react";
+import { BrowserRouter, HashRouter, Route, Routes } from "react-router-dom";
+import { useSelector } from "react-redux";
 
-import { CSpinner, useColorModes } from '@coreui/react'
-import './scss/style.scss'
+import { CSpinner, useColorModes } from "@coreui/react";
+import "./scss/style.scss";
 
 // Containers
-const DefaultLayout = React.lazy(() => import('./layout/DefaultLayout'))
+const DefaultLayout = React.lazy(() => import("./layout/DefaultLayout"));
 
 // Pages
-const Login = React.lazy(() => import('./views/pages/login/Login'))
-const Register = React.lazy(() => import('./views/pages/register/Register'))
-const Page404 = React.lazy(() => import('./views/pages/page404/Page404'))
-const Page500 = React.lazy(() => import('./views/pages/page500/Page500'))
-const Event = React.lazy(() => import('./views/pages/event_management/Event'))
-const EventCreate = React.lazy(() => import('./views/pages/event_management/Event_create'))
-const VoucherCreate = React.lazy(() => import('./views/pages/voucher_management/Voucher_create'))
-const Voucher = React.lazy(() => import('./views/pages/voucher_management/Voucher'))
+const Login = React.lazy(() => import("./views/pages/login/Login"));
+const Register = React.lazy(() => import("./views/pages/register/Register"));
+const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
+const Page500 = React.lazy(() => import("./views/pages/page500/Page500"));
+const Event = React.lazy(() => import("./views/pages/event_management/Event"));
+const EventCreate = React.lazy(
+  () => import("./views/pages/event_management/Event_create"),
+);
+const VoucherCreate = React.lazy(
+  () => import("./views/pages/voucher_management/Voucher_create"),
+);
+const Voucher = React.lazy(
+  () => import("./views/pages/voucher_management/Voucher"),
+);
 
 const App = () => {
   // const { isColorModeSet, setColorMode } = useColorModes('coreui-free-react-admin-template-theme')
@@ -47,18 +53,43 @@ const App = () => {
       >
         <Routes>
           <Route exact path="/login" name="Login Page" element={<Login />} />
-          <Route exact path="/register" name="Register Page" element={<Register />} />
-          <Route exact path="/event" name="Event Management Page" element={<Event />} />
-          <Route exact path="/event/create/:id" name="Event Create Page" element={<EventCreate />} />
-          <Route exact path="/voucher/create/:id" name="Voucher Create Page" element={<VoucherCreate />} />
-          <Route exact path="/voucher" name="Voucher Create Page" element={<Voucher />} />
+          <Route
+            exact
+            path="/register"
+            name="Register Page"
+            element={<Register />}
+          />
+          <Route
+            exact
+            path="/event"
+            name="Event Management Page"
+            element={<Event />}
+          />
+          <Route
+            exact
+            path="/event/create/:id"
+            name="Event Create Page"
+            element={<EventCreate />}
+          />
+          <Route
+            exact
+            path="/voucher/create/:id"
+            name="Voucher Create Page"
+            element={<VoucherCreate />}
+          />
+          <Route
+            exact
+            path="/voucher"
+            name="Voucher Create Page"
+            element={<Voucher />}
+          />
           <Route exact path="/404" name="Page 404" element={<Page404 />} />
           <Route exact path="/500" name="Page 500" element={<Page500 />} />
           <Route path="*" name="Home" element={<DefaultLayout />} />
         </Routes>
       </Suspense>
     </BrowserRouter>
-  )
-}
+  );
+};
 
-export default App
+export default App;
