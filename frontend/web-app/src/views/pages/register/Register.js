@@ -1,5 +1,9 @@
 /* eslint-disable prettier/prettier */
-import React from 'react'
+import React, { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom';
+import {request} from '../../../hooks/useRequest';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import {
   CButton,
   CCard,
@@ -10,12 +14,93 @@ import {
   CFormInput,
   CInputGroup,
   CInputGroupText,
-  CRow,
+  CRow
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
-import { cil3d, cilAddressBook, cilLockLocked, cilUser } from '@coreui/icons'
+import { cil3d, cilAddressBook, cilLockLocked, cilPhone, cilUser } from '@coreui/icons'
 
 const Register = () => {
+  const [validated, setValidated] = useState(false);
+  const [formErrors, setFormErrors] = useState({});
+  const navigate = useNavigate();
+
+  // check if logged in, if so, redirect to home
+  useEffect(() => {
+    const checkLoggedIn = async () => {
+      try {
+        await request('api/users/currentuser', 'get', null);
+        navigate('/');
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    checkLoggedIn();
+  }, [navigate]);
+
+  const handleChange = (e) => {
+    const { name, value} = e.target;
+    let errors = { ...formErrors };
+
+    if (name === 'email') {
+      const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (emailPattern.test(value)) {
+        delete errors.email;
+      } else {
+        errors.email = 'Please provide a valid email address.';
+      }
+    }
+
+    if (name === 'password') {
+      if (value.length >= 6 && value.length <= 20) {
+        delete errors.password;
+      } else {
+        errors.password = 'Password must be between 6 to 20 characters long.';
+      }
+    }
+
+    setFormErrors(errors);
+  };
+
+  const handleRegister = async (e) => {
+    e.preventDefault();
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    const formValues = Object.fromEntries(formData.entries());
+
+    if (formValues.password !== formValues.repeatPassword) {
+      setFormErrors((prevErrors) => ({
+        ...prevErrors,
+        repeatPassword: 'Passwords must match.',
+      }));
+      return;
+    }
+
+    const { repeatPassword, ...errors } = formErrors;
+    setFormErrors(errors);
+
+    if (form.checkValidity()) { 
+      formValues.lat = 0;
+      formValues.long = 0;
+      try {
+        const data = await request('api/users/register', 'POST', formValues);  
+        
+        form.reset();
+        setValidated(false);
+        toast.success('Registration successful!');
+        navigate('/');
+      } catch (errors) {
+        console.log(errors);
+        if (errors.length > 0) {
+          toast.error(errors[0].message);
+        } else {
+          toast.error('An error occurred. Please try again later');
+        }
+      }
+    } else {
+      setValidated(true);
+    }
+  };
+
   return (
     <div className="bg-body-tertiary min-vh-100 d-flex flex-row align-items-center">
       <CContainer>
@@ -23,7 +108,7 @@ const Register = () => {
           <CCol md={9} lg={7} xl={6}>
             <CCard className="mx-4">
               <CCardBody className="p-4">
-                <CForm>
+                <CForm noValidate validated={validated} onSubmit={handleRegister}>
                   <h1>Register</h1>
                   <p className="text-body-secondary">Create your account</p>
                   
@@ -31,26 +116,74 @@ const Register = () => {
                     <CInputGroupText>
                       <CIcon icon={cilUser} />
                     </CInputGroupText>
-                    <CFormInput placeholder="Brand Name" autoComplete="brand-name" />
+                    <CFormInput 
+                      floatingLabel="Brand name"
+                      type="text"
+                      id="name"
+                      name="name"
+                      placeholder="Brand name"
+                      required
+                    />
                   </CInputGroup>
 
                   <CInputGroup className="mb-3">
                     <CInputGroupText>
                       <CIcon icon={cil3d} />
                     </CInputGroupText>
-                    <CFormInput placeholder="Field" autoComplete="field" />
+                    <CFormInput 
+                      floatingLabel="Field"
+                      type="text"
+                      id="field"
+                      name="field"
+                      placeholder="Field"
+                      required
+                    />
                   </CInputGroup>
 
                   <CInputGroup className="mb-3">
                     <CInputGroupText>
                       <CIcon icon={cilAddressBook} />
                     </CInputGroupText>
-                    <CFormInput placeholder="Address" autoComplete="address" />
+                    <CFormInput 
+                      floatingLabel="Address"
+                      type="text"
+                      id="address"
+                      name="address"
+                      placeholder="Address"
+                      required
+                    />
                   </CInputGroup>
 
                   <CInputGroup className="mb-3">
                     <CInputGroupText>@</CInputGroupText>
-                    <CFormInput placeholder="Email" autoComplete="email" />
+                    <CFormInput
+                      floatingLabel="Email"
+                      type="email"
+                      id="email"
+                      name="email"
+                      placeholder="Email"
+                      onChange={handleChange}
+                      feedback={formErrors.email}
+                      required
+                      invalid={!validated && formErrors.email}
+                    />
+                  </CInputGroup>
+
+                  <CInputGroup className="mb-3">
+                    <CInputGroupText>
+                      <CIcon icon={cilPhone} />
+                    </CInputGroupText>
+                    <CFormInput
+                      floatingLabel="Phone number"
+                      type="tel"
+                      id="phonenum"
+                      name="phonenum"
+                      placeholder="Phone number"
+                      onChange={handleChange}
+                      feedback={formErrors.phone}
+                      required
+                      invalid={!validated && formErrors.phone}
+                    />
                   </CInputGroup>
 
                   <CInputGroup className="mb-3">
@@ -58,9 +191,17 @@ const Register = () => {
                       <CIcon icon={cilLockLocked} />
                     </CInputGroupText>
                     <CFormInput
+                      floatingLabel="Password"
                       type="password"
+                      id="password"
+                      name="password"
                       placeholder="Password"
-                      autoComplete="new-password"
+                      minLength={6}
+                      maxLength={20}
+                      onChange={handleChange}
+                      feedback={formErrors.password}
+                      required
+                      invalid={!validated && formErrors.password}
                     />
                   </CInputGroup>
 
@@ -69,14 +210,22 @@ const Register = () => {
                       <CIcon icon={cilLockLocked} />
                     </CInputGroupText>
                     <CFormInput
+                      floatingLabel="Repeat password"
                       type="password"
+                      id="repeatPassword"
+                      name="repeatPassword"
                       placeholder="Repeat password"
-                      autoComplete="new-password"
+                      minLength={6}
+                      maxLength={20}
+                      onChange={handleChange}
+                      feedback={formErrors.repeatPassword}
+                      required
+                      invalid={!validated && formErrors.repeatPassword}
                     />
                   </CInputGroup>
 
                   <div className="d-grid">
-                    <CButton color="success">Create Account</CButton>
+                    <CButton type="submit" color="primary">Register</CButton>
                   </div>
                 </CForm>
               </CCardBody>
@@ -84,6 +233,19 @@ const Register = () => {
           </CCol>
         </CRow>
       </CContainer>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+        transition: Bounce
+      />
     </div>
   )
 }

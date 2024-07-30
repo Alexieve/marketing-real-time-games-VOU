@@ -2,6 +2,7 @@ import express from 'express';
 import 'express-async-errors'
 import {json} from 'body-parser';
 import cookieSession from 'cookie-session';
+const cors = require('cors');
 
 // Routes
 import {currentUserRouter} from './routes/current-user';
@@ -21,6 +22,7 @@ app.use(cookieSession({
     signed: false,
     secure: true,
 }));
+app.use(cors());
 
 app.use(currentUserRouter);
 app.use(loginRouter);

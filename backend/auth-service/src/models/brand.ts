@@ -24,7 +24,7 @@ export class Brand extends User {
 
     static async createBrand({ name, email, phonenum, password, status, field, address, lat, long }: { name: string; email: string; phonenum: string; password: string; status: boolean; field: string; address: string; lat: number; long: number }): Promise<Brand> {
         const user = await User.create({ name, email, phonenum, password, role: 'Brand', status });
-
+        
         await pool.query(
             'CALL SP_CREATE_BRAND($1, $2, $3, $4, $5)',
             [user.id, field, address, lat, long]

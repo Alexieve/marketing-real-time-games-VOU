@@ -11,17 +11,18 @@ const route = express.Router();
 
 route.post('/api/users/login', loginValidator, validateRequest,
 async (req: Request, res: Response) => {
+
     const {email, password} = req.body;
 
     const existingUser = await User.findByEmail(email);
     if (!existingUser) {
-        throw new BadRequestError('Invalid credentials');
+        throw new BadRequestError('Wrong email or password');
     }
 
     const passwordsMatch = await Password.compare(password, existingUser.password);
 
     if (!passwordsMatch) {
-        throw new BadRequestError('Invalid credentials');
+        throw new BadRequestError('Wrong email or password');
     }
 
     const userJwt = jwt.sign({
