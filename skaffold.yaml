@@ -16,11 +16,11 @@ build:
       manual:
       - src: "src/**/*.ts"
         dest: .
-  # - image: vmquynh/web-app
-  #   context: frontend/web-app
-  #   docker:
-  #     dockerfile: Dockerfile
-  #   sync:
-  #     manual:
-  #     - src: "src/**/*.js"
-  #       dest: .
+  - image: vmquynh/web-app
+    context: frontend/web-app
+    docker:
+      dockerfile: Dockerfile
+    sync:
+      manual:
+      - src: "src/**/*.js"
+        dest: .

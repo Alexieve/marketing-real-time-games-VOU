@@ -65,11 +65,18 @@ class User implements IUser {
     }
 
     static async findAll(): Promise<User[] | null> {
-        const res = await pool.query(
-            'SELECT * FROM FUNC_FIND_ALL_USERS()'
-        );
-        if (res.rows.length === 0) return null;
-        return res.rows.map((row: IUser) => new User(row));
+        try {
+            const res = await pool.query(
+                'SELECT * FROM FUNC_FIND_ALL_USER()'
+            );
+            if (res.rows.length === 0) return null;
+            return res.rows.map((row: IUser) => new User(row));
+        }
+        catch (err) {
+            console.error(err);
+            return null;
+        }
+        
     }
 
     async delete(): Promise<void> {

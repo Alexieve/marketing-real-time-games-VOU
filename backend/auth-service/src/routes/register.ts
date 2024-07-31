@@ -2,6 +2,7 @@ import express, {Request, Response} from 'express';
 import { BadRequestError } from '../errors/bad-request-error';
 import { registerValidator } from '../utils/validators';
 import { Brand } from '../models/brand';
+import { User } from '../models/user';
 import jwt from 'jsonwebtoken';
 import { validateRequest } from '../middlewares/validate-request';
 
@@ -22,6 +23,7 @@ async (req: Request, res: Response) => {
     const brand = await Brand.createBrand(
         {name, email, phonenum, password, status: true, field, address, lat, long}
     );
+
 
     const userJwt = jwt.sign({
         id: brand.id,
