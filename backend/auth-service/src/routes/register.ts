@@ -1,10 +1,10 @@
 import express, {Request, Response} from 'express';
-import { BadRequestError } from '../errors/bad-request-error';
+import { BadRequestError } from '@vmquynh-vou/shared';
 import { registerValidator } from '../utils/validators';
 import { Brand } from '../models/brand';
 import { User } from '../models/user';
 import jwt from 'jsonwebtoken';
-import { validateRequest } from '../middlewares/validate-request';
+import { validateRequest } from '@vmquynh-vou/shared';
 
 const route = express.Router();
 
@@ -30,7 +30,8 @@ async (req: Request, res: Response) => {
         name: brand.name,
         email: brand.email,
         phonenum: brand.phonenum,
-        status: brand.status
+        status: brand.status,
+        role: brand.role
     }, process.env.JWT_KEY!);
 
     req.session = {

@@ -11,8 +11,8 @@ import {logoutRouter} from './routes/logout';
 import {registerRouter} from './routes/register';
 
 // Middlewares
-import {errorHandler} from './middlewares/error-handler';
-import {NotFoundError} from './errors/not-found-error';
+import {errorHandler} from '@vmquynh-vou/shared';
+import {NotFoundError} from '@vmquynh-vou/shared';
 
 const app = express();
 app.set('trust proxy', true);

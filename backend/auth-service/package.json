@@ -8,6 +8,7 @@
     "@types/jsonwebtoken": "^9.0.6",
     "@types/node": "^20.14.12",
     "@types/pg": "^8.11.6",
+    "@vmquynh-vou/shared": "^1.0.4",
     "bcryptjs": "^2.4.3",
     "cookie-session": "^2.1.0",
     "cors": "^2.8.5",
