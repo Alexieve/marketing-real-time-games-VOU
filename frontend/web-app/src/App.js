@@ -14,8 +14,8 @@ const Register = React.lazy(() => import("./views/pages/register/Register"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
 const Page500 = React.lazy(() => import("./views/pages/page500/Page500"));
 const Event = React.lazy(() => import("./views/pages/event_management/Event"));
-const EventCreate = React.lazy(
-  () => import("./views/pages/event_management/Event_create"),
+const EventCreateEdit = React.lazy(
+  () => import("./views/pages/event_management/Event_create_edit"),
 );
 const VoucherCreate = React.lazy(
   () => import("./views/pages/voucher_management/Voucher_create"),
@@ -61,15 +61,21 @@ const App = () => {
           />
           <Route
             exact
-            path="/event"
+            path="/events"
             name="Event Management Page"
             element={<Event />}
           />
           <Route
             exact
-            path="/event/create/:id"
+            path="/events/create"
             name="Event Create Page"
-            element={<EventCreate />}
+            element={<EventCreateEdit />}
+          />
+          <Route
+            exact
+            path="/events/edit/:id"
+            name="Event Create Page"
+            element={<EventCreateEdit />}
           />
           <Route
             exact

@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: event-query-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: event-query
+  template:
+    metadata:
+      labels:
+        app: event-query
+    spec:
+      containers:
+        - name: event-query
+          image: nlhkha03/event-query
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: event-query-srv
+spec:
+  selector:
+    app: event-query
+  ports:
+    - name: event-query
+      protocol: TCP
+      port: 3002
+      targetPort: 3002
+
+          

@@ -17,7 +17,6 @@ import {
     CInputGroup,
     CInputGroupText,
     CCardImage,
-    CBadge,
     CAlert,
 } from '@coreui/react';
 import { CIcon } from '@coreui/icons-react'
@@ -36,10 +35,9 @@ const Event = () => {
 
     useEffect(() => {
         const fetchData = () => {
-            axios.get('http://localhost:8000/events')
+            axios.get('https://vou-system.com/api/events_query')
                 .then(response => {
                     setEventData(response.data);
-                    console.log(response.data);
                 })
                 .catch(error => {
                     console.error('Error fetching event data:', error);
@@ -49,7 +47,7 @@ const Event = () => {
     }, []);
 
     const handleDelete = (id) => {
-        axios.delete(`http://localhost:8000/events/${id}`)
+        axios.delete(`https://vou-system.com/api/events/delete/${id}`)
             .then(response => {
                 if (response.status === 200) {
                     // Remove the deleted event from the eventData state
@@ -137,7 +135,7 @@ const Event = () => {
                         <div className="flex-grow-1">
                             <CustomDateRangePicker onDateRangeChange={handleDateRangeChange} />
                         </div>
-                        <Link to={`/event/create/${-1}`} className="btn btn-success text-white">
+                        <Link to={`/events/create`} className="btn btn-success text-white">
                             Create Event
                         </Link>
                     </div>
@@ -145,7 +143,7 @@ const Event = () => {
                         <CRow>
                             {currentItems.map((event) => (
                                 <CCol md="4" key={event.id} className='mb-4'>
-                                    <Link to={`/event/create/${event.id}`} className="card-link">
+                                    <Link to={`/events/edit/${event.id}`} state={{ item: event }} className="card-link">
                                         <CCard className="shadow-sm card-hover">
                                             <CCardImage className="card-image" orientation="top" src={event.imageUrl} />
                                             <CCardBody style={{ padding: '1rem' }}>

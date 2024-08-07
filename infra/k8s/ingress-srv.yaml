@@ -17,6 +17,20 @@ spec:
                 name: auth-srv
                 port: 
                   number: 3000 
+          - path : /api/events_query
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: event-query-srv
+                port: 
+                  number: 3002
+          - path: /api/events/?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: event-srv
+                port: 
+                  number: 3001
           - path: /?(.*)
             pathType: Exact
             backend:

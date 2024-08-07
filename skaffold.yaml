@@ -24,3 +24,19 @@ build:
       manual:
       - src: "src/**/*.js"
         dest: .
+  - image: nlhkha03/event
+    context: backend/event-service
+    docker:
+      dockerfile: Dockerfile
+    sync:
+      manual:
+      - src: "src/**/*.ts"
+        dest: .
+  - image: nlhkha03/event-query
+    context: backend/event-query-service
+    docker:
+      dockerfile: Dockerfile
+    sync:
+      manual:
+      - src: "src/**/*.ts"
+        dest: .

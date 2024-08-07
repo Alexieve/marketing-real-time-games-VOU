@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { AppSidebar, AppFooter, AppHeader } from '../../../components/index';
-import { useParams, Link, useLocation } from 'react-router-dom';
+import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import '../../../scss/event/event.scss';
 import {
@@ -16,8 +16,6 @@ import {
     CButton,
     CRow,
     CCol,
-    CListGroup,
-    CListGroupItem,
     CFormTextarea,
     CToast,
     CToastHeader,
@@ -41,8 +39,7 @@ const EventCreate = () => {
 
     const { id } = useParams();
     const location = useLocation();
-    const { state } = location;
-
+    const navigate = useNavigate();
     const [eventData, setEventData] = useState({
         name: "",
         imageUrl: "",
@@ -64,44 +61,14 @@ const EventCreate = () => {
     const toaster = useRef();
     const [imagePreview, setImagePreview] = useState(null);
 
-    const brand = "Tech Store";
-
-    const params = {
-        id: '1',
-        name: "Tech Store"
-    };
     useEffect(() => {
-        if (localStorage.getItem('formSubmittedSuccess') === 'true') {
-            addToast(successToast);
-            localStorage.removeItem('formSubmittedSuccess'); // Corrected the key name
+        if (id !== undefined) {
+            const { name, imageUrl, description, startTime, endTime, games, vouchers } = location.state.item;
+            setEventData({ name, imageUrl, description, startTime, endTime });
+            setImagePreview(imageUrl);
+            setSelectedGames(games);
+            setSelectedVouchers(vouchers);
         }
-
-        if (id !== "-1") {
-            axios.get(`http://localhost:8000/events/${id}`)
-                .then(response => {
-                    const { name, imageUrl, description, startTime, endTime, games, vouchers } = response.data;
-                    setEventData({ name, imageUrl, description, startTime, endTime });
-                    setImagePreview(imageUrl);
-                    setSelectedGames(games);
-                    setSelectedVouchers(vouchers);
-                })
-                .catch(error => {
-                    console.error('Error fetching event data:', error);
-                });
-            // const { name, imageUrl, startTime, endTime, games, vouchers } = state;
-            // setEventData({ name, imageUrl, startTime, endTime });
-            // setImagePreview(imageUrl);
-            // setSelectedGames(games);
-            // setSelectedVouchers(vouchers);
-        }
-
-        axios.get('http://localhost:8000/games')
-            .then(response => setGames(response.data))
-            .catch(error => console.error('Error fetching games data:', error));
-
-        axios.get(`http://localhost:8000/vouchers`)
-            .then(response => { setVouchers(response.data); console.log(response.data) })
-            .catch(error => console.error('Error fetching vouchers data:', error));
     }, []);
 
     const warningToast = ({ message }) => (
@@ -142,7 +109,7 @@ const EventCreate = () => {
                 <div className="fw-bold me-auto">Success</div>
                 <small>Just now</small>
             </CToastHeader>
-            <CToastBody>Event {(id == -1) ? 'created' : 'edited'} successfully!</CToastBody>
+            <CToastBody>Event {(id === undefined) ? 'created' : 'edited'} successfully!</CToastBody>
         </CToast>
     );
 
@@ -166,6 +133,26 @@ const EventCreate = () => {
             <CToastBody>{message}</CToastBody>
         </CToast>
     );
+
+    const handleGameSelectClicked = () => {
+        if (games.length === 0) {
+            axios.get('http://localhost:8000/games')
+                .then(response => setGames(response.data))
+                .catch(error => console.error('Error fetching games data:', error));
+        }
+        setSelectedGamesModal(selectedGames);
+        setShowGameModal(true);
+    }
+
+    const handleVoucherSelectClicked = () => {
+        if (vouchers.length === 0) {
+            axios.get(`http://localhost:8000/vouchers`)
+                .then(response => { setVouchers(response.data); })
+                .catch(error => console.error('Error fetching vouchers data:', error));
+        }
+        setSelectedVouchersModal(selectedVouchers);
+        setShowVoucherModal(true);
+    }
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
@@ -192,7 +179,6 @@ const EventCreate = () => {
                 return [...prevSelectedGames, game];
             }
         });
-        console.log(selectedGames);
     };
 
     const handleGameSave = () => {
@@ -269,24 +255,28 @@ const EventCreate = () => {
             };
 
             let response;
-            if (id == "-1") {
-                response = await axios.post('http://localhost:8000/events', payload, {
+            if (id == undefined) {
+                response = await axios.post('https://vou-system.com/api/events/create', payload, {
                     headers: {
                         'Content-Type': 'application/json'
                     }
                 });
             }
             else {
-                response = await axios.put(`http://localhost:8000/events/${id}`, payload, {
+                response = await axios.put(`http://localhost:8000/events/edit/${id}`, payload, {
                     headers: {
                         'Content-Type': 'application/json'
                     }
                 });
             }
 
-            console.log(`Event ${(id == -1) ? 'created' : 'edited'} successfully:`, response.data);
             localStorage.setItem('formSubmittedSuccess', 'true');
-            window.location.reload();
+            navigate(`/events/edit/${response.data.id}`, {
+                replace: true,
+                state: { item: payload }
+            })
+            window.scrollTo(0, 0);
+            addToast(successToast);
 
         } catch (error) {
             addToast(ErrorToast({ message: error.message }));
@@ -345,10 +335,10 @@ const EventCreate = () => {
                                                 id="imageUrl"
                                                 name="imageUrl"
                                                 onChange={handleFileChange}
-                                                required={id === "-1"}
+                                                required={id === undefined}
                                             />
                                         </CInputGroup>
-                                        {imagePreview && <CCardImage className="card-image mb-3" orientation="top" src={imagePreview} />}
+                                        {imagePreview && <CCardImage className="card-image mb-3" src={imagePreview} />}
                                         <CInputGroup className="mb-3">
                                             <CInputGroupText id="basic-addon1">Event Start Time</CInputGroupText>
                                             <CFormInput
@@ -374,50 +364,56 @@ const EventCreate = () => {
                                         <CCard className="shadow-lg mt-4">
                                             <CCardHeader className="text-white d-flex justify-content-between align-items-center" style={{ backgroundColor: '#4A90E2' }}>
                                                 <h6 className="mb-0">Select Games for Event</h6>
-                                                <CButton className="button-custom" style={{ textDecoration: 'underline' }} onClick={() => { setSelectedGamesModal(selectedGames); setShowGameModal(true) }}>Add</CButton>
+                                                <CButton className="button-custom" style={{ textDecoration: 'underline' }} onClick={handleGameSelectClicked}>Add</CButton>
                                             </CCardHeader>
                                             <CCardBody>
-                                                <CListGroup className="p-0">
+                                                <CRow>
                                                     {selectedGames.map((game, index) => (
-                                                        <CListGroupItem key={index} className='d-flex justify-content-between align-items-center'>
-                                                            {game.name}
-                                                            <CButton
-                                                                color="danger"
-                                                                size="sm"
-                                                                className="ml-2"
-                                                                onClick={() => handleGameDelete(index)}
-                                                            >
-                                                                Delete
-                                                            </CButton>
-                                                        </CListGroupItem>
+                                                        <CCol md="6" key={game.id || index} className='mb-2'>
+                                                            <CCard style={{ boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', borderRadius: '8px' }}>
+                                                                <CCardImage className="card-image" orientation="top" src={game.imageUrl} style={{ borderTopLeftRadius: '8px', borderTopRightRadius: '8px' }} />
+                                                                <CCardBody style={{ padding: '1rem' }}>
+                                                                    <CCardTitle style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>{game.name}</CCardTitle>
+                                                                    <CCardText style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>Type: {game.type}</CCardText>
+                                                                    <CCardText className='truncate' style={{ fontSize: '0.875rem', color: '#6c757d', marginBottom: '1rem' }}>Guide: {game.guide}</CCardText>
+                                                                    <div className='d-flex justify-content-end'>
+                                                                        <CButton color="danger" size="sm" className="ml-2" onClick={() => handleGameDelete(index)}>Delete</CButton>
+                                                                    </div>
+                                                                </CCardBody>
+                                                            </CCard>
+                                                        </CCol>
                                                     ))}
-                                                </CListGroup>
+                                                </CRow>
                                             </CCardBody>
                                         </CCard>
                                         <CCard className="shadow-lg mt-4">
                                             <CCardHeader className="text-white d-flex justify-content-between align-items-center" style={{ backgroundColor: '#4A90E2' }}>
                                                 <h6 className="mb-0">Select Vouchers for Event</h6>
-                                                <CButton className="button-custom" style={{ textDecoration: 'underline' }} onClick={() => { setSelectedVouchersModal(selectedVouchers); setShowVoucherModal(true) }}>Add</CButton>
+                                                <CButton className="button-custom" style={{ textDecoration: 'underline' }} onClick={handleVoucherSelectClicked}>Add</CButton>
                                             </CCardHeader>
                                             <CCardBody>
-                                                <CListGroup className="p-0">
+                                                <CRow>
                                                     {selectedVouchers.map((voucher, index) => (
-                                                        <CListGroupItem key={index} className='d-flex justify-content-between align-items-center'>
-                                                            {voucher.code}
-                                                            <CButton
-                                                                color="danger"
-                                                                size="sm"
-                                                                className="ml-2"
-                                                                onClick={() => handleVoucherDelete(index)}
-                                                            >
-                                                                Delete
-                                                            </CButton>
-                                                        </CListGroupItem>
+                                                        <CCol md="6" key={voucher.id || index} className='mb-2'>
+                                                            <CCard style={{ boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', borderRadius: '8px' }}>
+                                                                <CCardImage className="card-image" orientation="top" src={voucher.imageUrl} style={{ borderTopLeftRadius: '8px', borderTopRightRadius: '8px' }} />
+                                                                <CCardBody style={{ padding: '1rem' }}>
+                                                                    <CCardTitle style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>{voucher.code}</CCardTitle>
+                                                                    <CCardText style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>Price: {voucher.price}</CCardText>
+                                                                    <CCardText style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>Description: {voucher.description}</CCardText>
+                                                                    <CCardText style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>Quantity: {voucher.quantity}</CCardText>
+                                                                    <CCardText style={{ fontSize: '1rem', marginBottom: '1rem' }}>Expired Time: {voucher.expTime}</CCardText>
+                                                                    <div className='d-flex justify-content-end'>
+                                                                        <CButton color="danger" size="sm" className="ml-2" onClick={() => handleVoucherDelete(index)}>Delete</CButton>
+                                                                    </div>
+                                                                </CCardBody>
+                                                            </CCard>
+                                                        </CCol>
                                                     ))}
-                                                </CListGroup>
+                                                </CRow>
                                             </CCardBody>
                                         </CCard>
-                                        <CButton type="submit" style={{ backgroundColor: '#7ED321' }} className="w-100 mt-4">{id !== "-1" ? 'Edit Event' : 'Create Event'}</CButton>
+                                        <CButton type="submit" style={{ backgroundColor: '#7ED321' }} className="w-100 mt-4">{id !== undefined ? 'Edit Event' : 'Create Event'}</CButton>
                                     </CForm>
                                 </CCardBody>
                             </CCard>
@@ -449,7 +445,7 @@ const EventCreate = () => {
                         <CRow>
                             {filteredGames.map((game, index) => (
                                 <CCol md="4" key={game.id || index} className='mb-4'>
-                                    <CCard style={{ width: '250pt', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', borderRadius: '8px' }}>
+                                    <CCard style={{ boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', borderRadius: '8px' }}>
                                         <CCardImage className="card-image" orientation="top" src={game.imageUrl} style={{ borderTopLeftRadius: '8px', borderTopRightRadius: '8px' }} />
                                         <CCardBody style={{ padding: '1rem' }}>
                                             <CCardTitle style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>{game.name}</CCardTitle>
@@ -509,7 +505,7 @@ const EventCreate = () => {
                         <CRow>
                             {filteredVouchers.map((voucher, index) => (
                                 <CCol md="4" key={voucher.id || index} className='mb-4'>
-                                    <CCard style={{ width: '250pt', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', borderRadius: '8px' }}>
+                                    <CCard style={{ boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', borderRadius: '8px' }}>
                                         <CCardImage className="card-image" orientation="top" src={voucher.imageUrl} style={{ borderTopLeftRadius: '8px', borderTopRightRadius: '8px' }} />
                                         <CCardBody style={{ padding: '1rem' }}>
                                             <CCardTitle style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>{voucher.code}</CCardTitle>
