@@ -1,9 +1,11 @@
+/* eslint-disable react/prop-types */
 import React, { Suspense, useEffect } from "react";
-import { BrowserRouter, HashRouter, Route, Routes } from "react-router-dom";
-import { useSelector } from "react-redux";
-
-import { CSpinner, useColorModes } from "@coreui/react";
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { CSpinner } from "@coreui/react";
 import "./scss/style.scss";
+import { request } from "./hooks/useRequest";
+import { useDispatch, useSelector } from "react-redux";
+import { authActions } from "./stores/authSlice";
 
 // Containers
 const DefaultLayout = React.lazy(() => import("./layout/DefaultLayout"));
@@ -24,23 +26,23 @@ const Voucher = React.lazy(
   () => import("./views/pages/voucher_management/Voucher"),
 );
 
+import ProtectedRoute from "./components/ProtectedRoute";
+
 const App = () => {
-  // const { isColorModeSet, setColorMode } = useColorModes('coreui-free-react-admin-template-theme')
-  // const storedTheme = useSelector((state) => state.sidebar.theme)
+  const dispatch = useDispatch();
 
-  // useEffect(() => {
-  //   const urlParams = new URLSearchParams(window.location.href.split('?')[1])
-  //   const theme = urlParams.get('theme') && urlParams.get('theme').match(/^[A-Za-z0-9\s]+/)[0]
-  //   if (theme) {
-  //     setColorMode(theme)
-  //   }
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        await request("/api/users/currentuser");
+        dispatch(authActions.setIsAuthenticated(true));
+      } catch (error) {
+        dispatch(authActions.setIsAuthenticated(false));
+      }
+    };
 
-  //   if (isColorModeSet()) {
-  //     return
-  //   }
-
-  //   setColorMode(storedTheme)
-  // }, []) // eslint-disable-line react-hooks/exhaustive-deps
+    checkAuth();
+  }, []);
 
   return (
     <BrowserRouter>
@@ -52,13 +54,8 @@ const App = () => {
         }
       >
         <Routes>
-          <Route exact path="/login" name="Login Page" element={<Login />} />
-          <Route
-            exact
-            path="/register"
-            name="Register Page"
-            element={<Register />}
-          />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route
             exact
             path="/events"
@@ -78,20 +75,31 @@ const App = () => {
             element={<EventCreateEdit />}
           />
           <Route
-            exact
             path="/voucher/create/:id"
-            name="Voucher Create Page"
-            element={<VoucherCreate />}
+            element={
+              <ProtectedRoute>
+                <VoucherCreate />
+              </ProtectedRoute>
+            }
           />
           <Route
-            exact
             path="/voucher"
-            name="Voucher Create Page"
-            element={<Voucher />}
+            element={
+              <ProtectedRoute>
+                <Voucher />
+              </ProtectedRoute>
+            }
           />
-          <Route exact path="/404" name="Page 404" element={<Page404 />} />
-          <Route exact path="/500" name="Page 500" element={<Page500 />} />
-          <Route path="*" name="Home" element={<DefaultLayout />} />
+          <Route path="/404" element={<Page404 />} />
+          <Route path="/500" element={<Page500 />} />
+          <Route
+            path="*"
+            element={
+              <ProtectedRoute>
+                <DefaultLayout />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </Suspense>
     </BrowserRouter>

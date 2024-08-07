@@ -1,8 +1,8 @@
 import express, {Request, Response} from 'express';
 import { loginValidator } from '../utils/validators';
-import { validateRequest } from '../middlewares/validate-request';
+import { validateRequest } from '@vmquynh-vou/shared';
 import { User } from '../models/user';
-import { BadRequestError } from '../errors/bad-request-error';
+import { BadRequestError } from '@vmquynh-vou/shared';
 import { Password } from '../utils/password';
 import jwt from 'jsonwebtoken';
 
@@ -30,7 +30,8 @@ async (req: Request, res: Response) => {
         name: existingUser.name,
         email: existingUser.email,
         phonenum: existingUser.phonenum,
-        status: existingUser.status
+        status: existingUser.status,
+        role: existingUser.role
     }, process.env.JWT_KEY!);
 
     req.session = {

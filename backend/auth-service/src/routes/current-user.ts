@@ -1,6 +1,6 @@
 import express from 'express';
-import { currentUser } from '../middlewares/current-user';
-import { requireAuth } from '../middlewares/require-auth';
+import { currentUser } from '@vmquynh-vou/shared';
+import { requireAuth } from '@vmquynh-vou/shared';
 
 const route = express.Router();
 

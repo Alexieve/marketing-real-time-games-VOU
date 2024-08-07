@@ -15,17 +15,27 @@ import {
   cilCommentSquare,
   cilEnvelopeOpen,
   cilFile,
-  cilLockLocked,
   cilSettings,
   cilTask,
   cilUser,
   cilAccountLogout,
 } from "@coreui/icons";
 import CIcon from "@coreui/icons-react";
-
 import avatar8 from "./../../assets/images/avatars/8.jpg";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { authActions } from "../../stores/authSlice";
+import { request } from "../../hooks/useRequest";
 
 const AppHeaderDropdown = () => {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    dispatch(authActions.setIsAuthenticated(false));
+    await request("/api/users/logout", "POST", null);
+  };
+
   return (
     <CDropdown variant="nav-item">
       <CDropdownToggle
@@ -93,7 +103,7 @@ const AppHeaderDropdown = () => {
           </CBadge>
         </CDropdownItem>
         <CDropdownDivider />
-        <CDropdownItem href="#">
+        <CDropdownItem onClick={handleLogout} href="/login">
           <CIcon icon={cilAccountLogout} className="me-2" />
           Logout
         </CDropdownItem>

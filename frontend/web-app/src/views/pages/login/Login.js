@@ -1,10 +1,11 @@
 /* eslint-disable react/no-unescaped-entities */
-/* eslint-disable prettier/prettier */
-import React, {useEffect, useState} from 'react'
-import { Link, useNavigate } from 'react-router-dom'
-import { ToastContainer, toast } from 'react-toastify'
-import { request } from '../../../hooks/useRequest';
-import 'react-toastify/dist/ReactToastify.css';
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { ToastContainer, toast } from "react-toastify";
+import { request } from "../../../hooks/useRequest";
+import "react-toastify/dist/ReactToastify.css";
+import { authActions } from "../../../stores/authSlice";
+import { useDispatch, useSelector } from "react-redux";
 import {
   CButton,
   CCard,
@@ -17,46 +18,40 @@ import {
   CInputGroup,
   CInputGroupText,
   CRow,
-} from '@coreui/react'
-import CIcon from '@coreui/icons-react'
-import { cilLockLocked } from '@coreui/icons'
+} from "@coreui/react";
+import CIcon from "@coreui/icons-react";
+import { cilLockLocked } from "@coreui/icons";
 
 const Login = () => {
-  const [validated, setValidated] = useState(false);
   const [formErrors, setFormErrors] = useState({});
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
 
-  // check if logged in, if so, redirect to home
   useEffect(() => {
-    const checkLoggedIn = async () => {
-      try {
-        await request('api/users/currentuser', 'get', null);
-        navigate('/');
-      } catch (error) {
-        console.error(error);
-      }
+    if (isAuthenticated) {
+      navigate("/");
     }
-    checkLoggedIn();
-  }, [navigate]);
+  }, []);
 
   const handleChange = (e) => {
-    const { name, value} = e.target;
+    const { name, value } = e.target;
     let errors = { ...formErrors };
 
-    if (name === 'email') {
+    if (name === "email") {
       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (emailPattern.test(value)) {
         delete errors.email;
       } else {
-        errors.email = 'Please provide a valid email address.';
+        errors.email = "Please provide a valid email address.";
       }
     }
 
-    if (name === 'password') {
+    if (name === "password") {
       if (value.length >= 6 && value.length <= 20) {
         delete errors.password;
       } else {
-        errors.password = 'Password must be between 6 to 20 characters long.';
+        errors.password = "Password must be between 6 to 20 characters long.";
       }
     }
 
@@ -69,25 +64,21 @@ const Login = () => {
     const formData = new FormData(form);
     const formValues = Object.fromEntries(formData.entries());
 
-
     if (form.checkValidity()) {
       try {
-        const data = await request('api/users/login', 'post', formValues);
-        form.reset();
-        setValidated(false);
-        toast.success('Login successful!');
-        navigate('/');
+        await request("api/users/login", "post", formValues);
+        dispatch(authActions.setIsAuthenticated(true));
+        toast.success("Login successful!");
+        navigate("/");
       } catch (errors) {
         if (errors.length > 0) {
           toast.error(errors[0].message);
         } else {
-          toast.error('An error occurred. Please try again later');
+          toast.error("An error occurred. Please try again later");
         }
       }
-    } else {
-      setValidated(true);
     }
-  }
+  };
 
   return (
     <div className="bg-body-tertiary min-vh-100 d-flex flex-row align-items-center">
@@ -97,12 +88,14 @@ const Login = () => {
             <CCardGroup>
               <CCard className="p-4">
                 <CCardBody>
-                  <CForm noValidate validated={validated} onSubmit={handleLogin}>
+                  <CForm noValidate onSubmit={handleLogin}>
                     <h1>Login</h1>
-                    <p className="text-body-secondary">Sign In to your account</p>
+                    <p className="text-body-secondary">
+                      Sign In to your account
+                    </p>
                     <CInputGroup className="mb-3">
                       <CInputGroupText>@</CInputGroupText>
-                      <CFormInput 
+                      <CFormInput
                         floatingLabel="Email"
                         type="email"
                         id="email"
@@ -134,7 +127,7 @@ const Login = () => {
                     </CInputGroup>
                     <CRow>
                       <CCol xs={6}>
-                        <CButton type='submit' color="primary" className="px-4">
+                        <CButton type="submit" color="primary" className="px-4">
                           Login
                         </CButton>
                       </CCol>
@@ -147,14 +140,22 @@ const Login = () => {
                   </CForm>
                 </CCardBody>
               </CCard>
-              <CCard className="text-white bg-primary py-5" style={{ width: '44%' }}>
+              <CCard
+                className="text-white bg-primary py-5"
+                style={{ width: "44%" }}
+              >
                 <CCardBody className="text-center">
                   <div>
                     <h2>Sign up</h2>
                     <p>Don't have an account?</p>
                     <p>Register now and get access to the best events!</p>
                     <Link to="/register">
-                      <CButton color="primary" className="mt-3" active tabIndex={-1}>
+                      <CButton
+                        color="primary"
+                        className="mt-3"
+                        active
+                        tabIndex={-1}
+                      >
                         Register Now!
                       </CButton>
                     </Link>
@@ -176,10 +177,10 @@ const Login = () => {
         draggable
         pauseOnHover
         theme="colored"
-        transition: Bounce
+        transition:Bounce
       />
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;
