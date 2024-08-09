@@ -21,6 +21,18 @@ spec:
                 secretKeyRef:
                   name: jwt-secret
                   key: JWT_KEY
+            - name: DB_HOST
+              value: "postgres-auth-srv"
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_DATABASE
+              value: "auth-db"
+            - name: DB_USER
+              value: "auth-admin"
+            - name: DB_PASSWORD
+              value: "auth-admin"
+            - name: DB_HOST_NAME
+              value: "postgresql"
 ---
 apiVersion: v1
 kind: Service
