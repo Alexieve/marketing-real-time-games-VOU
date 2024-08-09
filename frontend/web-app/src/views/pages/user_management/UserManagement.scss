@@ -1,0 +1,78 @@
+.search-input {
+  display: flex;
+  width: 100%;
+  margin-bottom: 5px;
+
+  .ant-input-group-wrapper,
+  .ant-input-wrapper {
+    width: 300px;
+  }
+
+  .ant-input-affix-wrapper {
+    display: flex;
+    align-items: center;
+    height: 40px;
+  }
+
+  .ant-input {
+    font-size: 16px;
+    height: 40px;
+  }
+
+  .ant-btn {
+    font-size: 16px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+  }
+}
+
+.add-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.custom-dropdown-button .dropdown-toggle::after {
+  display: none;
+}
+
+.custom-dropdown-button {
+  caret: false;
+}
+
+.table-column-icon
+{
+  width: 50px; /* Đặt chiều rộng cố định cho tất cả các cột */
+  text-align: center;
+}
+.table-column-avatar
+{
+  width: 50px; /* Đặt chiều rộng cố định cho tất cả các cột */
+  text-align: center;
+}
+.table-column-user
+{
+  width: 120px; /* Đặt chiều rộng cố định cho tất cả các cột */
+  text-align: left;
+}
+.table-column-role
+{
+  width: 60px; /* Đặt chiều rộng cố định cho tất cả các cột */
+  text-align: right;
+}
+.table-column-email
+{
+  width: 50px; /* Đặt chiều rộng cố định cho tất cả các cột */
+  text-align: center;
+}
+.table-column-phone,
+.table-column-active {
+  width: 120px; /* Đặt chiều rộng cố định cho tất cả các cột */
+  text-align: center;
+}
+.custom-search-input {
+  width: 300px;  // Adjust the width as needed
+  height: 40px;  // Adjust the height as needed
+  font-size: 16px;  // Adjust the font size as needed
+}
