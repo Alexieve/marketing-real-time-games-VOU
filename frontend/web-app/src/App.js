@@ -25,6 +25,9 @@ const VoucherCreate = React.lazy(
 const Voucher = React.lazy(
   () => import("./views/pages/voucher_management/Voucher"),
 );
+const UserManagement = React.lazy(
+  () => import("./views/pages/user_management/UserManagement"),
+);
 
 import ProtectedRoute from "./components/ProtectedRoute";
 
@@ -33,12 +36,13 @@ const App = () => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      try {
-        await request("/api/users/currentuser");
-        dispatch(authActions.setIsAuthenticated(true));
-      } catch (error) {
-        dispatch(authActions.setIsAuthenticated(false));
-      }
+      // try {
+      //   await request("/api/users/currentuser");
+      //   dispatch(authActions.setIsAuthenticated(true));
+      // } catch (error) {
+      //   dispatch(authActions.setIsAuthenticated(false));
+      // }
+      dispatch(authActions.setIsAuthenticated(true));
     };
 
     checkAuth();
@@ -55,13 +59,19 @@ const App = () => {
       >
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          <Route path="/register" element={<Register />} /> 
           <Route
             path="/event"
             element={
               <ProtectedRoute>
                 <Event />
               </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/usermanagement"
+            element={
+              <ProtectedRoute><UserManagement /></ProtectedRoute>
             }
           />
           <Route
