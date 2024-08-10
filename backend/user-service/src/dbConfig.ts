@@ -7,7 +7,7 @@ export interface DBConfig {
 }
 
 const config: DBConfig = {
-  host: 'postgres-auth-srv',
+  host: 'postgres-user-srv',
   port: 5432,
   database: 'auth-db',
   user: 'auth-admin',
@@ -15,3 +15,5 @@ const config: DBConfig = {
 };
 
 export default config;
+// ok roi do, chay sai  port =)):))
+

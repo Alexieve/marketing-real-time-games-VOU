@@ -10,8 +10,8 @@ spec:
     - host: vou-system.com
       http:
         paths:
-          - path: /api/users/?(.*)
-            pathType: ImplementationSpecific
+          - path: /api/users/
+            pathType: Prefix
             backend:
               service:
                 name: auth-srv
