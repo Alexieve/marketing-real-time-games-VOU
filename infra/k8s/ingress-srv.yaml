@@ -32,9 +32,9 @@ spec:
                 port: 
                   number: 3001
           - path: /?(.*)
-            pathType: Exact
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: web-app-srv
                 port: 
-                  number: 3000                                                    
+                  number: 3000

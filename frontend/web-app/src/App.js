@@ -1,10 +1,10 @@
 /* eslint-disable react/prop-types */
 import React, { Suspense, useEffect } from "react";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { CSpinner } from "@coreui/react";
 import "./scss/style.scss";
 import { request } from "./hooks/useRequest";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { authActions } from "./stores/authSlice";
 
 // Containers
@@ -57,22 +57,31 @@ const App = () => {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route
-            exact
             path="/events"
             name="Event Management Page"
-            element={<Event />}
+            element={
+              // <ProtectedRoute>
+              <Event />
+              // </ProtectedRoute>
+            }
           />
           <Route
-            exact
             path="/events/create"
             name="Event Create Page"
-            element={<EventCreateEdit />}
+            element={
+              // <ProtectedRoute>
+              <EventCreateEdit />
+              // </ProtectedRoute>
+            }
           />
           <Route
-            exact
             path="/events/edit/:id"
             name="Event Create Page"
-            element={<EventCreateEdit />}
+            element={
+              // <ProtectedRoute>
+              <EventCreateEdit />
+              // </ProtectedRoute>
+            }
           />
           <Route
             path="/voucher/create/:id"

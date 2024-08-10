@@ -270,7 +270,7 @@ const EventCreate = () => {
                 });
             }
 
-            localStorage.setItem('formSubmittedSuccess', 'true');
+            // localStorage.setItem('formSubmittedSuccess', 'true');
             navigate(`/events/edit/${response.data.id}`, {
                 replace: true,
                 state: { item: payload }

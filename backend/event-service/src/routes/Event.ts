@@ -2,7 +2,7 @@ import express, { Request, Response } from 'express';
 import { Event } from '../models/Event';
 import { eventValidator } from '../utils/validators';
 import { BadRequestError } from '../errors/bad-request-error';
-
+import { publishMessage } from '../pubsub/producer';
 const router = express.Router();
 
 router.use(express.json());
@@ -19,6 +19,7 @@ router.post('/api/events/create', eventValidator, async (req: Request, res: Resp
         endTime,
     });
     await event.save();
+    await publishMessage('event_created_queue', event.toJSON());
     res.status(201).send(event);
 });
 
@@ -48,7 +49,7 @@ router.delete('/api/events/delete/:id', async (req: Request, res: Response) => {
     if (!event) {
         throw new BadRequestError('Event not found');
     }
-    
+
     res.status(200).send({ message: 'Event deleted successfully' });
 });
 
