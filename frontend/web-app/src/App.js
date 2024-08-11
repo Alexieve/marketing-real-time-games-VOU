@@ -36,13 +36,13 @@ const App = () => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      // try {
-      //   await request("/api/users/currentuser");
-      //   dispatch(authActions.setIsAuthenticated(true));
-      // } catch (error) {
-      //   dispatch(authActions.setIsAuthenticated(false));
-      // }
-      dispatch(authActions.setIsAuthenticated(true));
+      try {
+        await request("/api/users/currentuser");
+        dispatch(authActions.setIsAuthenticated(true));
+      } catch (error) {
+        dispatch(authActions.setIsAuthenticated(false));
+      }
+      // dispatch(authActions.setIsAuthenticated(true));
     };
 
     checkAuth();
@@ -59,7 +59,7 @@ const App = () => {
       >
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} /> 
+          <Route path="/register" element={<Register />} />
           <Route
             path="/event"
             element={
@@ -71,7 +71,9 @@ const App = () => {
           <Route
             path="/usermanagement"
             element={
-              <ProtectedRoute><UserManagement /></ProtectedRoute>
+              <ProtectedRoute>
+                <UserManagement />
+              </ProtectedRoute>
             }
           />
           <Route

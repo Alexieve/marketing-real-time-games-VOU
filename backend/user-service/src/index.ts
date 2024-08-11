@@ -2,6 +2,7 @@ import express from 'express';
 import 'express-async-errors'
 import {json} from 'body-parser';
 import cookieSession from 'cookie-session';
+import { consume } from './utils/subscriber';
 const cors = require('cors');
 
 // Routes
@@ -35,12 +36,20 @@ app.all('*', async (req, res) => {
 
 app.use(errorHandler);
 
+const startSubscribers = async () => {
+    const exchange = 'user-exchange';
+    const exchangeService = 'topic';
+    const queue = 'user-queue';
+    const routingKey = 'user.*';
+    await consume(exchange, exchangeService, queue, routingKey);
+}
+startSubscribers();
+
 const start = async () => {
     if (!process.env.JWT_KEY) {
         throw new Error('JWT_KEY must be defined');
     }
 }
-
 start();
 
 app.listen(3000, () => {

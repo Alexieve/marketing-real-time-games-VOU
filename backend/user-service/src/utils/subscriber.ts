@@ -15,8 +15,9 @@ async function connect() : Promise<amqp.Connection> {
 
 async function process(msg: any) {
   const { action, data } = JSON.parse(msg);
-  if (action === 'create') {
-      console.log(`[x] Received create user request: ${data}`);
+  if (action === 'createBrand') {
+      console.log(`[x] Received create user request: `);
+      console.log(data)
   }
 }
 
@@ -35,7 +36,6 @@ export async function consume(exchange: string, exchangeService: string, queue: 
       if (msg !== null) {
         const content = msg.content.toString();
         process(content);
-        console.log(`[x] Received ${content}`);
 
         channel.ack(msg);
       }

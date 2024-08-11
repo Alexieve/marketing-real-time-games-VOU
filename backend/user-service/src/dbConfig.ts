@@ -15,5 +15,3 @@ const config: DBConfig = {
 };
 
 export default config;
-// ok roi do, chay sai  port =)):))
-

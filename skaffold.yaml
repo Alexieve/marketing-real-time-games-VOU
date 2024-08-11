@@ -16,14 +16,14 @@ build:
       manual:
       - src: "src/**/*.ts"
         dest: .
-   - image: vmquynh/user
+  - image: vmquynh/user
     context: backend/user-service
     docker:
       dockerfile: Dockerfile
     sync:
       manual:
       - src: "src/**/*.ts"
-        dest: . 
+        dest: .
   - image: vmquynh/web-app
     context: frontend/web-app
     docker:
