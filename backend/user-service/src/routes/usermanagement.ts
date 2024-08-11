@@ -44,7 +44,7 @@ route.post('/api/usermanagement/update', async (req: Request, res: Response) => 
     }
   });
   route.post('/api/usermanagement/addadmin', async (req: Request, res: Response) => {
-    try {
+    // try {
       const {name, email, phone, password, role,status} = req.body;
 
       const chec = await pool.query(
@@ -52,7 +52,6 @@ route.post('/api/usermanagement/update', async (req: Request, res: Response) => 
         [email]
       );
       if (chec.rows.length > 0) {
-        res.status(200).send('1');
         throw new BadRequestError('Email in use');
       }
       const hashedPassword = await Password.hash(password);
@@ -62,14 +61,14 @@ route.post('/api/usermanagement/update', async (req: Request, res: Response) => 
           [name, email, phonenum, hashedPassword, role, status]
     );
       if (!result) {
-        res.status(200).send('2');
-        throw new BadRequestError('Cannt create user admin');
+        //res.status(200).send('2');
+        throw new BadRequestError('Can not create user admin');
     }
-      res.status(200).send('3');
-    } catch (error) {
-      console.error('Error create user admin:', error);
-      res.status(500).json({ message: 'Error updating user' });
-    }
+      res.status(200).send('Done');
+    // } catch (error) {
+    //   console.error('Error create user admin:', error);
+    //   res.status(500).json({ message: 'Error updating user' });
+    // }
   });
   route.post('/api/usermanagement/delete', async (req: Request, res: Response) => {
     try {
@@ -93,16 +92,15 @@ route.post('/api/usermanagement/update', async (req: Request, res: Response) => 
     }
   });
   route.post('/api/usermanagement/addbrand', async (req: Request, res: Response) => {
-    try {
+    // try {
       const {name, email, phone, password, role,status, field, address} = req.body;
       const chec = await pool.query(
         'SELECT * FROM FUNC_FIND_USER_BY_EMAIL($1)',
         [email]
       );
       if (chec.rows.length > 0) {
-        res.status(200).send('1');
+        //res.status(200).send('1');
         throw new BadRequestError('Email in use');
-        return;
       }
       const hashedPassword = await Password.hash(password);
       const phonenum = phone;
@@ -118,10 +116,10 @@ route.post('/api/usermanagement/update', async (req: Request, res: Response) => 
           'CALL SP_CREATE_BRAND($1, $2, $3, $4, $5)',
             [temp.rows[0].id, field, address, 0, 0]
       );
-      res.status(200).send('3');
-    } catch (error) {
-      console.error('Error create brand admin:', error);
-      res.status(500).json({ message: 'Error create brand' });
-    }
+      res.status(200).send('Done');
+    // } catch (error) {
+    //   console.error('Error create brand admin:', error);
+    //   res.status(500).json({ message: 'Error create brand' });
+    // }
   });
 export {route as usermanagementRouter};
