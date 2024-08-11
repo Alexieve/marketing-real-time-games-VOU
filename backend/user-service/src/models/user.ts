@@ -30,10 +30,8 @@ class User implements IUser {
         src: string;
         status: string;
     };
-    new?: boolean;
-    registered?: string;
 
-    constructor({id, name, email, phonenum, password, role = 'Admin', status, avatar, new: isNew, registered}: IUser) {
+    constructor({id, name, email, phonenum, password, role = 'Admin', status, avatar}: IUser) {
         this.id = id ?? null;
         this.name = name;
         this.email = email;
@@ -42,8 +40,6 @@ class User implements IUser {
         this.role = role;
         this.status = status;
         this.avatar = avatar;
-        this.new = isNew;
-        this.registered = registered;
     }
 
     static async findAllUser(): Promise<User[] | null> {
@@ -64,8 +60,6 @@ class User implements IUser {
                     src: 'avatar1', // Replace this with actual avatar logic
                     status: 'success' // Replace this with actual status logic
                 },
-                new: row.new || false,
-                registered: row.registered || 'Jan 1, 2023' // Replace this with actual date logic
             }));
             
             return users;

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { CInputGroup, CInputGroupText, CModal, CModalBody, CModalFooter, CModalHeader, CForm, CFormInput, CButton, CFormSwitch } from '@coreui/react'
-import './AddUserModal.scss'  
+import './AddBrandModal.scss'  
 import CIcon from '@coreui/icons-react'
-import { cilUser, cilEnvelopeClosed, cilLockLocked, cilPhone } from '@coreui/icons'
+import { cilUser, cilEnvelopeClosed, cilLockLocked, cilPhone, cilAddressBook } from '@coreui/icons'
 import { request } from '../../../hooks/useRequest';
 import { notification } from 'antd'; // Assuming you're using Ant Design for notifications
 
-const AddUserModal = ({ isVisible, onCancel, form }) => {
+const AddBrandModal = ({ isVisible, onCancel, form }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState('');
@@ -16,19 +16,9 @@ const AddUserModal = ({ isVisible, onCancel, form }) => {
   const [phone, setPhone] = useState('');
   const [phoneError, setPhoneError] = useState('');
   const [status, setStatus] = useState(true);
-  // useEffect(() => {
-  //   if (isVisible) {
-  //     setName('');
-  //     setEmail('');
-  //     setEmailError('');
-  //     setPassword('');
-  //     setConfirmPassword('');
-  //     setPasswordError('');
-  //     setPhone('');
-  //     setPhoneError('');
-  //     setStatus(true);
-  //   }
-  // }, [isVisible]);
+  
+  const [field, setField] = useState('');
+  const [address, setAddress] = useState('');
 
   const handleEmailChange = (e) => {
     const value = e.target.value;
@@ -62,7 +52,6 @@ const AddUserModal = ({ isVisible, onCancel, form }) => {
     const value = e.target.value;
     setPhone(value);
 
-    // Kiểm tra số điện thoại hợp lệ
     if (value) {
       const phonePattern = /^\d{10}$/;
       if (!phonePattern.test(value)) {
@@ -89,7 +78,7 @@ const AddUserModal = ({ isVisible, onCancel, form }) => {
 
   const handleFormSubmit = async () => {
     // Check if any required fields are empty
-    if (!name || !email || !phone || !password) {
+    if (!name || !email || !phone || !password ||  !field || !address) {
       notification.error({
         message: 'Please fill in all required fields.',
       });
@@ -109,31 +98,33 @@ const AddUserModal = ({ isVisible, onCancel, form }) => {
       email,
       phone,
       password,
-      role: 'Admin',
-      status: status, 
+      role: 'Brand',
+      status: status,
+      field,
+      address
     };
   
     try {
-      const result = await request('api/usermanagement/addadmin', 'post', updatedUser);
+      const result = await request('api/usermanagement/addbrand', 'post', updatedUser);
       if(result == '3'){
         notification.success({
-          message: 'User created successfully',
+          message: 'Brand created successfully',
         });
         onCancel();
       }
-      if(result == '2'){
-        notification.error({
-          message: 'Can not create user admin',
-        });
-      }
+      // if(result == '2'){
+      //   notification.error({
+      //     message: 'Can not create user admin',
+      //   });
+      // }
       if(result == '1'){
         notification.error({
-          message: 'Can not create user admin',
+          message: 'Email in use',
         });
       }
     } catch (error) {
       notification.error({
-        message: 'Error creating user',
+        message: 'Error creating Brand',
         description: error.message,
       });
     }
@@ -162,6 +153,9 @@ const AddUserModal = ({ isVisible, onCancel, form }) => {
               onChange={(e) => setName(e.target.value)}
             />
           </CInputGroup>
+
+          
+
           <CInputGroup className="mb-3">
             <CInputGroupText id="basic-addon-email"><CIcon icon={cilEnvelopeClosed} /></CInputGroupText>
             <CFormInput
@@ -215,6 +209,28 @@ const AddUserModal = ({ isVisible, onCancel, form }) => {
             />
           </CInputGroup>
           {phoneError && <div className="error-message">{phoneError}</div>}
+          <CInputGroup className="mb-3">
+            <CInputGroupText id="basic-addon-field"><CIcon icon={cilUser} /></CInputGroupText>
+            <CFormInput
+              name="field"
+              placeholder="Field"
+              aria-label="Field"
+              aria-describedby="basic-addon-field"
+              value={field}
+              onChange={(e) => setField(e.target.value)}
+            />
+          </CInputGroup>
+          <CInputGroup className="mb-3">
+            <CInputGroupText id="basic-addon-address"><CIcon icon={cilAddressBook} /></CInputGroupText>
+            <CFormInput 
+              type="text" 
+              placeholder="Address" 
+              aria-label="Address" 
+              aria-describedby="basic-addon-address"
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
+            />
+          </CInputGroup>
 
           <CFormSwitch
             id="isActive"
@@ -236,4 +252,4 @@ const AddUserModal = ({ isVisible, onCancel, form }) => {
   );
 };
 
-export default AddUserModal;
+export default AddBrandModal;
