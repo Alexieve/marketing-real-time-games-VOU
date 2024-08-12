@@ -1,44 +1,27 @@
-import React, { useState, useEffect } from "react";
-import { Modal, Form, Input, notification } from "antd";
-import {
-  CPagination,
-  CPaginationItem,
-  CForm,
-  CFormInput,
-  CButton,
-  CAvatar,
-  CCard,
-  CCardBody,
-  CCol,
-  CRow,
-  CTable,
-  CTableBody,
-  CTableDataCell,
-  CTableHead,
-  CTableHeaderCell,
-  CTableRow,
-  CDropdown,
-  CDropdownToggle,
-  CDropdownMenu,
-  CDropdownItem,
-} from "@coreui/react";
-import CIcon from "@coreui/icons-react";
-import { cilPeople, cilOptions } from "@coreui/icons";
-import { request } from "../../../hooks/useRequest";
-import avatar6 from "src/assets/images/avatars/6.jpg";
-import AddUserModal from "./UserManage_AddUser";
-import EditUserModal from "./UserManage_EditUser";
-import "./UserManagement.scss";
+import React, { useState, useEffect } from 'react'
+import { Modal, Form, Input, notification } from 'antd'
+import { CPagination, CPaginationItem, CForm, CFormInput, CButton, CAvatar, CCard, CCardBody, CCol, CRow, CTable, CTableBody, CTableDataCell, CTableHead, CTableHeaderCell, CTableRow, CDropdown, CDropdownToggle, CDropdownMenu, CDropdownItem } from '@coreui/react'
+import CIcon from '@coreui/icons-react'
+import { cilPeople, cilOptions } from '@coreui/icons'
+import { request } from '../../../hooks/useRequest';
+import avatar6 from 'src/assets/images/avatars/6.jpg'
+import AddUserModal from './UserManage_AddUser'
+//import AddCusModal from './UserManage_AddCus'
+import AddBrandModal from './UserManage_AddBrand'
+import EditUserModal from './UserManage_EditUser'
+import './UserManagement.scss'
 
 const UserManagement = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [filteredUsers, setFilteredUsers] = useState([]);
-  const [users, setUsers] = useState([]);
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [isModalVisibleEdit, setIsModalVisibleEdit] = useState(false);
-  const [currentUser, setCurrentUser] = useState(null);
-  const [selectedRole, setSelectedRole] = useState("All");
-  const [form] = Form.useForm();
+  const [searchTerm, setSearchTerm] = useState('')
+  const [filteredUsers, setFilteredUsers] = useState([])
+  const [users, setUsers] = useState([]) 
+  const [isModalVisible, setIsModalVisible] = useState(false)
+  const [isModalVisibleBrand, setIsModalVisibleBrand] = useState(false)
+  const [isModalVisibleCus, setIsModalVisibleCus] = useState(false)
+  const [isModalVisibleEdit, setIsModalVisibleEdit] = useState(false)
+  const [currentUser, setCurrentUser] = useState(null)
+  const [selectedRole, setSelectedRole] = useState('All') 
+  const [form] = Form.useForm()
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(4);
 
@@ -83,9 +66,15 @@ const UserManagement = () => {
     setSelectedRole(role);
   };
 
-  const handleAdd = (role) => {
-    setIsModalVisible(true);
-  };
+  const handleAddA = (role) => {
+    setIsModalVisible(true)
+  }
+  const handleAddB = (role) => {
+    setIsModalVisibleBrand(true)
+  }
+  const handleAddU = (role) => {
+    setIsModalVisibleCus(true)
+  }
 
   const handleSubmit = (values) => {};
   const handleSubmitedit = async (user) => {};
@@ -97,11 +86,19 @@ const UserManagement = () => {
 
   const handleDelete = async (user) => {
     try {
-      await request("api/usermanagement/delete", "post", { id: user.id });
-      notification.success({
-        message: "User deleted successfully",
-      });
-
+      const resultdel = await request('api/usermanagement/delete', 'post', { id: user.id });
+      if(resultdel == '1'){
+        notification.error({
+          message: 'Error occur when delete',
+        });
+      }
+      if(resultdel == '2'){
+        notification.success({
+          message: 'User deleted successfully',
+        });
+      }
+      
+      
       // // Xóa user khỏi danh sách users trong state
       // setUsers(prevUsers => prevUsers.filter(u => u.id !== user.id));
       // setFilteredUsers(prevUsers => prevUsers.filter(u => u.id !== user.id));
@@ -177,15 +174,9 @@ const UserManagement = () => {
                       Add User
                     </CDropdownToggle>
                     <CDropdownMenu>
-                      <CDropdownItem onClick={() => handleAdd("User")}>
-                        User
-                      </CDropdownItem>
-                      <CDropdownItem onClick={() => handleAdd("Admin")}>
-                        Admin
-                      </CDropdownItem>
-                      <CDropdownItem onClick={() => handleAdd("Brand")}>
-                        Brand
-                      </CDropdownItem>
+                      <CDropdownItem onClick={() => handleAddU('User')}>User</CDropdownItem>
+                      <CDropdownItem onClick={() => handleAddA('Admin')}>Admin</CDropdownItem>
+                      <CDropdownItem onClick={() => handleAddB('Brand')}>Brand</CDropdownItem>
                     </CDropdownMenu>
                   </CDropdown>
                 </CCol>
@@ -194,6 +185,18 @@ const UserManagement = () => {
               <AddUserModal
                 isVisible={isModalVisible}
                 onCancel={() => setIsModalVisible(false)}
+                onSubmit={handleSubmit}
+                form={form}
+              />
+              {/* <AddCusModal
+                isVisible={isModalVisibleCus}
+                onCancel={() => setIsModalVisibleCus(false)}
+                onSubmit={handleSubmit}
+                form={form}
+              /> */}
+              <AddBrandModal
+                isVisible={isModalVisibleBrand}
+                onCancel={() => setIsModalVisibleBrand(false)}
                 onSubmit={handleSubmit}
                 form={form}
               />
@@ -256,10 +259,9 @@ const UserManagement = () => {
                       </CTableDataCell>
                       <CTableDataCell className="table-column-user">
                         <div>{user.name}</div>
-                        <div className="small text-body-secondary text-nowrap">
-                          <span>{user.new ? "New" : "Recurring"}</span> |
-                          Registered: {user.registered}
-                        </div>
+                        {/* <div className="small text-body-secondary text-nowrap">
+                          <span>{user.new ? 'New' : 'Recurring'}</span> | Registered: {user.registered}
+                        </div> */}
                       </CTableDataCell>
                       <CTableDataCell className="text-center table-column-role">
                         {user.role}

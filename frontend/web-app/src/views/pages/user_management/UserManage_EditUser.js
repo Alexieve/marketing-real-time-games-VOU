@@ -27,11 +27,19 @@ const EditUserModal = ({ isVisible, onCancel, currentUser, form }) => {
     };
 
     try {
-      await request('api/usermanagement/update', 'post', updatedUser);
-      notification.success({
-        message: 'User updated successfully',
-      });
-      onCancel(); // Đóng modal sau khi cập nhật thành công
+      const result = await request('api/usermanagement/update', 'post', updatedUser);
+      if(result == '1'){
+        notification.error({
+          message: 'Error when update',
+        });
+      }
+      if(result == '2'){
+        notification.success({
+          message: 'User updated successfully',
+        });
+        onCancel(); // Đóng modal sau khi cập nhật thành công
+      }
+      
     } catch (error) {
       notification.error({
         message: 'Error updating user',

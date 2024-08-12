@@ -34,19 +34,19 @@ route.post('/api/usermanagement/update', async (req: Request, res: Response) => 
         [name, status, id]
     );
       if (!result) {
+        res.status(200).send('1');
         throw new BadRequestError('result not found');
     }
-      res.status(200).send(result);
+      res.status(200).send('2');
     } catch (error) {
       console.error('Error updating user:', error);
       res.status(500).json({ message: 'Error updating user' });
     }
   });
   route.post('/api/usermanagement/addadmin', async (req: Request, res: Response) => {
-    try {
+    // try {
       const {name, email, phone, password, role,status} = req.body;
-      console.log(name);
-      
+
       const chec = await pool.query(
         'SELECT * FROM FUNC_FIND_USER_BY_EMAIL($1)',
         [email]
@@ -61,22 +61,18 @@ route.post('/api/usermanagement/update', async (req: Request, res: Response) => 
           [name, email, phonenum, hashedPassword, role, status]
     );
       if (!result) {
-        throw new BadRequestError('Cannt create user admin');
+        //res.status(200).send('2');
+        throw new BadRequestError('Can not create user admin');
     }
-      res.status(200).send(result);
-    } catch (error) {
-      console.error('Error create user admin:', error);
-      res.status(500).json({ message: 'Error updating user' });
-    }
+      res.status(200).send('Done');
+    // } catch (error) {
+    //   console.error('Error create user admin:', error);
+    //   res.status(500).json({ message: 'Error updating user' });
+    // }
   });
   route.post('/api/usermanagement/delete', async (req: Request, res: Response) => {
     try {
       const { id } = req.body;
-  
-      // Kiểm tra nếu id không tồn tại
-      if (!id) {
-        return res.status(400).json({ message: 'Invalid data delete' });
-      }
   
       // Xóa user theo id
       const result = await pool.query(
@@ -85,13 +81,45 @@ route.post('/api/usermanagement/update', async (req: Request, res: Response) => 
       );
   
       if (result.rowCount === 0) {
-        return res.status(404).json({ message: 'User not found' });
+        res.status(200).send('1');
+        throw new BadRequestError('Cannt del user');
       }
   
-      res.status(200).json({ message: 'User deleted successfully' });
+      res.status(200).send('2');
     } catch (error) {
       console.error('Error deleting user:', error);
       res.status(500).json({ message: 'Error deleting user' });
     }
+  });
+  route.post('/api/usermanagement/addbrand', async (req: Request, res: Response) => {
+    // try {
+      const {name, email, phone, password, role,status, field, address} = req.body;
+      const chec = await pool.query(
+        'SELECT * FROM FUNC_FIND_USER_BY_EMAIL($1)',
+        [email]
+      );
+      if (chec.rows.length > 0) {
+        //res.status(200).send('1');
+        throw new BadRequestError('Email in use');
+      }
+      const hashedPassword = await Password.hash(password);
+      const phonenum = phone;
+      const result = await pool.query(
+        'CALL SP_CREATE_USER($1, $2, $3, $4, $5, $6)', 
+          [name, email, phonenum, hashedPassword, role, status]
+      );
+      const temp = await pool.query(
+        'SELECT * FROM FUNC_FIND_USER_BY_EMAIL($1)',
+                [email]
+      );
+      const result3 = await pool.query(
+          'CALL SP_CREATE_BRAND($1, $2, $3, $4, $5)',
+            [temp.rows[0].id, field, address, 0, 0]
+      );
+      res.status(200).send('Done');
+    // } catch (error) {
+    //   console.error('Error create brand admin:', error);
+    //   res.status(500).json({ message: 'Error create brand' });
+    // }
   });
 export {route as usermanagementRouter};
