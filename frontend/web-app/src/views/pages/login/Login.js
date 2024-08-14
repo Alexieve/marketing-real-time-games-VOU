@@ -66,7 +66,7 @@ const Login = () => {
 
     if (form.checkValidity()) {
       try {
-        await request("api/users/login", "post", formValues);
+        await request("api/auth/login", "post", formValues);
         dispatch(authActions.setIsAuthenticated(true));
         toast.success("Login successful!");
         navigate("/");

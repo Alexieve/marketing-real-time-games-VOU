@@ -27,15 +27,7 @@ const registerValidator = [
   body('address')
     .trim()
     .isLength({ min: 2, max: 255 })
-    .withMessage('Address must be between 2 and 255 characters'),
-
-  body('lat')
-    .isNumeric()
-    .withMessage('Latitude must be a number'),
-    
-  body('long')
-    .isNumeric()
-    .withMessage('Longitude must be a number')
+    .withMessage('Address must be between 2 and 255 characters')
 ];
 
 const loginValidator = [

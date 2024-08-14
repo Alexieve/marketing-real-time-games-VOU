@@ -33,7 +33,7 @@ const AppHeaderDropdown = () => {
 
   const handleLogout = async () => {
     dispatch(authActions.setIsAuthenticated(false));
-    await request("/api/users/logout", "POST", null);
+    await request("/api/auth/logout", "POST", null);
   };
 
   return (

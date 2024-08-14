@@ -80,10 +80,8 @@ const Register = () => {
     setFormErrors(errors);
 
     if (form.checkValidity()) {
-      formValues.lat = 0;
-      formValues.long = 0;
       try {
-        await request("api/users/register", "POST", formValues);
+        await request("api/auth/register/brand", "POST", formValues);
         dispatch(authActions.setIsAuthenticated(true));
         toast.success("Registration successful!");
         navigate("/");

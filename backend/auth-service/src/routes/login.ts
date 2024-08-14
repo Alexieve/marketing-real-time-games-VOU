@@ -1,20 +1,29 @@
 import express, {Request, Response} from 'express';
 import { loginValidator } from '../utils/validators';
 import { validateRequest } from '@vmquynh-vou/shared';
-import { User } from '../models/user';
 import { BadRequestError } from '@vmquynh-vou/shared';
-import { Password } from '../utils/password';
+import { Password } from '@vmquynh-vou/shared';
 import jwt from 'jsonwebtoken';
+import { requestAPI } from '@vmquynh-vou/shared';
 
 
 const route = express.Router();
 
-route.post('/api/users/login', loginValidator, validateRequest,
+route.post('/api/auth/login', loginValidator, validateRequest,
 async (req: Request, res: Response) => {
 
     const {email, password} = req.body;
 
-    const existingUser = await User.findByEmail(email);
+    let existingUser = null;
+    try {
+        existingUser = await requestAPI('http://user-srv:3000/api/user/get/user/by-email', 'POST', {email});
+    } catch (error: any) {
+        if (error == 'Account does not exists!')
+            throw new BadRequestError('Wrong email or password');
+        else
+            throw new BadRequestError(error);
+    }
+
     if (!existingUser) {
         throw new BadRequestError('Wrong email or password');
     }

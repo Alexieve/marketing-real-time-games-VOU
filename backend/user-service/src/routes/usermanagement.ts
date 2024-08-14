@@ -1,10 +1,7 @@
 import express, {Request, Response} from 'express';
-import { loginValidator } from '../utils/validators';
-import { validateRequest } from '@vmquynh-vou/shared';
 import { User } from '../models/user';
 import { BadRequestError } from '@vmquynh-vou/shared';
-import { Password } from '../utils/password';
-import jwt from 'jsonwebtoken';
+import { Password } from '@vmquynh-vou/shared';
 import { pool } from '../connection';
 const route = express.Router();
 
@@ -14,7 +11,6 @@ route.get('/api/usermanagement/load', async (req: Request, res: Response) => {
       if (!users) {
         return res.status(404).send({ message: 'No users found' });
       }
-      //console.log('check Users:', users);
       res.send(users);
     } catch (error) {
       console.error('Error in /api/usermanagement:', error); // Log error for debugging
@@ -44,31 +40,26 @@ route.post('/api/usermanagement/update', async (req: Request, res: Response) => 
     }
   });
   route.post('/api/usermanagement/addadmin', async (req: Request, res: Response) => {
-    // try {
-      const {name, email, phone, password, role,status} = req.body;
+    const {name, email, phone, password, role,status} = req.body;
 
-      const chec = await pool.query(
-        'SELECT * FROM FUNC_FIND_USER_BY_EMAIL($1)',
-        [email]
-      );
-      if (chec.rows.length > 0) {
-        throw new BadRequestError('Email in use');
-      }
-      const hashedPassword = await Password.hash(password);
-      const phonenum = phone;
-      const result = await pool.query(
-        'CALL SP_CREATE_USER($1, $2, $3, $4, $5, $6)', 
-          [name, email, phonenum, hashedPassword, role, status]
+    const chec = await pool.query(
+      'SELECT * FROM FUNC_FIND_USER_BY_EMAIL($1)',
+      [email]
     );
-      if (!result) {
-        //res.status(200).send('2');
-        throw new BadRequestError('Can not create user admin');
+    if (chec.rows.length > 0) {
+      throw new BadRequestError('Email in use');
+    }
+    const hashedPassword = await Password.hash(password);
+    const phonenum = phone;
+    const result = await pool.query(
+      'CALL SP_CREATE_USER($1, $2, $3, $4, $5, $6)', 
+        [name, email, phonenum, hashedPassword, role, status]
+    );
+
+    if (!result) {
+      throw new BadRequestError('Can not create user admin');
     }
       res.status(200).send('Done');
-    // } catch (error) {
-    //   console.error('Error create user admin:', error);
-    //   res.status(500).json({ message: 'Error updating user' });
-    // }
   });
   route.post('/api/usermanagement/delete', async (req: Request, res: Response) => {
     try {
@@ -92,34 +83,29 @@ route.post('/api/usermanagement/update', async (req: Request, res: Response) => 
     }
   });
   route.post('/api/usermanagement/addbrand', async (req: Request, res: Response) => {
-    // try {
-      const {name, email, phone, password, role,status, field, address} = req.body;
-      const chec = await pool.query(
-        'SELECT * FROM FUNC_FIND_USER_BY_EMAIL($1)',
-        [email]
-      );
-      if (chec.rows.length > 0) {
-        //res.status(200).send('1');
-        throw new BadRequestError('Email in use');
-      }
-      const hashedPassword = await Password.hash(password);
-      const phonenum = phone;
-      const result = await pool.query(
-        'CALL SP_CREATE_USER($1, $2, $3, $4, $5, $6)', 
-          [name, email, phonenum, hashedPassword, role, status]
-      );
-      const temp = await pool.query(
-        'SELECT * FROM FUNC_FIND_USER_BY_EMAIL($1)',
-                [email]
-      );
-      const result3 = await pool.query(
-          'CALL SP_CREATE_BRAND($1, $2, $3, $4, $5)',
-            [temp.rows[0].id, field, address, 0, 0]
-      );
-      res.status(200).send('Done');
-    // } catch (error) {
-    //   console.error('Error create brand admin:', error);
-    //   res.status(500).json({ message: 'Error create brand' });
-    // }
+    const {name, email, phone, password, role,status, field, address} = req.body;
+    
+    const chec = await pool.query(
+      'SELECT * FROM FUNC_FIND_USER_BY_EMAIL($1)',
+      [email]
+    );
+    if (chec.rows.length > 0) {
+      throw new BadRequestError('Email in use');
+    }
+    const hashedPassword = await Password.hash(password);
+    const phonenum = phone;
+    const result = await pool.query(
+      'CALL SP_CREATE_USER($1, $2, $3, $4, $5, $6)', 
+        [name, email, phonenum, hashedPassword, role, status]
+    );
+    const temp = await pool.query(
+      'SELECT * FROM FUNC_FIND_USER_BY_EMAIL($1)',
+              [email]
+    );
+    const result3 = await pool.query(
+        'CALL SP_CREATE_BRAND($1, $2, $3, $4, $5)',
+          [temp.rows[0].id, field, address, 0, 0]
+    );
+    res.status(200).send('Done');
   });
 export {route as usermanagementRouter};

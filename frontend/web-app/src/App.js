@@ -37,7 +37,7 @@ const App = () => {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        await request("/api/users/currentuser");
+        await request("/api/auth/currentuser");
         dispatch(authActions.setIsAuthenticated(true));
       } catch (error) {
         dispatch(authActions.setIsAuthenticated(false));

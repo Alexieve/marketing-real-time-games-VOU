@@ -2,14 +2,13 @@ import express from 'express';
 import 'express-async-errors'
 import {json} from 'body-parser';
 import cookieSession from 'cookie-session';
-import { consume } from './utils/subscriber';
 const cors = require('cors');
 
 // Routes
 import {currentUserRouter} from './routes/current-user';
 import {loginRouter} from './routes/login';
 import {logoutRouter} from './routes/logout';
-import {registerRouter} from './routes/register';
+import {registerRouter} from './routes/register-brand';
 
 // Middlewares
 import {errorHandler} from '@vmquynh-vou/shared';
@@ -36,16 +35,6 @@ app.all('*', async (req, res) => {
 });
 
 app.use(errorHandler);
-
-const startSubscribers = async () => {
-    const exchange = 'auth-exchange';
-    const exchangeService = 'topic';
-    const queue = 'auth-queue';
-    const routingKey = 'auth.*';
-    await consume(exchange, exchangeService, queue, routingKey);
-}
-startSubscribers();
-
 
 const start = async () => {
     if (!process.env.JWT_KEY) {
