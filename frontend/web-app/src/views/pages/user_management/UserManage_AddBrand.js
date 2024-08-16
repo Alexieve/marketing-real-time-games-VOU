@@ -5,14 +5,16 @@ import CIcon from '@coreui/icons-react'
 import { cilUser, cilEnvelopeClosed, cilLockLocked, cilPhone, cilAddressBook } from '@coreui/icons'
 import { request } from '../../../hooks/useRequest';
 import { notification } from 'antd'; // Assuming you're using Ant Design for notifications
-
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer, toast } from "react-toastify";
 const AddBrandModal = ({ isVisible, onCancel, form }) => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [passwordError, setPasswordError] = useState('');
+  const [passwordLengthError, setPasswordLengthError] = useState('');
+  const [passwordMatchError, setPasswordMatchError] = useState('');
   const [phone, setPhone] = useState('');
   const [phoneError, setPhoneError] = useState('');
   const [status, setStatus] = useState(true);
@@ -65,33 +67,39 @@ const AddBrandModal = ({ isVisible, onCancel, form }) => {
   };
 
   const validatePasswords = (password, confirmPassword) => {
-    let error = '';
+    let lengthError = '';
+    let matchError = '';
     
     if (password && (password.length < 6 || password.length > 20)) {
-      error = 'Password must be between 6 and 20 characters.';
-    } else if (password && confirmPassword && password !== confirmPassword) {
-      error = 'Passwords do not match.';
+      lengthError = 'Password must be between 6 and 20 characters.';
+    } else {
+      lengthError = '';
     }
 
-    setPasswordError(error);
+    if (password && confirmPassword && password !== confirmPassword) {
+      matchError = 'Passwords do not match.';
+    } else {
+      matchError = '';
+    }
+
+    setPasswordLengthError(lengthError);
+    setPasswordMatchError(matchError);
   };
 
   const handleFormSubmit = async () => {
     // Check if any required fields are empty
     if (!name || !email || !phone || !password ||  !field || !address) {
-      notification.error({
-        message: 'Please fill in all required fields.',
-      });
+      toast.error("Please fill in all required fields.");
+
       return; // Exit the function early to prevent submission
     }
   
     // Check for validation errors
-    if (emailError || passwordError || phoneError) {
-      notification.error({
-        message: 'Please correct the validation errors.',
-      });
-      return; // Exit the function early to prevent submission
+    if (emailError || passwordLengthError || passwordMatchError || phoneError) {
+      toast.error("Please correct the validation errors.");
+      return;
     }
+
   
     const updatedUser = {
       name,
@@ -106,31 +114,19 @@ const AddBrandModal = ({ isVisible, onCancel, form }) => {
   
     try {
       const result = await request('api/usermanagement/addbrand', 'post', updatedUser);
-      if(result == '3'){
-        notification.success({
-          message: 'Brand created successfully',
-        });
-        onCancel();
+      toast.success("Add Brand successful!");
+      onCancel();
+    } catch (errors) {
+      if (errors.length > 0) {
+        toast.error(errors[0].message);
+      } else {
+        toast.error("An error occurred. Please try again later");
       }
-      // if(result == '2'){
-      //   notification.error({
-      //     message: 'Can not create user admin',
-      //   });
-      // }
-      if(result == '1'){
-        notification.error({
-          message: 'Email in use',
-        });
-      }
-    } catch (error) {
-      notification.error({
-        message: 'Error creating Brand',
-        description: error.message,
-      });
     }
   };
 
   return (
+    <>
     <CModal
       visible={isVisible}
       onClose={onCancel}
@@ -182,7 +178,7 @@ const AddBrandModal = ({ isVisible, onCancel, form }) => {
               onChange={handlePasswordChange}
             />
           </CInputGroup>
-
+          {passwordLengthError && <div className="error-message">{passwordLengthError}</div>}
           <CInputGroup className="mb-3">
             <CInputGroupText id="basic-addon-confirm-password"><CIcon icon={cilLockLocked} /></CInputGroupText>
             <CFormInput
@@ -195,7 +191,7 @@ const AddBrandModal = ({ isVisible, onCancel, form }) => {
               onChange={handleConfirmPasswordChange}
             />
           </CInputGroup>
-          {passwordError && <div className="error-message">{passwordError}</div>}
+          {passwordMatchError && <div className="error-message">{passwordMatchError}</div>}
 
           <CInputGroup className="mb-3">
             <CInputGroupText id="basic-addon-phone"><CIcon icon={cilPhone} /></CInputGroupText>
@@ -248,7 +244,22 @@ const AddBrandModal = ({ isVisible, onCancel, form }) => {
           {'Add'}
         </CButton>
       </CModalFooter>
+      
     </CModal>
+    <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+        transition:Bounce
+      />
+    </>
   );
 };
 
