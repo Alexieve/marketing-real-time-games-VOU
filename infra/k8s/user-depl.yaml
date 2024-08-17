@@ -12,9 +12,32 @@ spec:
       labels:
         app: user
     spec:
+      initContainers:
+        - name: wait-for-rabbitmq
+          image: busybox
+          command: ['sh', '-c', 'until nc -z rabbitmq 5672; do echo waiting for rabbitmq; sleep 2; done;']
+        - name: wait-for-postgres
+          image: busybox
+          command: ['sh', '-c', 'until nc -z postgres-user-srv 5432; do echo waiting for postgres; sleep 2; done;']
       containers:
         - name: user
           image: vmquynh/user
+          env:
+            - name: JWT_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: jwt-secret
+                  key: JWT_KEY
+            - name: DB_HOST
+              value: "postgres-user-srv"
+            - name: DB_PORT
+              value: "5432"
+            - name: DB_DATABASE
+              value: "user-db"
+            - name: DB_ADMIN
+              value: "user-admin"
+            - name: DB_PASSWORD
+              value: "user-admin"
 ---
 apiVersion: v1
 kind: Service

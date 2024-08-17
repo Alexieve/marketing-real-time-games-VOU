@@ -1,4 +1,4 @@
-import { pool } from '../connection';
+import db from '../connection';
 import { User, IUser } from './user';
 
 interface IBrand extends IUser {
@@ -21,7 +21,7 @@ export class Brand extends User {
         : Promise<Brand> {
         try {
             const user = await User.create({ name, email, phonenum, password, role: 'Brand', status });
-            await pool.query(
+            await db.query(
                 'CALL SP_CREATE_BRAND($1, $2, $3)',
                 [user.id, field, address]
             );

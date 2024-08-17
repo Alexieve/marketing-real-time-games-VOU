@@ -2,7 +2,7 @@ import express, {Request, Response} from 'express';
 import { User } from '../models/user';
 import { BadRequestError } from '@vmquynh-vou/shared';
 import { Password } from '@vmquynh-vou/shared';
-import { pool } from '../connection';
+import db from '../connection';
 const route = express.Router();
 
 route.get('/api/usermanagement/load', async (req: Request, res: Response) => {
@@ -25,7 +25,7 @@ route.post('/api/usermanagement/update', async (req: Request, res: Response) => 
       console.log(id);
       console.log(name);
   
-      const result = await pool.query(
+      const result = await db.query(
         'UPDATE "USER" SET name = $1, status = $2 WHERE id = $3',
         [name, status, id]
     );
@@ -42,7 +42,7 @@ route.post('/api/usermanagement/update', async (req: Request, res: Response) => 
   route.post('/api/usermanagement/addadmin', async (req: Request, res: Response) => {
     const {name, email, phone, password, role,status} = req.body;
 
-    const chec = await pool.query(
+    const chec = await db.query(
       'SELECT * FROM FUNC_FIND_USER_BY_EMAIL($1)',
       [email]
     );
@@ -51,7 +51,7 @@ route.post('/api/usermanagement/update', async (req: Request, res: Response) => 
     }
     const hashedPassword = await Password.hash(password);
     const phonenum = phone;
-    const result = await pool.query(
+    const result = await db.query(
       'CALL SP_CREATE_USER($1, $2, $3, $4, $5, $6)', 
         [name, email, phonenum, hashedPassword, role, status]
     );
@@ -66,7 +66,7 @@ route.post('/api/usermanagement/update', async (req: Request, res: Response) => 
       const { id } = req.body;
   
       // Xóa user theo id
-      const result = await pool.query(
+      const result = await db.query(
         'DELETE FROM "USER" WHERE id = $1',
         [id]
       );
@@ -85,7 +85,7 @@ route.post('/api/usermanagement/update', async (req: Request, res: Response) => 
   route.post('/api/usermanagement/addbrand', async (req: Request, res: Response) => {
     const {name, email, phone, password, role,status, field, address} = req.body;
     
-    const chec = await pool.query(
+    const chec = await db.query(
       'SELECT * FROM FUNC_FIND_USER_BY_EMAIL($1)',
       [email]
     );
@@ -94,15 +94,15 @@ route.post('/api/usermanagement/update', async (req: Request, res: Response) => 
     }
     const hashedPassword = await Password.hash(password);
     const phonenum = phone;
-    const result = await pool.query(
+    const result = await db.query(
       'CALL SP_CREATE_USER($1, $2, $3, $4, $5, $6)', 
         [name, email, phonenum, hashedPassword, role, status]
     );
-    const temp = await pool.query(
+    const temp = await db.query(
       'SELECT * FROM FUNC_FIND_USER_BY_EMAIL($1)',
               [email]
     );
-    const result3 = await pool.query(
+    const result3 = await db.query(
         'CALL SP_CREATE_BRAND($1, $2, $3, $4, $5)',
           [temp.rows[0].id, field, address, 0, 0]
     );

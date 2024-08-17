@@ -12,6 +12,10 @@ spec:
       labels:
         app: auth
     spec:
+      initContainers:
+        - name: wait-for-rabbitmq
+          image: busybox
+          command: ['sh', '-c', 'until nc -z rabbitmq 5672; do echo waiting for rabbitmq; sleep 2; done;']
       containers:
         - name: auth
           image: vmquynh/auth

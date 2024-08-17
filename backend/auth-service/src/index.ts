@@ -1,49 +1,29 @@
-import express from 'express';
-import 'express-async-errors'
-import {json} from 'body-parser';
-import cookieSession from 'cookie-session';
-const cors = require('cors');
-
-// Routes
-import {currentUserRouter} from './routes/current-user';
-import {loginRouter} from './routes/login';
-import {logoutRouter} from './routes/logout';
-import {registerRouter} from './routes/register-brand';
-
-// Middlewares
-import {errorHandler} from '@vmquynh-vou/shared';
-import {NotFoundError} from '@vmquynh-vou/shared';
-
-const app = express();
-app.set('trust proxy', true);
-
-app.use(json());
-app.use(cookieSession({
-    signed: false,
-    secure: true,
-}));
-app.use(cors());
-
-app.use(currentUserRouter);
-app.use(loginRouter);
-app.use(logoutRouter);
-app.use(registerRouter);
-
-// // Try to throw not found error
-app.all('*', async (req, res) => {
-    throw new NotFoundError();
-});
-
-app.use(errorHandler);
+import { app } from './app';
+import { BrandCreatedPublisher } from './events/publishers/user-created-publisher';
+import { rabbitMQWrapper } from './rabbitmq-wrapper';
 
 const start = async () => {
     if (!process.env.JWT_KEY) {
         throw new Error('JWT_KEY must be defined');
     }
+
+    try {
+        await rabbitMQWrapper.connect('amqp://rabbitmq');
+        // rabbitMQWrapper.channel.on('close', () => {
+        //     console.log('RabbitMQ channel closed');
+        //     process.exit();
+        // });
+        // process.on('SIGINT', () => { rabbitMQWrapper.channel.close(); });
+        // process.on('SIGTERM', () => { rabbitMQWrapper.channel.close(); });
+
+
+    } catch (error) {
+        console.error(error);
+    }
+
+    app.listen(3000, () => {
+        console.log('Auth service listening on port 3000');
+    });
 }
 
 start();
-
-app.listen(3000, () => {
-    console.log('Auth service listening on port 3000');
-});

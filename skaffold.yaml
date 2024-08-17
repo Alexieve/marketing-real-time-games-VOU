@@ -3,6 +3,9 @@ kind: Config
 deploy:
   kubectl:
     manifests:
+    - ./infra/rabbitmq/*
+    - ./infra/database/*
+    - ./infra/nginx/*
     - ./infra/k8s/*
 build:
   local:

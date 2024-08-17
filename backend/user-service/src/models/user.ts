@@ -1,4 +1,4 @@
-import { pool } from '../connection';
+import db from '../connection';
 import { Password } from '@vmquynh-vou/shared';
 
 interface IUser {
@@ -43,17 +43,16 @@ class User implements IUser {
     static async create({ name, email, phonenum, password, role = 'Admin', status }: IUser): Promise<User> {
         try {
             const hashedPassword = await Password.hash(password);
-            await pool.query(
+            await db.query(
                 'CALL SP_CREATE_USER($1, $2, $3, $4, $5, $6)', 
                 [name, email, phonenum, hashedPassword, role, status]
             );
 
-            const res = await pool.query(
-                'SELECT * FROM FUNC_FIND_USER_BY_EMAIL($1)',
-                [email]
-            );
-
-            return new User(res.rows[0]);
+            const res = await this.findByEmail(email);
+            if (!res) {
+                throw new Error('Cannot find user after create!');
+            }
+            return res;
         } catch (error) {
             console.error('Error creating user:', error);
             throw error;
@@ -62,7 +61,7 @@ class User implements IUser {
 
     static async findByEmail(email: string): Promise<User | null> {
         try {
-            const res = await pool.query(
+            const res = await db.query(
                 'SELECT * FROM FUNC_FIND_USER_BY_EMAIL($1)',
                 [email]
             );
@@ -75,7 +74,7 @@ class User implements IUser {
     }
 
     static async findById(id: number): Promise<User | null> {
-        const res = await pool.query(
+        const res = await db.query(
             'SELECT * FROM FUNC_FIND_USER_BY_ID($1)',
             [id]
         );
@@ -85,7 +84,7 @@ class User implements IUser {
 
     static async findAllUser(): Promise<User[] | null> {
         try {
-            const res = await pool.query(
+            const res = await db.query(
                 'SELECT * FROM FUNC_FIND_ALL_USER()'
             );            
             if (res.rows.length === 0) return null;
@@ -113,7 +112,7 @@ class User implements IUser {
     async delete(): Promise<void> {
         if (!this.id) throw new Error('Cannot delete user without ID');
 
-        await pool.query(
+        await db.query(
             'CALL SP_DELETE_USER($1)', 
             [this.id]
         );
