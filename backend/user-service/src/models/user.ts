@@ -32,7 +32,7 @@ class User implements IUser {
     };
 
     constructor({id, name, email, phonenum, password, role = 'Admin', status, avatar}: IUser) {
-        this.id = id ?? null;
+        this.id = id || null;
         this.name = name;
         this.email = email;
         this.phonenum = phonenum;

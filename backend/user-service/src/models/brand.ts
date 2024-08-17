@@ -20,7 +20,7 @@ export class Brand extends User {
         : { name: string; email: string; phonenum: string; password: string; status: boolean; field: string; address: string;})
         : Promise<Brand> {
         try {
-            const user = await User.create({ name, email, phonenum, password, role: 'Brand', status });
+            const user = await super.create({ name, email, phonenum, password, role: 'Brand', status });
             await db.query(
                 'CALL SP_CREATE_BRAND($1, $2, $3)',
                 [user.id, field, address]
@@ -30,5 +30,50 @@ export class Brand extends User {
             console.error('Error creating brand:', error);
             throw error;
         }
+    }
+
+    static async findByEmail(email: string): Promise<Brand | null> {
+        try {
+            const brand = await db.query(
+                'SELECT * FROM FUNC_FIND_BRAND_BY_EMAIL($1)',
+                [email]
+            );
+            if (brand.rows.length === 0) return null
+            return new Brand(brand.rows[0]);
+        } catch (error) {
+            console.error('Error finding brand by email:', error);
+            throw error;
+        }
+    }
+
+    static async findById(id: number): Promise<User | null> {
+        const brand = await db.query(
+            'SELECT * FROM FUNC_FIND_BRAND_BY_ID($1)',
+            [id]
+        );
+        if (brand.rows.length === 0) return null
+        return new Brand(brand.rows[0]);
+    }
+
+    static async findAll(): Promise<User[] | null> {
+        try {
+            const res = await db.query(
+                'SELECT * FROM FUNC_FIND_ALL_BRAND()'
+            );
+            if (res.rows.length === 0) return null;
+            return res.rows.map((row: any) => new Brand(row));
+        } catch (err) {
+            console.error('Error finding all brands:', err);
+            return null;
+        }
+    }
+
+    async delete(): Promise<void> {
+        if (!this.id) throw new Error('Cannot delete Brand without ID');
+
+        await db.query(
+            'SELECT * FROM FUNC_DELETE_BRAND($1)', 
+            [this.id]
+        );
     }
 }

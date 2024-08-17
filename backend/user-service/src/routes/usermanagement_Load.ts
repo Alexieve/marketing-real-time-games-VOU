@@ -5,7 +5,7 @@ import { User } from '../models/user';
 import { BadRequestError } from '@vmquynh-vou/shared';
 import { Password } from '../utils/password';
 import jwt from 'jsonwebtoken';
-import { pool } from '../connection';
+import db from '../connection';
 const route = express.Router();
 
 route.get('/api/usermanagement/load', async (req: Request, res: Response) => {

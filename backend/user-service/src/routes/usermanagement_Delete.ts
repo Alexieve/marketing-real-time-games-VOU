@@ -5,7 +5,7 @@ import { User } from '../models/user';
 import { BadRequestError } from '@vmquynh-vou/shared';
 import { Password } from '../utils/password';
 import jwt from 'jsonwebtoken';
-import { pool } from '../connection';
+import db from '../connection';
 const route = express.Router();
 
 
@@ -13,19 +13,19 @@ const route = express.Router();
       const { id, role } = req.body;
       if (role === 'User') {
         // Xóa bản ghi tương ứng trong bảng CUSTOMER nếu role là 'user'
-        await pool.query(
+        await db.query(
           'DELETE FROM "CUSTOMER" WHERE userid = $1',
           [id]
         );
       }
       if (role === 'Brand') {
         // Xóa bản ghi tương ứng trong bảng CUSTOMER nếu role là 'user'
-        await pool.query(
+        await db.query(
           'DELETE FROM "BRAND" WHERE userid = $1',
           [id]
         );
       }
-      const result = await pool.query(
+      const result = await db.query(
         'DELETE FROM "USER" WHERE id = $1',
         [id]
       );
