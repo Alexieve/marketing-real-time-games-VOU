@@ -2,7 +2,8 @@ import express from 'express';
 import 'express-async-errors'
 import {json} from 'body-parser';
 import cookieSession from 'cookie-session';
-import { rabbitMQWrapper } from './rabbitmq-wrapper';
+// import { rabbitMQWrapper } from './rabbitmq-wrapper';
+import { rabbitMQWrapper } from '@vmquynh-vou/shared';
 import { BrandCreatedListener } from './events/listeners/user-created-listener';
 const cors = require('cors');
 

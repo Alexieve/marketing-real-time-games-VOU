@@ -1,6 +1,8 @@
 import { app } from './app';
 import { BrandCreatedPublisher } from './events/publishers/user-created-publisher';
-import { rabbitMQWrapper } from './rabbitmq-wrapper';
+import { rabbitMQWrapper } from '@vmquynh-vou/shared';
+import { RedisClient } from '@vmquynh-vou/shared';
+// const RedisClient = require('@vmquynh-vou/shared');
 
 const start = async () => {
     if (!process.env.JWT_KEY) {
@@ -9,17 +11,13 @@ const start = async () => {
 
     try {
         await rabbitMQWrapper.connect('amqp://rabbitmq');
-        // rabbitMQWrapper.channel.on('close', () => {
-        //     console.log('RabbitMQ channel closed');
-        //     process.exit();
-        // });
-        // process.on('SIGINT', () => { rabbitMQWrapper.channel.close(); });
-        // process.on('SIGTERM', () => { rabbitMQWrapper.channel.close(); });
-
-
     } catch (error) {
         console.error(error);
     }
+
+    // await RedisClient.getInstance();
+    // await RedisClient.set('test', 'test', 30);
+    // console.log(await RedisClient.get('test'));
 
     app.listen(3000, () => {
         console.log('Auth service listening on port 3000');

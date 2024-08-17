@@ -4,7 +4,7 @@ import { brandRegisterValidator, customerRegisterValidator } from '../utils/vali
 import jwt from 'jsonwebtoken';
 import { validateRequest } from '@vmquynh-vou/shared';
 import { requestAPI } from '@vmquynh-vou/shared';
-import { rabbitMQWrapper } from '../rabbitmq-wrapper';
+import { rabbitMQWrapper } from '@vmquynh-vou/shared';
 import { BrandCreatedPublisher, CustomerCreatedPublisher } from '../events/publishers/user-created-publisher';
 
 const route = express.Router();

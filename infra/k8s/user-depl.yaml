@@ -19,6 +19,9 @@ spec:
         - name: wait-for-postgres
           image: busybox
           command: ['sh', '-c', 'until nc -z postgres-user-srv 5432; do echo waiting for postgres; sleep 2; done;']
+        - name: wait-for-redis
+          image: busybox:1.31
+          command: ['sh', '-c', 'until nc -zv redis 6379; do echo "Waiting for Redis..."; sleep 5; done']
       containers:
         - name: user
           image: vmquynh/user
