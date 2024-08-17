@@ -43,12 +43,12 @@
 
 .table-column-icon
 {
-  width: 50px; /* Đặt chiều rộng cố định cho tất cả các cột */
-  text-align: center;
+  width: 10px; /* Đặt chiều rộng cố định cho tất cả các cột */
+  text-align: left !important; /* Căn lề trái cho cột */
 }
 .table-column-avatar
 {
-  width: 50px; /* Đặt chiều rộng cố định cho tất cả các cột */
+  width: 10px; /* Đặt chiều rộng cố định cho tất cả các cột */
   text-align: center;
 }
 .table-column-user

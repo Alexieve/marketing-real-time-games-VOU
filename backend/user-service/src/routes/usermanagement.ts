@@ -1,4 +1,6 @@
 import express, {Request, Response} from 'express';
+import { loginValidator } from '../utils/validators';
+import { validateRequest } from '@vmquynh-vou/shared';
 import { User } from '../models/user';
 import { BadRequestError } from '@vmquynh-vou/shared';
 import { Password } from '@vmquynh-vou/shared';
@@ -40,7 +42,7 @@ route.post('/api/usermanagement/update', async (req: Request, res: Response) => 
     }
   });
   route.post('/api/usermanagement/addadmin', async (req: Request, res: Response) => {
-    const {name, email, phone, password, role,status} = req.body;
+      const {name, email, phone, password, role,status} = req.body;
 
     const chec = await db.query(
       'SELECT * FROM FUNC_FIND_USER_BY_EMAIL($1)',
@@ -55,9 +57,8 @@ route.post('/api/usermanagement/update', async (req: Request, res: Response) => 
       'CALL SP_CREATE_USER($1, $2, $3, $4, $5, $6)', 
         [name, email, phonenum, hashedPassword, role, status]
     );
-
-    if (!result) {
-      throw new BadRequestError('Can not create user admin');
+      if (!result) {
+        throw new BadRequestError('Can not create user admin');
     }
       res.status(200).send('Done');
   });
@@ -107,5 +108,5 @@ route.post('/api/usermanagement/update', async (req: Request, res: Response) => 
           [temp.rows[0].id, field, address, 0, 0]
     );
     res.status(200).send('Done');
-  });
+});
 export {route as usermanagementRouter};

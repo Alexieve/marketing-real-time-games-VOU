@@ -13,6 +13,8 @@ interface IUser {
         src: string;
         status: string;
     };
+    new?: boolean;
+    registered?: string;
 }
 
 

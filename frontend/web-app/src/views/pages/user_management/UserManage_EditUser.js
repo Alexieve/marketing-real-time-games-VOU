@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { CInputGroup, CInputGroupText, CModal, CModalBody, CModalFooter, CModalHeader, CForm, CFormInput, CButton, CFormSwitch } from '@coreui/react';
-import './EditUserModal.scss';  
+// import './EditUserModal.scss';  
 import CIcon from '@coreui/icons-react';
 import { cilUser, cilEnvelopeClosed, cilPhone } from '@coreui/icons';
 import { request } from '../../../hooks/useRequest';
 import { notification } from 'antd'; // Assuming you're using Ant Design for notifications
+import "react-toastify/dist/ReactToastify.css";
+import { ToastContainer, toast } from "react-toastify";
 
 const EditUserModal = ({ isVisible, onCancel, currentUser, form }) => {
   const [name, setName] = useState(currentUser?.name || '');
@@ -28,27 +30,21 @@ const EditUserModal = ({ isVisible, onCancel, currentUser, form }) => {
 
     try {
       const result = await request('api/usermanagement/update', 'post', updatedUser);
-      if(result == '1'){
-        notification.error({
-          message: 'Error when update',
-        });
-      }
-      if(result == '2'){
-        notification.success({
-          message: 'User updated successfully',
-        });
-        onCancel(); // Đóng modal sau khi cập nhật thành công
-      }
+      toast.success("Update information successful!");
+      onCancel();
       
-    } catch (error) {
-      notification.error({
-        message: 'Error updating user',
-        description: error.message,
-      });
+    } catch (errors) {
+      console.log(errors);
+      if (errors.length > 0) {
+        toast.error(errors[0].message);
+      } else {
+        toast.error("An error occurred. Please try again later");
+      }
     }
   };
 
   return (
+    <>
     <CModal
       visible={isVisible}
       onClose={onCancel}
@@ -108,6 +104,20 @@ const EditUserModal = ({ isVisible, onCancel, currentUser, form }) => {
         </CButton>
       </CModalFooter>
     </CModal>
+    <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+        transition:Bounce
+      />
+    </>
   );
 };
 
