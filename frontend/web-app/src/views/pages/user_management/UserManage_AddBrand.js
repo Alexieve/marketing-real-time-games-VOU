@@ -114,8 +114,11 @@ const AddBrandModal = ({ isVisible, onCancel, form }) => {
   
     try {
       const result = await request('api/usermanagement/addbrand', 'post', updatedUser);
-      toast.success("Add Brand successful!");
+      toast.success("Add Brand successful. Reload after 2 second...");
       onCancel();
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);  // Delay một chút để đảm bảo toast hiện ra trước khi reload
     } catch (errors) {
       if (errors.length > 0) {
         toast.error(errors[0].message);

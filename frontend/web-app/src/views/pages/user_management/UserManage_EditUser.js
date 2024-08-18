@@ -30,9 +30,11 @@ const EditUserModal = ({ isVisible, onCancel, currentUser, form }) => {
 
     try {
       const result = await request('api/usermanagement/update', 'post', updatedUser);
-      toast.success("Update information successful!");
+      toast.success("Update information successful. Reload after 2 second...");
       onCancel();
-      
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);  // Delay một chút để đảm bảo toast hiện ra trước khi reload
     } catch (errors) {
       console.log(errors);
       if (errors.length > 0) {

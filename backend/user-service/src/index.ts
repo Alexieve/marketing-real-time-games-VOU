@@ -6,6 +6,7 @@ import cookieSession from 'cookie-session';
 import { rabbitMQWrapper } from '@vmquynh-vou/shared';
 import { BrandCreatedListener } from './events/listeners/user-created-listener';
 const cors = require('cors');
+import {usermanagementRouter_CountPage} from './routes/usermanagement_CountPage';
 
 // Routes
 import {postRouter} from './routes/post';
@@ -41,6 +42,7 @@ app.use(usermanagementRouter_Load);
 app.use(usermanagementRouter_Update);
 app.use(usermanagementRouter_Delete);
 // app.use(edituserRouter);
+app.use(usermanagementRouter_CountPage);
 
 // // Try to throw not found error
 app.all('*', async (req, res) => {

@@ -105,8 +105,11 @@ const AddUserModal = ({ isVisible, onCancel, form }) => {
 
     try {
       const result = await request('api/usermanagement/addadmin', 'post', updatedUser);
-      toast.success("Add Admin successful!");
+      toast.success("Add Admin successful. Reload after 2 second...");
       onCancel();
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);  // Delay một chút để đảm bảo toast hiện ra trước khi reload
     } catch (errors) {
       if (errors.length > 0) {
         toast.error(errors[0].message);

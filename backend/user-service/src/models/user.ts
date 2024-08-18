@@ -1,4 +1,6 @@
 import db from '../connection';
+// import { Pool } from 'pg';
+
 import { Password } from '@vmquynh-vou/shared';
 
 interface IUser {
@@ -118,6 +120,50 @@ class User implements IUser {
             'CALL SP_DELETE_USER($1)', 
             [this.id]
         );
+    }
+    static async findAllUserSearch(name?: string, role?: string, offset?:string  ): Promise<User[] | null> {
+    try {
+            // const res = await pool.query(
+            //     'SELECT * FROM "USER"'
+            // );      
+    let query = 'SELECT * FROM "USER" WHERE 1=1'; // Start with a base query
+
+    // Add conditions to the query based on the name and role
+    if (name) {
+      query += ` AND name LIKE '%${name}%'`; // ILIKE for case-insensitive search
+    }
+    if (role && role !== 'All') {
+      query += ` AND role = '${role}'`;
+    }
+    // Convert offset to integer and validate
+    const offsetNumber = parseInt(offset as string, 10); // Convert string to number
+    if (!isNaN(offsetNumber) && offsetNumber >= 0) { // Check if it is a valid number
+        query += ` ORDER BY ID LIMIT 4 OFFSET ${offsetNumber}`;
+    } else {
+        query += ` ORDER BY ID LIMIT 4 OFFSET 0`; // Default to 0 if offset is invalid
+    }
+    
+    const res = await db.query(query);      
+            if (res.rows.length === 0) return null;
+            const users = res.rows.map((row: any) => new User({
+                id: row.id,
+                name: row.name,
+                email: row.email,
+                phonenum: row.phonenum,
+                password: row.password, // Make sure to handle this securely
+                role: row.role,
+                status: row.status,
+                avatar: {
+                    src: 'avatar1', // Replace this with actual avatar logic
+                    status: 'success' // Replace this with actual status logic
+                },
+            }));
+            
+            return users;
+        } catch (err) {
+            console.error('Error finding all users:', err);
+            return null;
+        }
     }
 }    
 export { User, IUser };
