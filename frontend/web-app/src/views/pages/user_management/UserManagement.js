@@ -3,7 +3,7 @@ import { Modal, Form, Input, notification } from 'antd'
 import { CCardHeader, CPagination, CPaginationItem, CForm, CFormInput, CButton, CAvatar, CCard, CCardBody, CCol, CRow, CTable, CTableBody, CTableDataCell, CTableHead, CTableHeaderCell, CTableRow, CDropdown, CDropdownToggle, CDropdownMenu, CDropdownItem } from '@coreui/react'
 import './UserManagement.scss'
 import CIcon from '@coreui/icons-react'
-import { cilPeople, cilOptions } from '@coreui/icons'
+import { cilPeople, cilOptions, cilSearch } from '@coreui/icons'
 import { request } from '../../../hooks/useRequest';
 import avatar6 from 'src/assets/images/avatars/6.jpg'
 import AddUserModal from './UserManage_AddUser'
@@ -28,28 +28,47 @@ const UserManagement = () => {
   const [form] = Form.useForm()
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(4); 
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      try { 
-        const response = await request('api/usermanagement/load', 'get');
-        setUsers(response); 
-        setFilteredUsers(response); 
-      } catch (errors) {
-        console.log(errors);
-        if (errors.length > 0) {
-          toast.error(errors[0].message);
-        } else {
-          toast.error("An error occurred. Please try again later");
-        }
+  const [totalUsers, setTotalUsers] = useState(0);
+  const fetchUsers = async () => {
+    try { 
+      const offset = (currentPage - 1) * pageSize;
+      const response = await request(`api/usermanagement/load?name=${searchTerm}&role=${selectedRole}&offset=${offset}`, 'get');
+      setUsers(response); 
+      setFilteredUsers(response); 
+    } catch (errors) {
+      console.log(errors);
+      if (errors.length > 0) {
+        toast.error(errors[0].message);
+      } else {
+        toast.error("An error occurred. Please try again later");
       }
-    };
-    fetchUsers();
-  }, [])
-
+    }
+  };
+  const fetchPage = async () => {
+    try { 
+      const response = await request(`api/usermanagement/countpage?name=${searchTerm}&role=${selectedRole}`, 'get');
+      setTotalUsers(response); 
+    } catch (errors) {
+      console.log(errors);
+      if (errors.length > 0) {
+        toast.error(errors[0].message);
+      } else {
+        toast.error("An error occurred. Please try again later");
+      }
+    }
+  };
   useEffect(() => {
-    filterUsers(searchTerm, selectedRole);
-  }, [searchTerm, selectedRole]);
+    fetchUsers();
+    fetchPage();
+  }, [])
+  useEffect(() => {
+    fetchUsers();
+    fetchPage();
+  }, [currentPage])
+
+  // useEffect(() => {
+  //   filterUsers(searchTerm, selectedRole);
+  // }, [selectedRole]);
 
   const filterUsers = (searchTerm, role) => {
     const filtered = users.filter(user =>
@@ -60,7 +79,11 @@ const UserManagement = () => {
   }
 
   const handleSearch = (value) => {
-    setSearchTerm(value)
+    //setSearchTerm(value)
+    //filterUsers(searchTerm, selectedRole);
+    setCurrentPage(1);
+    fetchUsers();
+    fetchPage();
   }
 
   const handleChange = (e) => {
@@ -69,6 +92,7 @@ const UserManagement = () => {
 
   const handleRoleChange = (role) => {
     setSelectedRole(role)
+    //setCurrentPage(1);
   }
 
   const handleAddA = (role) => {
@@ -96,10 +120,10 @@ const UserManagement = () => {
   const handleDelete = async (user) => {
     try {
       const resultdel = await request('api/usermanagement/delete', 'post', { id: user.id, role: user.role });
-      toast.success("Delete user successful!");
-      // // Xóa user khỏi danh sách users trong state
-      // setUsers(prevUsers => prevUsers.filter(u => u.id !== user.id));
-      // setFilteredUsers(prevUsers => prevUsers.filter(u => u.id !== user.id));
+      toast.success("Delete user successful. Reload after 2 second...");
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);  // Delay một chút để đảm bảo toast hiện ra trước khi reload
     } catch (errors) {
       console.log(errors);
       if (errors.length > 0) {
@@ -112,12 +136,20 @@ const UserManagement = () => {
 
   const handlePageChange = (page) => {
     setCurrentPage(page);
+    // fetchUsers();
+    // fetchPage();
   };
 
   const getPaginatedUsers = () => {
-    const startIndex = (currentPage - 1) * pageSize;
-    const endIndex = startIndex + pageSize;
-    return filteredUsers.slice(startIndex, endIndex);
+    
+    const tmp = Math.ceil(totalUsers / pageSize);
+    if (currentPage !== tmp) {
+      return filteredUsers.slice(0, 4);
+    }
+    const tmp2 = (currentPage-1)*pageSize;
+    const tmp3 = totalUsers - tmp2;
+    return filteredUsers.slice(0, tmp3);
+    
   };
 
   return (
@@ -132,7 +164,7 @@ const UserManagement = () => {
           <CCardHeader>User Management</CCardHeader>
             <CCardBody>
               <CRow justify="space-between" align="middle" className="mb-4">
-                <CCol xs={4}>
+                <CCol xs={3}>
                   <CForm className="search-input-wrapper">
                     <CFormInput
                       type="text"
@@ -146,9 +178,15 @@ const UserManagement = () => {
                       }}
                       className="custom-search-input"
                     />
+                    
                   </CForm>
                 </CCol>
-                <CCol xs={4}>
+                <CCol sm={1} >
+                <CButton color="primary" className="ms-2" onClick={() => handleSearch(searchTerm)}>
+                    <CIcon icon={cilSearch} />
+                    </CButton>
+                </CCol>
+                <CCol xs={3}>
                   <CDropdown>
                     <CDropdownToggle color="secondary" className="filter-button">
                       {selectedRole === 'All' ? 'All Role' : selectedRole}
@@ -260,12 +298,12 @@ const UserManagement = () => {
                 <CPaginationItem onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
                   Previous
                 </CPaginationItem>
-                {[...Array(Math.ceil(filteredUsers.length / pageSize)).keys()].map(page => (
+                {[...Array(Math.ceil(totalUsers / pageSize)).keys()].map(page => (
                   <CPaginationItem key={page + 1} active={currentPage === page + 1} onClick={() => handlePageChange(page + 1)}>
                     {page + 1}
                   </CPaginationItem>
                 ))}
-                <CPaginationItem onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === Math.ceil(filteredUsers.length / pageSize)}>
+                <CPaginationItem onClick={() => handlePageChange(currentPage + 1)} disabled={currentPage === Math.ceil(totalUsers / pageSize)}>
                   Next
                 </CPaginationItem>
               </CPagination>
