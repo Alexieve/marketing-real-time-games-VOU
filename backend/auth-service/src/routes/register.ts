@@ -57,15 +57,6 @@ async (req: Request, res: Response) => {
     const status = true;
     const data = {name, email, phonenum, password, status, gender};
 
-    await new CustomerCreatedPublisher(rabbitMQWrapper.channel).publish({
-        name: name,
-        email: email,
-        phonenum: phonenum,
-        status: status,
-        role: 'Customer',
-        gender: gender,
-    }, 'user-exchange');
-
     let customer = null;
     try {
         customer = await requestAPI('http://user-srv:3000/api/user/create/customer', 'POST', data); 

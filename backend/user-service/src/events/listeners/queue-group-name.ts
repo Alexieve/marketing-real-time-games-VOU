@@ -1,4 +1,6 @@
 export enum queueGroupName {
-    UserCreatedGroup = 'user-created-queue',
+    AdminCreatedQueue = 'admin-created-queue',
+    BrandCreatedQueue = 'brand-created-queue',
+    CustomerCreatedQueue = 'customer-created-queue',
 }
   

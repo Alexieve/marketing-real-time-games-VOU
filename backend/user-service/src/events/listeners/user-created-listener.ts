@@ -20,7 +20,7 @@ import {
 export class BrandCreatedListener extends Listener<BrandCreatedEvent> {
     exchange: ExchangeName.UserExchange = ExchangeName.UserExchange;
     routingKey: RoutingKey.BrandCreated = RoutingKey.BrandCreated;
-    queue = queueGroupName.UserCreatedGroup;
+    queue = queueGroupName.BrandCreatedQueue;
 
     async onMessage(data: BrandCreatedEvent['data'], msg: ConsumeMessage) {
         // Xác nhận (acknowledge) thông điệp

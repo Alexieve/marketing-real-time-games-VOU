@@ -8,7 +8,7 @@ import { BrandCreatedListener } from './events/listeners/user-created-listener';
 const cors = require('cors');
 
 // Routes
-// import {currentUserRouter} from './routes/current-user';
+import {postRouter} from './routes/post';
 import {usermanagementRouter} from './routes/usermanagement';
 import {usermanagementRouter_Load} from './routes/usermanagement_Load';
 import {usermanagementRouter_Update} from './routes/usermanagement_Update';
@@ -35,7 +35,7 @@ app.use(cookieSession({
 }));
 app.use(cors());
 
-// app.use(currentUserRouter);
+app.use(postRouter);
 app.use(usermanagementRouter);
 app.use(usermanagementRouter_Load);
 app.use(usermanagementRouter_Update);
