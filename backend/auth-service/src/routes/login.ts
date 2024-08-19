@@ -11,14 +11,14 @@ const route = express.Router();
 
 route.post('/api/auth/login', loginValidator, validateRequest,
 async (req: Request, res: Response) => {
-
     const {email, password} = req.body;
 
     let existingUser = null;
     try {
-        existingUser = await requestAPI('http://user-srv:3000/api/user/get/user/by-email', 'POST', {email});
+        existingUser = await requestAPI(`http://user-srv:3000/api/user-management/load/by-email/${email}`, 'get', {email});
     } catch (error: any) {
-        if (error == 'Account does not exists!')
+        console.log(error);
+        if (error == 'User not found!')
             throw new BadRequestError('Wrong email or password');
         else
             throw new BadRequestError(error);
@@ -32,6 +32,10 @@ async (req: Request, res: Response) => {
 
     if (!passwordsMatch) {
         throw new BadRequestError('Wrong email or password');
+    }
+
+    if (!existingUser.status) {
+        throw new BadRequestError('User is inactive!');
     }
 
     const userJwt = jwt.sign({

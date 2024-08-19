@@ -17,7 +17,7 @@ spec:
                 name: auth-srv
                 port: 
                   number: 3000 
-          - path: /api/user/
+          - path: /api/user-management/
             pathType: Prefix
             backend:
               service:

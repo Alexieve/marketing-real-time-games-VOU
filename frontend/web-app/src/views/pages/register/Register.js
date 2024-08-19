@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { request } from "../../../hooks/useRequest";
 import { ToastContainer, toast } from "react-toastify";
@@ -24,19 +24,12 @@ import {
   cilUser,
 } from "@coreui/icons";
 import { authActions } from "../../../stores/authSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 const Register = () => {
   const [formErrors, setFormErrors] = useState({});
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate("/");
-    }
-  }, [isAuthenticated, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -83,7 +76,7 @@ const Register = () => {
       try {
         await request("api/auth/register/brand", "POST", formValues);
         dispatch(authActions.setIsAuthenticated(true));
-        toast.success("Registration successful!");
+        // toast.success("Registration successful!");
         navigate("/");
       } catch (errors) {
         console.log(errors);

@@ -65,12 +65,12 @@ export class Customer extends User {
         }
     }
 
-    async delete(): Promise<void> {
-        if (!this.id) throw new Error('Cannot delete Customer without ID');
+    static async delete(id: string): Promise<void> {
+        if (!id) throw new Error('Cannot delete Customer without ID');
 
         await db.query(
-            'SELECT * FROM FUNC_DELETE_CUSTOMER($1)', 
-            [this.id]
+            'CALL SP_DELETE_CUSTOMER($1)', 
+            [id]
         );
     }
 }

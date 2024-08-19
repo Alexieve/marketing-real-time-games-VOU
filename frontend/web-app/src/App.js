@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import React, { Suspense, useEffect } from "react";
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { CSpinner } from "@coreui/react";
 import "./scss/style.scss";
 import { request } from "./hooks/useRequest";
@@ -42,11 +42,10 @@ const App = () => {
       } catch (error) {
         dispatch(authActions.setIsAuthenticated(false));
       }
-      // dispatch(authActions.setIsAuthenticated(true));
     };
 
     checkAuth();
-  }, []);
+  }, [dispatch]);
 
   return (
     <BrowserRouter>
@@ -58,8 +57,24 @@ const App = () => {
         }
       >
         <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
+          <Route
+            path="/login"
+            element={
+              <ProtectedRoute publicRoute={true}>
+                <Login />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/register"
+            element={
+              <ProtectedRoute publicRoute={true}>
+                <Register />
+              </ProtectedRoute>
+            }
+          />
+
           <Route
             path="/event"
             element={
@@ -68,6 +83,7 @@ const App = () => {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/user-management"
             element={
@@ -76,6 +92,7 @@ const App = () => {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/event/create/:id"
             element={
@@ -84,6 +101,7 @@ const App = () => {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/voucher/create/:id"
             element={
@@ -92,6 +110,7 @@ const App = () => {
               </ProtectedRoute>
             }
           />
+
           <Route
             path="/voucher"
             element={
@@ -100,8 +119,11 @@ const App = () => {
               </ProtectedRoute>
             }
           />
+
           <Route path="/404" element={<Page404 />} />
+
           <Route path="/500" element={<Page500 />} />
+
           <Route
             path="*"
             element={

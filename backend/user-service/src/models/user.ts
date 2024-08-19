@@ -52,7 +52,7 @@ class User implements IUser {
                 [name, email, phonenum, hashedPassword, role, status]
             );
 
-            const res = await this.findByEmail(email);
+            const res = await User.findByEmail(email);
             if (!res) {
                 throw new Error('Cannot find user after create!');
             }
@@ -113,38 +113,36 @@ class User implements IUser {
         }
     }
 
-    async delete(): Promise<void> {
-        if (!this.id) throw new Error('Cannot delete user without ID');
+    static async delete(id: string): Promise<void> {
+        if (!id) throw new Error('Cannot delete user without ID');
 
         await db.query(
             'CALL SP_DELETE_USER($1)', 
-            [this.id]
+            [id]
         );
     }
-    static async findAllUserSearch(name?: string, role?: string, offset?:string  ): Promise<User[] | null> {
-    try {
-            // const res = await pool.query(
-            //     'SELECT * FROM "USER"'
-            // );      
-    let query = 'SELECT * FROM "USER" WHERE 1=1'; // Start with a base query
 
-    // Add conditions to the query based on the name and role
-    if (name) {
-      query += ` AND name LIKE '%${name}%'`; // ILIKE for case-insensitive search
-    }
-    if (role && role !== 'All') {
-      query += ` AND role = '${role}'`;
-    }
-    // Convert offset to integer and validate
-    const offsetNumber = parseInt(offset as string, 10); // Convert string to number
-    if (!isNaN(offsetNumber) && offsetNumber >= 0) { // Check if it is a valid number
-        query += ` ORDER BY ID LIMIT 4 OFFSET ${offsetNumber}`;
-    } else {
-        query += ` ORDER BY ID LIMIT 4 OFFSET 0`; // Default to 0 if offset is invalid
-    }
-    
-    const res = await db.query(query);      
+    static async findAllUserSearch(name?: string, role?: string, offset?:string  ): Promise<User[] | null> {
+        try {
+            let query = 'SELECT * FROM "USER" WHERE 1=1';
+
+            if (role && role !== 'All') {
+                query += ` AND role = '${role}'`;
+            }
+            if (name) {
+                query += ` AND name LIKE '%${name}%'`; // ILIKE for case-insensitive search
+            }
+            
+            const offsetNumber = parseInt(offset as string, 10); // Convert string to number
+            if (!isNaN(offsetNumber) && offsetNumber >= 0) { // Check if it is a valid number
+                query += ` ORDER BY ID LIMIT 4 OFFSET ${offsetNumber}`;
+            } else {
+                query += ` ORDER BY ID LIMIT 4 OFFSET 0`; // Default to 0 if offset is invalid
+            }
+        
+            const res = await db.query(query);      
             if (res.rows.length === 0) return null;
+            
             const users = res.rows.map((row: any) => new User({
                 id: row.id,
                 name: row.name,
@@ -158,7 +156,6 @@ class User implements IUser {
                     status: 'success' // Replace this with actual status logic
                 },
             }));
-            
             return users;
         } catch (err) {
             console.error('Error finding all users:', err);

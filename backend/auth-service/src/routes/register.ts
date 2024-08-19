@@ -38,7 +38,7 @@ async (req: Request, res: Response) => {
 
     let brand = null;
     try {
-        brand = await requestAPI('http://user-srv:3000/api/user/create/brand', 'POST', data); 
+        brand = await requestAPI('http://user-srv:3000/api/user-management/create/brand', 'POST', data); 
     } catch (error: any) {
         throw new BadRequestError(error);
     }
@@ -59,7 +59,7 @@ async (req: Request, res: Response) => {
 
     let customer = null;
     try {
-        customer = await requestAPI('http://user-srv:3000/api/user/create/customer', 'POST', data); 
+        customer = await requestAPI('http://user-srv:3000/api/user-management/create/customer', 'POST', data); 
     } catch (error: any) {
         throw new BadRequestError(error);
     }

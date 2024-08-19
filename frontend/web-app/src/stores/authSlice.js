@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { request } from "../hooks/useRequest";
 
 const authSlice = createSlice({
   name: "auth",

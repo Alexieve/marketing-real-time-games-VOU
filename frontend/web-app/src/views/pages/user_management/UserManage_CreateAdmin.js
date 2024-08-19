@@ -1,22 +1,46 @@
-import React, { useState } from 'react'
-import { CInputGroup, CInputGroupText, CModal, CModalBody, CModalFooter, CModalHeader, CForm, CFormInput, CButton, CFormSwitch } from '@coreui/react'
-import CIcon from '@coreui/icons-react'
-import './AddUserModal.scss'  
-import { cilUser, cilEnvelopeClosed, cilLockLocked, cilPhone } from '@coreui/icons'
-import { request } from '../../../hooks/useRequest';
+/* eslint-disable react/prop-types */
+import React, { useState } from "react";
+import {
+  CInputGroup,
+  CInputGroupText,
+  CModal,
+  CModalBody,
+  CModalFooter,
+  CModalHeader,
+  CForm,
+  CFormInput,
+  CButton,
+  CFormSwitch,
+} from "@coreui/react";
+import CIcon from "@coreui/icons-react";
+import "./AddUserModal.scss";
+import {
+  cilUser,
+  cilEnvelopeClosed,
+  cilLockLocked,
+  cilPhone,
+} from "@coreui/icons";
+import { request } from "../../../hooks/useRequest";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
 
-const AddUserModal = ({ isVisible, onCancel, form }) => {
-  const [name, setName] = useState('');
-  const [email, setEmail] = useState('');
-  const [emailError, setEmailError] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [passwordLengthError, setPasswordLengthError] = useState('');
-  const [passwordMatchError, setPasswordMatchError] = useState('');
-  const [phone, setPhone] = useState('');
-  const [phoneError, setPhoneError] = useState('');
+const AddUserModal = ({
+  isVisible,
+  onCancel,
+  form,
+  setSelectedRole,
+  setSearchTerm,
+}) => {
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [emailError, setEmailError] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [passwordLengthError, setPasswordLengthError] = useState("");
+  const [passwordMatchError, setPasswordMatchError] = useState("");
+  const [phonenum, setPhonenum] = useState("");
+  const [phonenumError, setPhonenumError] = useState("");
   const [status, setStatus] = useState(true);
 
   const handleEmailChange = (e) => {
@@ -26,12 +50,12 @@ const AddUserModal = ({ isVisible, onCancel, form }) => {
     if (value) {
       const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       if (!emailPattern.test(value)) {
-        setEmailError('Please provide a valid email address.');
+        setEmailError("Please provide a valid email address.");
       } else {
-        setEmailError('');
+        setEmailError("");
       }
     } else {
-      setEmailError('');
+      setEmailError("");
     }
   };
 
@@ -49,34 +73,36 @@ const AddUserModal = ({ isVisible, onCancel, form }) => {
 
   const handlePhoneChange = (e) => {
     const value = e.target.value;
-    setPhone(value);
+    setPhonenum(value);
 
     if (value) {
       const phonePattern = /^\d{10}$/;
       if (!phonePattern.test(value)) {
-        setPhoneError('Phone number must be 10 digits long and include only numbers.');
+        setPhonenumError(
+          "Phone number must be 10 digits long and include only numbers.",
+        );
       } else {
-        setPhoneError('');
+        setPhonenumError("");
       }
     } else {
-      setPhoneError('');
+      setPhonenumError("");
     }
   };
 
   const validatePasswords = (password, confirmPassword) => {
-    let lengthError = '';
-    let matchError = '';
-    
+    let lengthError = "";
+    let matchError = "";
+
     if (password && (password.length < 6 || password.length > 20)) {
-      lengthError = 'Password must be between 6 and 20 characters.';
+      lengthError = "Password must be between 6 and 20 characters.";
     } else {
-      lengthError = '';
+      lengthError = "";
     }
 
     if (password && confirmPassword && password !== confirmPassword) {
-      matchError = 'Passwords do not match.';
+      matchError = "Passwords do not match.";
     } else {
-      matchError = '';
+      matchError = "";
     }
 
     setPasswordLengthError(lengthError);
@@ -84,12 +110,17 @@ const AddUserModal = ({ isVisible, onCancel, form }) => {
   };
 
   const handleFormSubmit = async () => {
-    if (!name || !email || !phone || !password) {
+    if (!name || !email || !phonenum || !password) {
       toast.error("Please fill in all required fields.");
       return;
     }
 
-    if (emailError || passwordLengthError || passwordMatchError || phoneError) {
+    if (
+      emailError ||
+      passwordLengthError ||
+      passwordMatchError ||
+      phonenumError
+    ) {
       toast.error("Please correct the validation errors.");
       return;
     }
@@ -97,19 +128,20 @@ const AddUserModal = ({ isVisible, onCancel, form }) => {
     const updatedUser = {
       name,
       email,
-      phone,
+      phonenum,
       password,
-      role: 'Admin',
-      status: status, 
+      role: "Admin",
+      status: status,
     };
 
     try {
-      const result = await request('api/usermanagement/addadmin', 'post', updatedUser);
+      await request("api/user-management/create/admin", "post", updatedUser);
       toast.success("Add Admin successful. Reload after 2 second...");
       onCancel();
       setTimeout(() => {
-        window.location.reload();
-      }, 2000);  // Delay một chút để đảm bảo toast hiện ra trước khi reload
+        setSearchTerm("");
+        setSelectedRole("Admin");
+      }, 2000); // Delay một chút để đảm bảo toast hiện ra trước khi reload
     } catch (errors) {
       if (errors.length > 0) {
         toast.error(errors[0].message);
@@ -128,12 +160,19 @@ const AddUserModal = ({ isVisible, onCancel, form }) => {
         className="user-management-modal"
       >
         <CModalHeader>
-          <h5>{'Add Admin'}</h5>
+          <h5>{"Add Admin"}</h5>
         </CModalHeader>
         <CModalBody>
-          <CForm form={form} onFinish={handleFormSubmit} layout="vertical" id="user-form">
+          <CForm
+            form={form}
+            onFinish={handleFormSubmit}
+            layout="vertical"
+            id="user-form"
+          >
             <CInputGroup className="mb-3">
-              <CInputGroupText id="basic-addon1"><CIcon icon={cilUser} /></CInputGroupText>
+              <CInputGroupText id="basic-addon1">
+                <CIcon icon={cilUser} />
+              </CInputGroupText>
               <CFormInput
                 name="username"
                 placeholder="Username"
@@ -144,7 +183,9 @@ const AddUserModal = ({ isVisible, onCancel, form }) => {
               />
             </CInputGroup>
             <CInputGroup className="mb-3">
-              <CInputGroupText id="basic-addon-email"><CIcon icon={cilEnvelopeClosed} /></CInputGroupText>
+              <CInputGroupText id="basic-addon-email">
+                <CIcon icon={cilEnvelopeClosed} />
+              </CInputGroupText>
               <CFormInput
                 name="email"
                 placeholder="Email"
@@ -158,7 +199,9 @@ const AddUserModal = ({ isVisible, onCancel, form }) => {
             {emailError && <div className="error-message">{emailError}</div>}
 
             <CInputGroup className="mb-3">
-              <CInputGroupText id="basic-addon-password"><CIcon icon={cilLockLocked} /></CInputGroupText>
+              <CInputGroupText id="basic-addon-password">
+                <CIcon icon={cilLockLocked} />
+              </CInputGroupText>
               <CFormInput
                 name="password"
                 type="password"
@@ -169,10 +212,14 @@ const AddUserModal = ({ isVisible, onCancel, form }) => {
                 onChange={handlePasswordChange}
               />
             </CInputGroup>
-            {passwordLengthError && <div className="error-message">{passwordLengthError}</div>}
+            {passwordLengthError && (
+              <div className="error-message">{passwordLengthError}</div>
+            )}
 
             <CInputGroup className="mb-3">
-              <CInputGroupText id="basic-addon-confirm-password"><CIcon icon={cilLockLocked} /></CInputGroupText>
+              <CInputGroupText id="basic-addon-confirm-password">
+                <CIcon icon={cilLockLocked} />
+              </CInputGroupText>
               <CFormInput
                 name="confirm-password"
                 type="password"
@@ -183,20 +230,26 @@ const AddUserModal = ({ isVisible, onCancel, form }) => {
                 onChange={handleConfirmPasswordChange}
               />
             </CInputGroup>
-            {passwordMatchError && <div className="error-message">{passwordMatchError}</div>}
+            {passwordMatchError && (
+              <div className="error-message">{passwordMatchError}</div>
+            )}
 
             <CInputGroup className="mb-3">
-              <CInputGroupText id="basic-addon-phone"><CIcon icon={cilPhone} /></CInputGroupText>
-              <CFormInput 
-                type="tel" 
-                placeholder="Phone Number" 
-                aria-label="Phone Number" 
+              <CInputGroupText id="basic-addon-phone">
+                <CIcon icon={cilPhone} />
+              </CInputGroupText>
+              <CFormInput
+                type="tel"
+                placeholder="Phone Number"
+                aria-label="Phone Number"
                 aria-describedby="basic-addon-phone"
-                value={phone}
+                value={phonenum}
                 onChange={handlePhoneChange}
               />
             </CInputGroup>
-            {phoneError && <div className="error-message">{phoneError}</div>}
+            {phonenumError && (
+              <div className="error-message">{phonenumError}</div>
+            )}
 
             <CFormSwitch
               id="isActive"
@@ -209,25 +262,14 @@ const AddUserModal = ({ isVisible, onCancel, form }) => {
           </CForm>
         </CModalBody>
         <CModalFooter>
-          <CButton color="secondary" onClick={onCancel}>Cancel</CButton>
+          <CButton color="secondary" onClick={onCancel}>
+            Cancel
+          </CButton>
           <CButton color="primary" onClick={handleFormSubmit}>
-            {'Add'}
+            {"Add"}
           </CButton>
         </CModalFooter>
       </CModal>
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="colored"
-        transition:Bounce
-      />
     </>
   );
 };

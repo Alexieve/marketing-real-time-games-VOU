@@ -68,12 +68,12 @@ export class Brand extends User {
         }
     }
 
-    async delete(): Promise<void> {
-        if (!this.id) throw new Error('Cannot delete Brand without ID');
+    static async delete(id: string): Promise<void> {
+        if (!id) throw new Error('Cannot delete Brand without ID');
 
         await db.query(
-            'SELECT * FROM FUNC_DELETE_BRAND($1)', 
-            [this.id]
+            'CALL SP_DELETE_BRAND($1)', 
+            [id]
         );
     }
 }
