@@ -56,9 +56,7 @@ const EditUserModal = ({
       toast.success("Update information successful. Reload after 2 second...");
       onCancel();
       setTimeout(() => {
-        setSearchTerm("");
-        setSelectedRole(currentUser.role);
-        // navigate("/user-management");
+        window.location.reload();
       }, 2000); // Delay một chút để đảm bảo toast hiện ra trước khi reload
     } catch (errors) {
       console.log(errors);

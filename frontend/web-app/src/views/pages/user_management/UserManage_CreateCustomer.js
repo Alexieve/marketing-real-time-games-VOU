@@ -143,8 +143,7 @@ const AddCusModal = ({ isVisible, onCancel, form, setSelectedRole }) => {
       toast.success("Add Customer successful. Reload after 2 second...");
       onCancel();
       setTimeout(() => {
-        setSelectedRole("Customer");
-        // navigate("/user-management");
+        window.location.reload();
       }, 2000); // Delay một chút để đảm bảo toast hiện ra trước khi reload
     } catch (errors) {
       if (errors.length > 0) {

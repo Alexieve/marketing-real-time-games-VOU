@@ -130,8 +130,7 @@ const UserManagement = () => {
       );
       toast.success("Delete user successful. Reload after 2 second...");
       setTimeout(() => {
-        setSelectedRole(user.role);
-        setSearchTerm("");
+        window.location.reload();
       }, 2000); // Delay một chút để đảm bảo toast hiện ra trước khi reload
     } catch (errors) {
       console.log(errors);

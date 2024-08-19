@@ -1,28 +1,111 @@
 import React from "react";
+import AuthGuard from "./guards/AuthGuard";
+import GuestGuard from "./guards/GuestGuard";
+import RoleBasedGuard from "./guards/RoleBasedGuard";
 
+// Import các component cần thiết
 const Dashboard = React.lazy(() => import("./views/dashboard/Dashboard"));
 const Login = React.lazy(() => import("./views/pages/login/Login"));
 const Register = React.lazy(() => import("./views/pages/register/Register"));
-
 const UserManagement = React.lazy(
   () => import("./views/pages/user_management/UserManagement"),
 );
+// const Game = React.lazy(() => import("./views/pages/game/Game"));
+const Event = React.lazy(() => import("./views/pages/event_management/Event"));
+const EventCreate = React.lazy(
+  () => import("./views/pages/event_management/Event_create"),
+);
+const Voucher = React.lazy(
+  () => import("./views/pages/voucher_management/Voucher"),
+);
+const VoucherCreate = React.lazy(
+  () => import("./views/pages/voucher_management/Voucher_create"),
+);
+const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
+const Page500 = React.lazy(() => import("./views/pages/page500/Page500"));
 
 const routes = [
-  // { path: "/", exact: true, name: "Home" },
   {
-    path: "/dashboard",
-    name: "Dashboard",
-    element: Dashboard,
-    protected: true,
+    path: "/login",
+    name: "Login",
+    element: (
+      <GuestGuard>
+        <Login />
+      </GuestGuard>
+    ),
   },
-  { path: "/login", name: "Login", element: Login, protected: false },
-  { path: "/register", name: "Register", element: Register, protected: false },
+  {
+    path: "/register",
+    name: "Register",
+    element: (
+      <GuestGuard>
+        <Register />
+      </GuestGuard>
+    ),
+  },
   {
     path: "/user-management",
     name: "User Management",
-    element: UserManagement,
-    protected: true,
+    element: (
+      <RoleBasedGuard accessibleRoles={["Admin"]}>
+        <UserManagement />
+      </RoleBasedGuard>
+    ),
+  },
+  // {
+  //   path: "/game",
+  //   name: "Game",
+  //   element: (
+  //     <RoleBasedGuard accessibleRoles={["Admin"]}>
+  //       <Game />
+  //     </RoleBasedGuard>
+  //   ),
+  // },
+  {
+    path: "/event",
+    name: "Event",
+    element: (
+      <RoleBasedGuard accessibleRoles={["Brand"]}>
+        <Event />
+      </RoleBasedGuard>
+    ),
+  },
+  {
+    path: "/event/create/:id",
+    name: "Create Event",
+    element: (
+      <RoleBasedGuard accessibleRoles={["Brand"]}>
+        <EventCreate />
+      </RoleBasedGuard>
+    ),
+  },
+  {
+    path: "/voucher",
+    name: "Voucher",
+    element: (
+      <RoleBasedGuard accessibleRoles={["Brand"]}>
+        <Voucher />
+      </RoleBasedGuard>
+    ),
+  },
+  {
+    path: "/voucher/create/:id",
+    name: "Create Voucher",
+    element: (
+      <RoleBasedGuard accessibleRoles={["Brand"]}>
+        <VoucherCreate />
+      </RoleBasedGuard>
+    ),
+  },
+  {
+    path: "/404",
+    name: "Page 404",
+    element: <Page404 />,
+  },
+  {
+    path: "/500",
+    name: "Page 500",
+    element: <Page500 />,
   },
 ];
 

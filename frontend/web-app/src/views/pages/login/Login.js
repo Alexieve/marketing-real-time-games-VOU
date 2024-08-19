@@ -59,8 +59,8 @@ const Login = () => {
 
     if (form.checkValidity()) {
       try {
-        await request("api/auth/login", "post", formValues);
-        dispatch(authActions.setIsAuthenticated(true));
+        const user = await request("api/auth/login", "post", formValues);
+        dispatch(authActions.login({ user }));
         navigate("/");
       } catch (errors) {
         if (errors.length > 0) {
