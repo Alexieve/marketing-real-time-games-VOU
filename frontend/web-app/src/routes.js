@@ -10,6 +10,15 @@ const Register = React.lazy(() => import("./views/pages/register/Register"));
 const UserManagement = React.lazy(
   () => import("./views/pages/user_management/UserManagement"),
 );
+const ReportAdmin = React.lazy(
+  () => import("./views/pages/report_admin/Report_Admin"),
+);
+const ReportAdmin_User = React.lazy(
+  () => import("./views/pages/report_admin/Report_Admin_User"),
+);
+const ReportAdmin_Game = React.lazy(
+  () => import("./views/pages/report_admin/Report_Admin_Game"),
+);
 // const Game = React.lazy(() => import("./views/pages/game/Game"));
 const Event = React.lazy(() => import("./views/pages/event_management/Event"));
 const EventCreate = React.lazy(
@@ -49,6 +58,33 @@ const routes = [
     element: (
       <RoleBasedGuard accessibleRoles={["Admin"]}>
         <UserManagement />
+      </RoleBasedGuard>
+    ),
+  },
+  {
+    path: "/report",
+    name: "Report Admin",
+    element: (
+      <RoleBasedGuard accessibleRoles={["Admin"]}>
+        <ReportAdmin />
+      </RoleBasedGuard>
+    ),
+  },
+  {
+    path: "/report/users",
+    name: "Report Admin user",
+    element: (
+      <RoleBasedGuard accessibleRoles={["Admin"]}>
+        <ReportAdmin_User />
+      </RoleBasedGuard>
+    ),
+  },
+  {
+    path: "/report/game",
+    name: "Report Admin Game",
+    element: (
+      <RoleBasedGuard accessibleRoles={["Admin"]}>
+        <ReportAdmin_Game />
       </RoleBasedGuard>
     ),
   },
