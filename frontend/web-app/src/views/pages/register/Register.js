@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { request } from "../../../hooks/useRequest";
 import { ToastContainer, toast } from "react-toastify";
@@ -24,19 +24,12 @@ import {
   cilUser,
 } from "@coreui/icons";
 import { authActions } from "../../../stores/authSlice";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 const Register = () => {
   const [formErrors, setFormErrors] = useState({});
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate("/");
-    }
-  }, [isAuthenticated, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -80,12 +73,14 @@ const Register = () => {
     setFormErrors(errors);
 
     if (form.checkValidity()) {
-      formValues.lat = 0;
-      formValues.long = 0;
       try {
-        await request("api/users/register", "POST", formValues);
-        dispatch(authActions.setIsAuthenticated(true));
-        toast.success("Registration successful!");
+        const user = await request(
+          "api/auth/register/brand",
+          "POST",
+          formValues,
+        );
+        dispatch(authActions.login({ user }));
+        // toast.success("Registration successful!");
         navigate("/");
       } catch (errors) {
         console.log(errors);
@@ -162,7 +157,7 @@ const Register = () => {
                       onChange={handleChange}
                       feedback={formErrors.email}
                       required
-                    // invalid={formErrors.email}
+                      invalid={formErrors.email}
                     />
                   </CInputGroup>
 
@@ -179,7 +174,7 @@ const Register = () => {
                       onChange={handleChange}
                       feedback={formErrors.phone}
                       required
-                    // invalid={formErrors.phone}
+                      invalid={formErrors.phone}
                     />
                   </CInputGroup>
 
@@ -198,7 +193,7 @@ const Register = () => {
                       onChange={handleChange}
                       feedback={formErrors.password}
                       required
-                    // invalid={formErrors.password}
+                      invalid={formErrors.password}
                     />
                   </CInputGroup>
 
@@ -217,7 +212,7 @@ const Register = () => {
                       onChange={handleChange}
                       feedback={formErrors.repeatPassword}
                       required
-                    // invalid={formErrors.repeatPassword}
+                      invalid={formErrors.repeatPassword}
                     />
                   </CInputGroup>
 

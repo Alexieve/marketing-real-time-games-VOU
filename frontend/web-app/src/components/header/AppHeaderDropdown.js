@@ -32,8 +32,8 @@ const AppHeaderDropdown = () => {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
-    dispatch(authActions.setIsAuthenticated(false));
-    await request("/api/users/logout", "POST", null);
+    dispatch(authActions.logout());
+    await request("/api/auth/logout", "POST", null);
   };
 
   return (

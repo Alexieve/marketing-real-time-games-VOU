@@ -3,6 +3,9 @@ kind: Config
 deploy:
   kubectl:
     manifests:
+    - ./infra/tools/*
+    - ./infra/database/*
+    - ./infra/nginx/*
       - ./infra/k8s/*
 portForward:
   - resourceType: deployment
@@ -21,53 +24,27 @@ build:
   local:
     push: false
   artifacts:
-    # - image: vmquynh/auth
-    #   context: backend/auth-service
-    #   docker:
-    #     dockerfile: Dockerfile
-    #   sync:
-    #     manual:
-    #       - src: "src/**/*.ts"
-    #         dest: .
-    # - image: vmquynh/user
-    #   context: backend/user-service
-    #   docker:
-    #     dockerfile: Dockerfile
-    #   sync:
-    #     manual:
-    #       - src: "src/**/*.ts"
-    #         dest: .
-    - image: vmquynh/web-app
-      context: frontend/web-app
-      docker:
-        dockerfile: Dockerfile
-      sync:
-        manual:
-          - src: "src/**/*.js"
-            dest: .
-          - src: "src/**/*.css"
-            dest: .
-    - image: nlhkha03/event
-      context: backend/event-service
-      docker:
-        dockerfile: Dockerfile
-      sync:
-        manual:
-          - src: "src/**/*.ts"
-            dest: .
-    - image: nlhkha03/event-query
-      context: backend/event-query-service
-      docker:
-        dockerfile: Dockerfile
-      sync:
-        manual:
-          - src: "src/**/*.ts"
-            dest: .
-    - image: nlhkha03/image
-      context: backend/image-service
-      docker:
-        dockerfile: Dockerfile
-      sync:
-        manual:
-          - src: "src/**/*.ts"
-            dest: .
+  - image: vmquynh/auth
+    context: backend/auth-service
+    docker:
+      dockerfile: Dockerfile
+    sync:
+      manual:
+      - src: "src/**/*.ts"
+        dest: .
+   - image: vmquynh/user
+    context: backend/user-service
+    docker:
+      dockerfile: Dockerfile
+    sync:
+      manual:
+      - src: "src/**/*.ts"
+        dest: . 
+  - image: vmquynh/web-app
+    context: frontend/web-app
+    docker:
+      dockerfile: Dockerfile
+    sync:
+      manual:
+      - src: "src/**/*.js"
+        dest: .

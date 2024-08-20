@@ -26,13 +26,6 @@ const Login = () => {
   const [formErrors, setFormErrors] = useState({});
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate("/");
-    }
-  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -66,9 +59,8 @@ const Login = () => {
 
     if (form.checkValidity()) {
       try {
-        await request("api/users/login", "post", formValues);
-        dispatch(authActions.setIsAuthenticated(true));
-        toast.success("Login successful!");
+        const user = await request("api/auth/login", "post", formValues);
+        dispatch(authActions.login({ user }));
         navigate("/");
       } catch (errors) {
         if (errors.length > 0) {
@@ -168,7 +160,7 @@ const Login = () => {
       </CContainer>
       <ToastContainer
         position="top-right"
-        autoClose={5000}
+        autoClose={3000}
         hideProgressBar={false}
         newestOnTop={false}
         closeOnClick

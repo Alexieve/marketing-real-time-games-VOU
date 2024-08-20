@@ -1,45 +1,79 @@
-// import { pool } from '../connection';
-// import { User, IUser } from './user';
+import db from '../connection';
+import { User, IUser } from './user';
 
-// interface IBrand extends IUser {
-//     field: string;
-//     address: string;
-//     lat: number;
-//     long: number;
-// }
+interface IBrand extends IUser {
+    field: string;
+    address: string;
+}
 
-// export class Brand extends User {
-//     field: string;
-//     address: string;
-//     lat: number;
-//     long: number;
+export class Brand extends User {
+    field: string;
+    address: string;
 
-//     constructor({ id, name, email, phonenum, password, status, field, address, lat, long }: IBrand) {
-//         super({ id, name, email, phonenum, password, role: 'Brand', status });
-//         this.field = field;
-//         this.address = address;
-//         this.lat = lat;
-//         this.long = long;
-//     }
+    constructor({ id, name, email, phonenum, password, status, field, address}: IBrand) {
+        super({ id, name, email, phonenum, password, role: 'Brand', status });
+        this.field = field;
+        this.address = address
+    }
 
-//     static async createBrand({ name, email, phonenum, password, status, field, address, lat, long }: { name: string; email: string; phonenum: string; password: string; status: boolean; field: string; address: string; lat: number; long: number }): Promise<Brand> {
-//         try {
-//             const user = await User.create({ name, email, phonenum, password, role: 'Brand', status });
+    static async createBrand({ name, email, phonenum, password, status, field, address}
+        : { name: string; email: string; phonenum: string; password: string; status: boolean; field: string; address: string;})
+        : Promise<Brand> {
+        try {
+            const user = await super.create({ name, email, phonenum, password, role: 'Brand', status });
+            await db.query(
+                'CALL SP_CREATE_BRAND($1, $2, $3)',
+                [user.id, field, address]
+            );
+            return new Brand({ ...user, field, address });
+        } catch (error) {
+            console.error('Error creating brand:', error);
+            throw error;
+        }
+    }
 
-//             try {
-//                 await pool.query(
-//                     'CALL SP_CREATE_BRAND($1, $2, $3, $4, $5)',
-//                     [user.id, field, address, lat, long]
-//                 );
-//             } catch (err) {
-//                 console.error('Error creating brand:', err);
-//                 throw err;
-//             }
+    static async findByEmail(email: string): Promise<Brand | null> {
+        try {
+            const brand = await db.query(
+                'SELECT * FROM FUNC_FIND_BRAND_BY_EMAIL($1)',
+                [email]
+            );
+            if (brand.rows.length === 0) return null
+            return new Brand(brand.rows[0]);
+        } catch (error) {
+            console.error('Error finding brand by email:', error);
+            throw error;
+        }
+    }
 
-//             return new Brand({ ...user, field, address, lat, long });
-//         } catch (err) {
-//             console.error('Error creating user for brand:', err);
-//             throw err;
-//         }
-//     }
-// }
+    static async findById(id: number): Promise<User | null> {
+        const brand = await db.query(
+            'SELECT * FROM FUNC_FIND_BRAND_BY_ID($1)',
+            [id]
+        );
+        if (brand.rows.length === 0) return null
+        return new Brand(brand.rows[0]);
+    }
+
+    static async findAll(): Promise<User[] | null> {
+        try {
+            const res = await db.query(
+                'SELECT * FROM FUNC_FIND_ALL_BRAND()'
+            );
+            if (res.rows.length === 0) return null;
+            return res.rows.map((row: any) => new Brand(row));
+        } catch (err) {
+            console.error('Error finding all brands:', err);
+            return null;
+        }
+    }
+
+    static async delete(id: string): Promise<void> {
+        if (!id) throw new Error('Cannot delete Brand without ID');
+
+        await db.query(
+            'CALL SP_DELETE_BRAND($1)', 
+            [id]
+        );
+    }
+}

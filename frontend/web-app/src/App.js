@@ -1,55 +1,56 @@
 /* eslint-disable react/prop-types */
 import React, { Suspense, useEffect } from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { CSpinner } from "@coreui/react";
 import "./scss/style.scss";
 import { request } from "./hooks/useRequest";
 import { useDispatch } from "react-redux";
 import { authActions } from "./stores/authSlice";
+import routes from "./routes";
 
 // Containers
 const DefaultLayout = React.lazy(() => import("./layout/DefaultLayout"));
 
 // Pages
-const Login = React.lazy(() => import("./views/pages/login/Login"));
-const Register = React.lazy(() => import("./views/pages/register/Register"));
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
 const Page500 = React.lazy(() => import("./views/pages/page500/Page500"));
-const Event = React.lazy(() => import("./views/pages/event_management/Event"));
-const EventCreateEdit = React.lazy(
-  () => import("./views/pages/event_management/Event_create_edit"),
-);
-const VoucherEdit = React.lazy(
-  () => import("./views/pages/voucher_management/Voucher_edit"),
-);
-const VoucherCreate = React.lazy(
-  () => import("./views/pages/voucher_management/Voucher_create"),
-);
-const Voucher = React.lazy(
-  () => import("./views/pages/voucher_management/Voucher"),
-);
-const UserManagement = React.lazy(
-  () => import("./views/pages/user_management/UserManagement"),
-);
 
-import ProtectedRoute from "./components/ProtectedRoute";
+// Guards
+import AuthGuard from "./guards/AuthGuard";
 
 const App = () => {
   const dispatch = useDispatch();
+  const { isInitialized, user } = useSelector((state) => state.auth);
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        await request("/api/users/currentuser");
-        dispatch(authActions.setIsAuthenticated(true));
+        const user = await request("/api/auth/currentuser");
+        dispatch(
+          authActions.initialize({
+            isAuthenticated: true,
+            user: user.currentUser,
+          }),
+        );
       } catch (error) {
-        dispatch(authActions.setIsAuthenticated(false));
+        console.log("Error during auth check:", error); // Đảm bảo rằng lỗi được log ra nếu có
+        dispatch(
+          authActions.initialize({ isAuthenticated: false, user: null }),
+        );
       }
-      // dispatch(authActions.setIsAuthenticated(true));
     };
 
     checkAuth();
-  }, []);
+  }, [dispatch]);
+
+  if (!isInitialized) {
+    // console.log("Waiting for initialization..."); // Kiểm tra xem isInitialized đã được cập nhật chưa
+    return (
+      <div className="pt-3 text-center">
+        <CSpinner color="primary" variant="grow" />
+      </div>
+    );
+  }
 
   return (
     <BrowserRouter>
@@ -61,71 +62,26 @@ const App = () => {
         }
       >
         <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route
-            path="/events"
-            name="Event Management Page"
-            element={
-              // <ProtectedRoute>
-              <Event />
-              // </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/events/create"
-            name="Event Create Page"
-            element={
-              // <ProtectedRoute>
-              <EventCreateEdit />
-              // </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/usermanagement"
-            element={
-              <ProtectedRoute><UserManagement /></ProtectedRoute>
-            }
-          />
-          <Route
-            path="/events/edit/:eventId"
-            name="Event Create Page"
-            element={
-              // <ProtectedRoute>
-              <EventCreateEdit />
-              // </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/voucher/create"
-            element={
-              // <ProtectedRoute>
-              <VoucherCreate />
-              // </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/voucher"
-            element={
-              // <ProtectedRoute>
-              <Voucher />
-              // </ProtectedRoute>
-            }
-          />
-          <Route
-            exact
-            path="/voucher/edit/:id"
-            name="Voucher edit Page"
-            element={<VoucherEdit />}
-          />
+          {routes.map((route, idx) => (
+            <Route key={idx} path={route.path} element={route.element} />
+          ))}
           <Route path="/404" element={<Page404 />} />
           <Route path="/500" element={<Page500 />} />
+          {user?.role === "Admin" && (
+            <Route
+              path="/"
+              element={<Navigate to="/user-management" replace />}
+            />
+          )}
+          {user?.role === "Brand" && (
+            <Route path="/" element={<Navigate to="/event" replace />} />
+          )}
           <Route
             path="*"
             element={
-              <ProtectedRoute>
+              <AuthGuard>
                 <DefaultLayout />
-              </ProtectedRoute>
+              </AuthGuard>
             }
           />
         </Routes>

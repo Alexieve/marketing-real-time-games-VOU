@@ -1,0 +1,50 @@
+// Report_Admin.scss
+
+// Đặt màu nền cho các ô CCard
+.custom-card {
+  background-color: #ffe4b5; // Màu nền ô (thay đổi theo nhu cầu của bạn)
+  border: 1px solid #333; // Màu sắc của khung bao quanh
+  //color: #1A1A1A; // Màu sắc của chữ
+  border-radius: 8px; // Bán kính góc của khung
+  //box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // Đổ bóng cho ô
+}
+
+// Tùy chỉnh tiêu đề của các ô CCard
+.custom-card .card-header {
+  background-color: #FA8072; // Màu nền tiêu đề
+  color: #FFFFFF; // Màu chữ tiêu đề
+  font-weight: bold; // Đặt chữ tiêu đề đậm
+}
+
+// Tùy chỉnh nội dung của các ô CCard
+.custom-card .card-body {
+  color: #1A1A1A; // Màu chữ nội dung
+}
+
+// Tùy chỉnh màu cho các widget CWidgetStatsC
+.widget-stats-c {
+  background-color: #FBC193; // Màu nền widget
+  border: 1px solid #333; // Màu sắc của khung widget
+  color: #FFFFFF; // Màu sắc của chữ widget
+  border-radius: 8px; // Bán kính góc của khung widget
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // Đổ bóng cho widget
+}
+
+// Tùy chỉnh các tab
+.nav-tabs .nav-link {
+  border: 1px solid #5D786F; // Màu sắc của đường viền tab
+  color: #5D786F; // Màu chữ tab
+}
+
+// .nav-tabs .nav-link.active {
+//   background-color: #5D786F; // Màu nền của tab đang hoạt động
+//   color: #FFFFFF; // Màu chữ của tab đang hoạt động
+//   border-color: #2A2A2A; // Màu viền của tab đang hoạt động
+// }
+
+// Tùy chỉnh các biểu đồ
+.chart-container {
+  background-color: #FEC5D6; // Màu nền của biểu đồ
+  border-radius: 8px; // Bán kính góc của biểu đồ
+  padding: 1rem; // Khoảng cách giữa nội dung biểu đồ và viền
+}

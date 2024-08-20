@@ -5,7 +5,7 @@
 
   .ant-input-group-wrapper,
   .ant-input-wrapper {
-    width: 300px;
+    width: 400px;
   }
 
   .ant-input-affix-wrapper {
@@ -38,41 +38,59 @@
 }
 
 .custom-dropdown-button {
-  caret: false;
+  padding: 0;
 }
 
 .table-column-icon
 {
-  width: 50px; /* Đặt chiều rộng cố định cho tất cả các cột */
-  text-align: center;
+  width: 10px; /* Đặt chiều rộng cố định cho tất cả các cột */
+  // text-align: left !important; /* Căn lề trái cho cột */
 }
 .table-column-avatar
 {
-  width: 50px; /* Đặt chiều rộng cố định cho tất cả các cột */
+  width: 20px; /* Đặt chiều rộng cố định cho tất cả các cột */
   text-align: center;
 }
 .table-column-user
 {
-  width: 120px; /* Đặt chiều rộng cố định cho tất cả các cột */
+  width: 300px; /* Đặt chiều rộng cố định cho tất cả các cột */
   text-align: left;
 }
 .table-column-role
 {
-  width: 60px; /* Đặt chiều rộng cố định cho tất cả các cột */
+  width: 100px; /* Đặt chiều rộng cố định cho tất cả các cột */
   text-align: right;
 }
 .table-column-email
 {
-  width: 50px; /* Đặt chiều rộng cố định cho tất cả các cột */
+  width: 400px; /* Đặt chiều rộng cố định cho tất cả các cột */
   text-align: center;
 }
-.table-column-phone,
+.table-column-phone
+{
+  width: 300px; /* Đặt chiều rộng cố định cho tất cả các cột */
+  text-align: center;
+}
 .table-column-active {
-  width: 120px; /* Đặt chiều rộng cố định cho tất cả các cột */
+  width: 100px; /* Đặt chiều rộng cố định cho tất cả các cột */
   text-align: center;
 }
 .custom-search-input {
   width: 300px;  // Adjust the width as needed
   height: 40px;  // Adjust the height as needed
   font-size: 16px;  // Adjust the font size as needed
+}
+.CTable {
+  min-height: 400px; /* Đặt chiều cao tối thiểu cho bảng */
+  max-height: 400px; /* Đặt chiều cao tối đa nếu cần */
+  overflow-y: visible; /* Ngăn cuộn dọc khi không cần thiết */
+
+}
+.custom-dropdown-button {
+  position: relative;
+}
+
+.CDropdownMenu {
+  position: absolute; /* Đảm bảo dropdown không bị cắt */
+  z-index: 1050; /* Đưa dropdown lên trên các thành phần khác */
 }
