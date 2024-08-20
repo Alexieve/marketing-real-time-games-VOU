@@ -21,6 +21,7 @@ const AppContent = () => {
   const routing = useRoutes([
     ...renderRoutes(routes),
     { path: "/", element: <Navigate to="/user-management" replace /> },
+    { path: "*", element: <Navigate to="/404" replace /> },
   ]);
 
   return (
