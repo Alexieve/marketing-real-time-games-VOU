@@ -4,9 +4,13 @@ import { BadRequestError } from '@vmquynh-vou/shared';
 import db from '../connection';
 import { Brand } from '../models/brand';
 import { Customer } from '../models/customer';
+import { requireRole } from '@vmquynh-vou/shared';
+
 const route = express.Router();
 
-route.post('/api/user-management/create/admin', async (req: Request, res: Response) => {
+route.post('/api/user-management/create/admin', 
+  // (req, res, next) => requireRole(req, res, next, ['Admin']),
+  async (req: Request, res: Response) => {
   const {name, email, phonenum, password, role,status} = req.body;
 
   const existingAdmin = await User.findByEmail(email) || null!;
@@ -19,7 +23,9 @@ route.post('/api/user-management/create/admin', async (req: Request, res: Respon
   res.status(200).send(admin);
 });
 
-route.post('/api/user-management/create/brand', async (req: Request, res: Response) => {
+route.post('/api/user-management/create/brand', 
+  // (req, res, next) => requireRole(req, res, next, ['Admin', 'Brand']),
+  async (req: Request, res: Response) => {
   const {name, email, phonenum, password, status, field, address} = req.body;
     
   const existingBrand = await Brand.findByEmail(email) || null!;
@@ -35,7 +41,9 @@ route.post('/api/user-management/create/brand', async (req: Request, res: Respon
   res.status(201).send(brand);
 });
 
-route.post('/api/user-management/create/customer', async (req: Request, res: Response) => {
+route.post('/api/user-management/create/customer', 
+  // (req, res, next) => requireRole(req, res, next, ['Admin', 'Customer']),
+  async (req: Request, res: Response) => {
   const {name, email, phonenum, password, status, gender} = req.body;
     
   const existingCustomer = await Customer.findByEmail(email) || null!;

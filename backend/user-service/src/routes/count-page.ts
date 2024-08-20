@@ -1,10 +1,12 @@
 import express, {Request, Response} from 'express';
-import { BadRequestError } from '@vmquynh-vou/shared';
+import { BadRequestError, requireRole } from '@vmquynh-vou/shared';
 import db from '../connection';
 
 const route = express.Router();
 
-route.get('/api/user-management/countpage', async (req: Request, res: Response) => {
+route.get('/api/user-management/countpage', 
+  // (req, res, next) => requireRole(req, res, next, ['Admin']),
+  async (req: Request, res: Response) => {
   const { name, role } = req.query;
 
   let query = 'SELECT COUNT(*) FROM "USER" WHERE 1=1'; 

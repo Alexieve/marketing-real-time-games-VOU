@@ -1,10 +1,12 @@
 import express, {Request, Response} from 'express';
 import { Customer } from '../models/customer';
 import { Brand } from '../models/brand';
-import { BadRequestError } from '@vmquynh-vou/shared';
+import { BadRequestError, requireRole } from '@vmquynh-vou/shared';
 const route = express.Router();
 
-route.post('/api/user-management/delete/:role/:id', async (req: Request, res: Response) => {
+route.post('/api/user-management/delete/:role/:id', 
+  // (req, res, next) => requireRole(req, res, next, ['Admin']),
+  async (req: Request, res: Response) => {
     const {role, id} = req.params;
     try {
       if (role === 'Customer') {

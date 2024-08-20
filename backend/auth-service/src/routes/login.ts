@@ -15,7 +15,11 @@ async (req: Request, res: Response) => {
 
     let existingUser = null;
     try {
-        existingUser = await requestAPI(`http://user-srv:3000/api/user-management/load/by-email/${email}`, 'get', {email});
+        existingUser = await requestAPI(
+            `http://user-srv:3000/api/user-management/load/by-email/${email}`, 
+            'get', 
+            {email}
+        );
     } catch (error: any) {
         console.log(error);
         if (error == 'User not found!')
