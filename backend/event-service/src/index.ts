@@ -1,41 +1,46 @@
 import express from 'express';
-import mongoose from 'mongoose';
-import { json } from 'body-parser';
+import { connectToDatabase } from './connection';
+import bodyParser, { json } from 'body-parser';
 const cors = require('cors');
 
 // Routes
-import eventRoutes from './routes/Event';
+import eventCreateRouter from './routes/EventCreate';
+import eventDeleteRouter from './routes/EventDelete';
+import eventUpdateRouter from './routes/EventUpdate';
+import voucherCreateRouter from './routes/VoucherCreate';
+import voucherDeleteRouter from './routes/VoucherDelete';
+import voucherUpdateRouter from './routes/VoucherUpdate';
+
+import { connectRabbitMQ } from './utils/publisher';
 
 // Middlewares
 import { errorHandler } from './middlewares/error-handler';
 import { NotFoundError } from './errors/not-found-error';
 
 const app = express();
+const port = 3000;
+// Middleware to parse multipart/form-data
+// app.use(express.urlencoded({ extended: true }));
+// app.use(express.json()); 
 
-const StartServer = async () => {
- 
-    await mongoose
-        .connect("mongodb://mongodb-event-srv:27017/event")
-        .then(() => {
-            console.log('Mongo connected successfully.');
-        })
-        .catch((error) => console.log(error));
+/** Routes */
+app.use(eventCreateRouter);
+app.use(eventDeleteRouter);
+app.use(eventUpdateRouter);
+app.use(voucherCreateRouter);
+app.use(voucherDeleteRouter);
+app.use(voucherUpdateRouter);
 
-    app.use(json());
-    app.use(cors());
+// // Try to throw not found error
+app.all('*', async (req, res) => {
+    throw new NotFoundError();
+});
 
-    /** Routes */
-    app.use(eventRoutes);
+app.use(errorHandler);
 
-    // // Try to throw not found error
-    app.all('*', async (req, res) => {
-        throw new NotFoundError();
-    });
-    app.use(errorHandler);
-
-    app.listen(3001, () => {
-        console.log('Event service listening on port 3001');
-    });
-};
-
-StartServer();
+app.listen(port, async () => {
+    console.log(`Event service listening on port ${port}`);
+    await connectToDatabase();
+    // Connect to RabbitMQ
+    await connectRabbitMQ();
+});

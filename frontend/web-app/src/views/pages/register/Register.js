@@ -162,7 +162,7 @@ const Register = () => {
                       onChange={handleChange}
                       feedback={formErrors.email}
                       required
-                      invalid={!validated && formErrors.email}
+                    // invalid={formErrors.email}
                     />
                   </CInputGroup>
 
@@ -179,7 +179,7 @@ const Register = () => {
                       onChange={handleChange}
                       feedback={formErrors.phone}
                       required
-                      invalid={!validated && formErrors.phone}
+                    // invalid={formErrors.phone}
                     />
                   </CInputGroup>
 
@@ -198,7 +198,7 @@ const Register = () => {
                       onChange={handleChange}
                       feedback={formErrors.password}
                       required
-                      invalid={!validated && formErrors.password}
+                    // invalid={formErrors.password}
                     />
                   </CInputGroup>
 
@@ -217,7 +217,7 @@ const Register = () => {
                       onChange={handleChange}
                       feedback={formErrors.repeatPassword}
                       required
-                      invalid={!validated && formErrors.repeatPassword}
+                    // invalid={formErrors.repeatPassword}
                     />
                   </CInputGroup>
 

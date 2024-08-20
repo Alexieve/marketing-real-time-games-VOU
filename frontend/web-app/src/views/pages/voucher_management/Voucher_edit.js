@@ -1,9 +1,9 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { AppSidebar, AppFooter, AppHeader } from '../../../components/index';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import '../../../scss/event/event.scss';
+import "react-toastify/dist/ReactToastify.css";
 import axios from 'axios';
 import {
     CCard,
@@ -17,14 +17,17 @@ import {
     CRow,
     CCol,
     CFormTextarea,
+    CToast,
+    CToastHeader,
+    CToastBody,
+    CToaster,
     CInputGroup,
     CInputGroupText
 } from '@coreui/react';
 
-const VoucherCreate = () => {
-    const location = useLocation();
-    const { state } = location;
-    const navigate = useNavigate();
+const VoucherEdit = () => {
+
+    const { id } = useParams(); // Assume ID is always provided
     const [voucherData, setVoucherData] = useState({
         code: "",
         qrCodeUrl: "",
@@ -34,10 +37,31 @@ const VoucherCreate = () => {
         quantity: 0,
         expTime: "",
         status: "active",
-        brand: state ? state.name : ""
+        brand: ""
     });
 
     const [imagePreview, setImagePreview] = useState(null);
+
+    useEffect(() => {
+        // Fetch voucher data using the provided ID
+        axios.get(`/api/events_query/get_vouchers/${id}`)
+            .then(async function (response) {
+                setVoucherData(response.data);
+                setImagePreview(response.data.imageUrl);
+                // Create Blob object from the image URL and assign it to the imageUrl property
+                // This is necessary for the file input to work correctly
+                const image = await fetch(response.data.imageUrl)
+                const blob = await image.blob();
+                const file = new File([blob], response.data.imageUrl.split('/').pop(), { type: blob.type });
+                setVoucherData((prevData) => ({
+                    ...prevData,
+                    imageUrl: file
+                }));
+            })
+            .catch(error => {
+                console.error('Error fetching voucher data:', error);
+            });
+    }, [id]); // Include ID as a dependency to refetch if the ID changes
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
@@ -58,7 +82,7 @@ const VoucherCreate = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const { code, qrCodeUrl, imageUrl, price, description, quantity, expTime, status, brand } = voucherData;
+        let { code, qrCodeUrl, imageUrl, price, description, quantity, expTime, status, brand } = voucherData;
 
         if (!code || !qrCodeUrl || !imageUrl || !price || !description || !quantity || !expTime || !status || !brand) {
             toast.warning("Please fill in all fields");
@@ -90,14 +114,14 @@ const VoucherCreate = () => {
             formData.append('status', status);
             formData.append('brand', brand);
 
-            const response = await axios.post('/api/vouchers/create', formData, {
+            const response = await axios.put(`/api/vouchers/update/${id}`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
             });
 
             window.scrollTo(0, 0);
-            toast.success("Voucher created successfully");
+            toast.success("Voucher updated successfully");
 
         } catch (error) {
             if (error.response.data.errors.length > 0) {
@@ -119,7 +143,7 @@ const VoucherCreate = () => {
                     <CRow className="justify-content-center mb-4">
                         <CCol md="6">
                             <CCard className="shadow-lg">
-                                <CCardHeader className="bg-primary text-white">Create New Voucher</CCardHeader>
+                                <CCardHeader className="bg-primary text-white">Voucher Information</CCardHeader>
                                 <CCardBody>
                                     <CForm onSubmit={handleSubmit}>
                                         <CInputGroup className="mb-3">
@@ -153,7 +177,7 @@ const VoucherCreate = () => {
                                                 id="imageUrl"
                                                 name="imageUrl"
                                                 onChange={handleFileChange}
-                                                required
+                                                required={false} // Image is not required when editing
                                             />
                                         </CInputGroup>
                                         {imagePreview && <CCardImage className="card-image mb-3" orientation="top" src={imagePreview} />}
@@ -227,9 +251,10 @@ const VoucherCreate = () => {
                                                 value={voucherData.brand}
                                                 onChange={handleChange}
                                                 required
+                                                readOnly
                                             />
                                         </CInputGroup>
-                                        <CButton type="submit" style={{ backgroundColor: '#7ED321' }} className="w-100 mt-4">Create Voucher</CButton>
+                                        <CButton type="submit" color="primary" className="w-100 mt-4">Edit Voucher</CButton>
                                     </CForm>
                                 </CCardBody>
                             </CCard>
@@ -255,4 +280,4 @@ const VoucherCreate = () => {
     );
 };
 
-export default VoucherCreate;
+export default VoucherEdit;

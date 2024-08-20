@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { AppSidebar, AppFooter, AppHeader } from '../../../components/index';
 import { Link } from 'react-router-dom';
-import { request } from '../../../hooks/useRequest';
 import axios from 'axios';
-
 
 import {
     CCard,
@@ -17,21 +15,18 @@ import {
     CCardText,
     CButton,
     CCardImage,
-    CInputGroup,
-    CInputGroupText,
 } from '@coreui/react';
-import { CIcon } from '@coreui/icons-react'
-import { cilSearch } from '@coreui/icons';
+
 import '../../../scss/event/event.scss';
 
-const Voucher = () => {
+const Event = () => {
     const [voucherData, setVoucherData] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
 
     useEffect(() => {
         const fetchData = () => {
-            axios.get('/api/events_query/get_vouchers')
+            axios.get('http://localhost:8000/vouchers')
                 .then(response => {
                     setVoucherData(response.data);
                     console.log(response.data);
@@ -44,12 +39,12 @@ const Voucher = () => {
     }, []);
 
     const handleDelete = (id) => {
-        axios.delete(`/api/vouchers/delete/${id}`)
+        axios.delete(`http://localhost:8000/vouchers/${id}`)
             .then(response => {
                 if (response.status === 200) {
                     // Remove the deleted voucher from the voucherData state
                     setVoucherData(voucherData.filter((voucher) => voucher.id !== id));
-                    console.log('Voucher deleted successfully');
+                    console.log('Event deleted successfully');
                 } else {
                     console.error('Failed to delete voucher');
                 }
@@ -96,26 +91,18 @@ const Voucher = () => {
             <div className="wrapper d-flex flex-column min-vh-100">
                 <AppHeader />
                 <div className="body flex-grow-1 m-2">
-                    <div className="d-flex justify-content-between align-items-center mb-3">
-                        <CInputGroup>
-                            <CInputGroupText>
-                                <CIcon icon={cilSearch} />
-                            </CInputGroupText>
-                            <CFormInput
-                                type="text"
-                                placeholder="Search vouchers"
-                                value={searchQuery}
-                                onChange={handleSearchChange}
-                            />
-                        </CInputGroup>
-                        <Link to="/voucher/create" className="btn btn-success text-white no-wrap mx-2">
-                            Create Voucher
-                        </Link>
+                    <div className='d-flex mb-3'>
+                        <CFormInput
+                            type="text"
+                            placeholder="Search events"
+                            value={searchQuery}
+                            onChange={handleSearchChange}
+                        />
                     </div>
                     <CRow className='m-0'>
                         {currentItems.map((voucher) => (
-                            <CCol md="4" key={voucher._id} className='mb-4'>
-                                <Link to={`/voucher/edit/${voucher._id}`} className="card-link">
+                            <CCol md="4" key={voucher.id} className='mb-4'>
+                                <Link to={`/voucher/create/${voucher.id}`} className="card-link">
                                     <CCard>
                                         <CCardImage className="card-image" orientation="top" src={voucher.imageUrl} />
                                         <CCardBody>
@@ -123,7 +110,7 @@ const Voucher = () => {
                                             <CCardText>Price: {voucher.price}</CCardText>
                                             <CCardText>Quantity: {voucher.quantity}</CCardText>
                                             <CCardText>Expiration Time: {voucher.expTime}</CCardText>
-                                            <CButton color="danger" onClick={(e) => { e.stopPropagation(); e.preventDefault(); handleDelete(voucher._id); }}>Delete</CButton>
+                                            <CButton color="danger" onClick={(e) => { e.stopPropagation(); e.preventDefault(); handleDelete(voucher.id); }}>Delete</CButton>
                                         </CCardBody>
                                     </CCard>
                                 </Link>
@@ -146,4 +133,4 @@ const Voucher = () => {
     );
 };
 
-export default Voucher;
+export default Event;

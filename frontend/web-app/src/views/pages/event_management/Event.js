@@ -35,7 +35,7 @@ const Event = () => {
 
   useEffect(() => {
     const fetchData = () => {
-      axios.get('https://vou-system.com/api/events_query')
+      axios.get('/api/events_query/get_events')
         .then(response => {
           setEventData(response.data);
         })
@@ -46,12 +46,12 @@ const Event = () => {
     fetchData();
   }, []);
 
-  const handleDelete = (id) => {
-    axios.delete(`https://vou-system.com/api/events/delete/${id}`)
+  const handleDelete = (_id) => {
+    axios.delete(`/api/events/delete/${_id}`)
       .then(response => {
         if (response.status === 200) {
           // Remove the deleted event from the eventData state
-          setEventData(eventData.filter((event) => event.id !== id));
+          setEventData(eventData.filter((event) => event._id !== _id));
           console.log('Event deleted successfully');
         } else {
           console.error('Failed to delete event');
@@ -139,15 +139,15 @@ const Event = () => {
             <div className="flex-grow-1">
               <CustomDateRangePicker onDateRangeChange={handleDateRangeChange} />
             </div>
-            <Link to={`/events/create`} className="btn btn-success text-white">
+            <Link to={`/events/create`} className="btn btn-success text-white no-wrap">
               Create Event
             </Link>
           </div>
           {currentItems.length > 0 ? (
             <CRow>
               {currentItems.map((event) => (
-                <CCol md="4" key={event.id} className='mb-4'>
-                  <Link to={`/events/edit/${event.id}`} state={{ item: event }} className="card-link">
+                <CCol md="4" key={event._id} className='mb-4'>
+                  <Link to={`/events/edit/${event._id}`} state={{ item: event }} className="card-link">
                     <CCard className="shadow-sm card-hover">
                       <CCardImage className="card-image" orientation="top" src={event.imageUrl} />
                       <CCardBody style={{ padding: '1rem' }}>
@@ -161,7 +161,7 @@ const Event = () => {
                           End time: {formatDateTime(event.endTime)}
                         </CCardText>
                         <div className='d-flex justify-content-end'>
-                          <CButton color="danger" className="btn-sm" onClick={(e) => { e.stopPropagation(); e.preventDefault(); handleDelete(event.id); }}>Delete</CButton>
+                          <CButton color="danger" className="btn-sm" onClick={(e) => { e.stopPropagation(); e.preventDefault(); handleDelete(event._id); }}>Delete</CButton>
                         </div>
                       </CCardBody>
                     </CCard>

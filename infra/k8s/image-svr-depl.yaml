@@ -1,30 +1,34 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: event-query-depl
+  name: image-depl
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: event-query
+      app: image
   template:
     metadata:
       labels:
-        app: event-query
+        app: image
     spec:
       containers:
-        - name: event-query
-          image: nlhkha03/event-query
+        - name: image
+          image: nlhkha03/image
+      volumes:
+        - name: image-storage
+          persistentVolumeClaim:
+            claimName: image-pvc
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: event-query-srv
+  name: image-srv
 spec:
   selector:
-    app: event-query
+    app: image
   ports:
-    - name: event-query
+    - name: image
       protocol: TCP
       port: 3000
       targetPort: 3000

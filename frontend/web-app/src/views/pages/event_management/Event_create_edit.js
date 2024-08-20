@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { AppSidebar, AppFooter, AppHeader } from '../../../components/index';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import '../../../scss/event/event.scss';
 import {
   CCard,
@@ -17,11 +19,7 @@ import {
   CRow,
   CCol,
   CFormTextarea,
-  CToast,
-  CToastHeader,
   CAlert,
-  CToastBody,
-  CToaster,
   CModal,
   CModalHeader,
   CModalBody,
@@ -37,7 +35,7 @@ import {
 
 const EventCreate = () => {
 
-  const { id } = useParams();
+  const { eventId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
   const [eventData, setEventData] = useState({
@@ -47,8 +45,6 @@ const EventCreate = () => {
     startTime: "",
     endTime: "",
   });
-
-
   const [selectedGames, setSelectedGames] = useState([]);
   const [selectedGamesModal, setSelectedGamesModal] = useState([]);
   const [games, setGames] = useState([]);
@@ -57,102 +53,29 @@ const EventCreate = () => {
   const [selectedVouchersModal, setSelectedVouchersModal] = useState([]);
   const [showGameModal, setShowGameModal] = useState(false);
   const [showVoucherModal, setShowVoucherModal] = useState(false);
-  const [toast, addToast] = useState(0);
-  const toaster = useRef();
   const [imagePreview, setImagePreview] = useState(null);
 
   useEffect(() => {
-    if (id !== undefined) {
-      const { name, imageUrl, description, startTime, endTime, games, vouchers } = location.state.item;
-      setEventData({ name, imageUrl, description, startTime, endTime });
-      setImagePreview(imageUrl);
-      setSelectedGames(games);
-      setSelectedVouchers(vouchers);
+    const fetchData = async () => {
+      if (eventId !== undefined) {
+        const { name, imageUrl, description, startTime, endTime, games, vouchers } = location.state.item;
+        setEventData({ name, imageUrl, description, startTime, endTime });
+        setImagePreview(imageUrl);
+        setSelectedGames(games);
+        setSelectedVouchers(vouchers);
+        // Create Blob object from the image URL and assign it to the imageUrl property
+        // This is necessary for the file input to work correctly
+        const image = await fetch(response.data.imageUrl)
+        const blob = await image.blob();
+        const file = new File([blob], response.data.imageUrl.split('/').pop(), { type: blob.type });
+        setEventData((prevData) => ({
+          ...prevData,
+          imageUrl: file
+        }));
+      }
     }
-  }, []);
-
-  const warningToast = ({ message }) => (
-    <CToast>
-      <CToastHeader closeButton>
-        <svg
-          className="rounded me-2"
-          width="20"
-          height="20"
-          xmlns="http://www.w3.org/2000/svg"
-          preserveAspectRatio="xMidYMid slice"
-          focusable="false"
-          role="img"
-        >
-          <rect width="100%" height="100%" fill="#ffcc00"></rect>
-        </svg>
-        <div className="fw-bold me-auto">Warning</div>
-        <small>Just now</small>
-      </CToastHeader>
-      <CToastBody>{message}.</CToastBody>
-    </CToast>
-  );
-
-  const successToast = (
-    <CToast>
-      <CToastHeader closeButton>
-        <svg
-          className="rounded me-2"
-          width="20"
-          height="20"
-          xmlns="http://www.w3.org/2000/svg"
-          preserveAspectRatio="xMidYMid slice"
-          focusable="false"
-          role="img"
-        >
-          <rect width="100%" height="100%" fill="#28a745"></rect>
-        </svg>
-        <div className="fw-bold me-auto">Success</div>
-        <small>Just now</small>
-      </CToastHeader>
-      <CToastBody>Event {(id === undefined) ? 'created' : 'edited'} successfully!</CToastBody>
-    </CToast>
-  );
-
-  const ErrorToast = ({ message }) => (
-    <CToast>
-      <CToastHeader closeButton>
-        <svg
-          className="rounded me-2"
-          width="20"
-          height="20"
-          xmlns="http://www.w3.org/2000/svg"
-          preserveAspectRatio="xMidYMid slice"
-          focusable="false"
-          role="img"
-        >
-          <rect width="100%" height="100%" fill="#dc3545"></rect>
-        </svg>
-        <div className="fw-bold me-auto">Error</div>
-        <small>Just now</small>
-      </CToastHeader>
-      <CToastBody>{message}</CToastBody>
-    </CToast>
-  );
-
-  const handleGameSelectClicked = () => {
-    if (games.length === 0) {
-      axios.get('http://localhost:8000/games')
-        .then(response => setGames(response.data))
-        .catch(error => console.error('Error fetching games data:', error));
-    }
-    setSelectedGamesModal(selectedGames);
-    setShowGameModal(true);
-  }
-
-  const handleVoucherSelectClicked = () => {
-    if (vouchers.length === 0) {
-      axios.get(`http://localhost:8000/vouchers`)
-        .then(response => { setVouchers(response.data); })
-        .catch(error => console.error('Error fetching vouchers data:', error));
-    }
-    setSelectedVouchersModal(selectedVouchers);
-    setShowVoucherModal(true);
-  }
+    fetchData();
+  }, [eventId]);
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -171,117 +94,25 @@ const EventCreate = () => {
     }));
   };
 
-  const handleGameSelect = (game) => {
-    setSelectedGamesModal((prevSelectedGames) => {
-      if (prevSelectedGames.some(selectedGame => selectedGame.id === game.id)) {
-        return prevSelectedGames.filter((g) => g.id !== game.id);
-      } else {
-        return [...prevSelectedGames, game];
-      }
-    });
-  };
-
-  const handleGameSave = () => {
-    setSelectedGames(selectedGamesModal);
-    setSelectedGamesModal([]);
-    setShowGameModal(false);
-  };
-
-  const handleGameDelete = (index) => {
-    const newSelectedGames = [...selectedGames];
-    newSelectedGames.splice(index, 1);
-    setSelectedGames(newSelectedGames);
-  };
-
-  const handleVoucherSelect = (voucher) => {
-    setSelectedVouchersModal((prevSelectedVouchers) => {
-      if (prevSelectedVouchers.some(selectedVoucher => selectedVoucher.id === voucher.id)) {
-        return prevSelectedVouchers.filter((v) => v !== voucher);
-      } else {
-        return [...prevSelectedVouchers, voucher];
-      }
-    });
-  };
-
-  const handleVoucherSave = () => {
-    setSelectedVouchers(selectedVouchersModal);
-    setSelectedVouchersModal([]);
-    setShowVoucherModal(false);
-  };
-
-  const handleVoucherDelete = (index) => {
-    const newSelectedVouchers = [...selectedVouchers];
-    newSelectedVouchers.splice(index, 1);
-    setSelectedVouchers(newSelectedVouchers);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    const { name, imageUrl, description, startTime, endTime } = eventData;
-    if (!name || !imageUrl || !startTime || !description || !endTime || selectedGames.length === 0 || selectedVouchers.length === 0) {
-      addToast(warningToast({ message: 'Please fill in all fields' }));
-      return;
+  const handleVoucherSelectClicked = async () => {
+    if (vouchers.length === 0) {
+      await axios.get(`/api/events_query/get_vouchers`)
+        .then(response => { setVouchers(response.data); })
+        .catch(error => console.error('Error fetching vouchers data:', error));
     }
-    if (endTime < startTime) {
-      addToast(warningToast({ message: 'End time must be after start time' }));
-      return
+    setSelectedVouchersModal(selectedVouchers);
+    setShowVoucherModal(true);
+  }
+
+  const handleGameSelectClicked = async () => {
+    if (games.length === 0) {
+      await axios.get('/api/events_query/get_games')
+        .then(response => setGames(response.data))
+        .catch(error => console.error('Error fetching games data:', error));
     }
-
-    // Convert image file to base64 string
-    const toBase64 = (file) => new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
-    });
-
-    const isBase64Image = (url) => {
-      const base64Pattern = /^data:image\/[a-zA-Z]+;base64,/;
-      return base64Pattern.test(url);
-    };
-
-    try {
-
-      const base64Image = isBase64Image(imageUrl) ? imageUrl : await toBase64(imageUrl);
-
-      const payload = {
-        name,
-        imageUrl: base64Image,
-        description,
-        startTime,
-        endTime,
-        games: selectedGames,
-        vouchers: selectedVouchers
-      };
-
-      let response;
-      if (id == undefined) {
-        response = await axios.post('https://vou-system.com/api/events/create', payload, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
-      }
-      else {
-        response = await axios.put(`http://localhost:8000/events/edit/${id}`, payload, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
-      }
-
-      // localStorage.setItem('formSubmittedSuccess', 'true');
-      navigate(`/events/edit/${response.data.id}`, {
-        replace: true,
-        state: { item: payload }
-      })
-      window.scrollTo(0, 0);
-      addToast(successToast);
-
-    } catch (error) {
-      addToast(ErrorToast({ message: error.message }));
-    }
-  };
+    setSelectedGamesModal(selectedGames);
+    setShowGameModal(true);
+  }
 
   const [searchGameTerm, setGameSearchTerm] = React.useState('');
 
@@ -294,6 +125,113 @@ const EventCreate = () => {
   const filteredVouchers = vouchers.filter(voucher =>
     voucher.code.toLowerCase().includes(searchVoucherTerm.toLowerCase())
   );
+
+  const handleGameSelect = (game) => {
+    setSelectedGamesModal((prevSelectedGames) => {
+      if (prevSelectedGames.some(selectedGame => selectedGame._id == game._id)) {
+        return prevSelectedGames.filter((g) => g._id !== game._id);
+      } else {
+        return [...prevSelectedGames, game];
+      }
+    });
+  };
+
+  const handleVoucherSelect = (voucher) => {
+    setSelectedVouchersModal((prevSelectedVouchers) => {
+      if (prevSelectedVouchers.some(selectedVoucher => selectedVoucher._id == voucher._id)) {
+        return prevSelectedVouchers.filter((v) => v._id !== voucher._id);
+      } else {
+        return [...prevSelectedVouchers, voucher];
+      }
+    });
+  };
+
+  const handleGameSave = () => {
+    setSelectedGames(selectedGamesModal);
+    setSelectedGamesModal([]);
+    setShowGameModal(false);
+  };
+
+  const handleVoucherSave = () => {
+    setSelectedVouchers(selectedVouchersModal);
+    setSelectedVouchersModal([]);
+    setShowVoucherModal(false);
+  };
+
+  const handleGameDelete = (index) => {
+    const newSelectedGames = [...selectedGames];
+    newSelectedGames.splice(index, 1);
+    setSelectedGames(newSelectedGames);
+  };
+
+  const handleVoucherDelete = (index) => {
+    const newSelectedVouchers = [...selectedVouchers];
+    newSelectedVouchers.splice(index, 1);
+    setSelectedVouchers(newSelectedVouchers);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const { name, imageUrl, description, startTime, endTime } = eventData;
+    if (!name || !imageUrl || !startTime || !description || !endTime || selectedGames.length === 0 || selectedVouchers.length === 0) {
+      toast.warning('Please fill in all fields');
+      return;
+    }
+    if (endTime < startTime) {
+      toast.warning('End time must be greater than start time');
+      return
+    }
+
+    try {
+      // Create new FormData object
+      const formData = new FormData();
+      formData.append('name', name);
+      formData.append('imageUrl', imageUrl);
+      formData.append('description', description);
+      formData.append('startTime', startTime);
+      formData.append('endTime', endTime);
+      formData.append('games', JSON.stringify(selectedGames.map(game => game._id)));
+      formData.append('vouchers', JSON.stringify(selectedVouchers.map(voucher => voucher._id)));
+
+      const response = (eventId == undefined) ?
+        await axios.post('/api/events/create', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        }) :
+        await axios.put(`/api/events/edit/${eventId}`, formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        });
+
+      const newState = {
+        name,
+        imageUrl: response.data.imageUrl,
+        description,
+        startTime,
+        endTime,
+        games: selectedGames,
+        vouchers: selectedVouchers
+      };
+
+      navigate(`/events/edit/${response.data._id}`, {
+        replace: true,
+        state: { item: newState }
+      })
+      window.scrollTo(0, 0);
+      toast.success('Event saved successfully');
+
+    } catch (error) {
+      if (error.response.data.errors.length > 0) {
+        for (let i = 0; i < error.response.data.errors.length; i++) {
+          toast.error(error.response.data.errors[i].message);
+        }
+      } else {
+        toast.error("An error occurred. Please try again later");
+      }
+    }
+  };
 
   return (
     <div>
@@ -335,7 +273,7 @@ const EventCreate = () => {
                         id="imageUrl"
                         name="imageUrl"
                         onChange={handleFileChange}
-                        required={id === undefined}
+                        required={eventId === undefined}
                       />
                     </CInputGroup>
                     {imagePreview && <CCardImage className="card-image mb-3" src={imagePreview} />}
@@ -369,12 +307,12 @@ const EventCreate = () => {
                       <CCardBody>
                         <CRow>
                           {selectedGames.map((game, index) => (
-                            <CCol md="6" key={game.id || index} className='mb-2'>
+                            <CCol md="6" key={game._id || index} className='mb-2'>
                               <CCard style={{ boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', borderRadius: '8px' }}>
                                 <CCardImage className="card-image" orientation="top" src={game.imageUrl} style={{ borderTopLeftRadius: '8px', borderTopRightRadius: '8px' }} />
                                 <CCardBody style={{ padding: '1rem' }}>
-                                  <CCardTitle style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>{game.name}</CCardTitle>
-                                  <CCardText style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>Type: {game.type}</CCardText>
+                                  <CCardTitle className="truncate" style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>{game.name}</CCardTitle>
+                                  <CCardText className='truncate' style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>Type: {game.type}</CCardText>
                                   <CCardText className='truncate' style={{ fontSize: '0.875rem', color: '#6c757d', marginBottom: '1rem' }}>Guide: {game.guide}</CCardText>
                                   <div className='d-flex justify-content-end'>
                                     <CButton color="danger" size="sm" className="ml-2" onClick={() => handleGameDelete(index)}>Delete</CButton>
@@ -394,15 +332,15 @@ const EventCreate = () => {
                       <CCardBody>
                         <CRow>
                           {selectedVouchers.map((voucher, index) => (
-                            <CCol md="6" key={voucher.id || index} className='mb-2'>
+                            <CCol md="6" key={voucher._id || index} className='mb-2'>
                               <CCard style={{ boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', borderRadius: '8px' }}>
                                 <CCardImage className="card-image" orientation="top" src={voucher.imageUrl} style={{ borderTopLeftRadius: '8px', borderTopRightRadius: '8px' }} />
                                 <CCardBody style={{ padding: '1rem' }}>
-                                  <CCardTitle style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>{voucher.code}</CCardTitle>
-                                  <CCardText style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>Price: {voucher.price}</CCardText>
-                                  <CCardText style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>Description: {voucher.description}</CCardText>
-                                  <CCardText style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>Quantity: {voucher.quantity}</CCardText>
-                                  <CCardText style={{ fontSize: '1rem', marginBottom: '1rem' }}>Expired Time: {voucher.expTime}</CCardText>
+                                  <CCardTitle className="truncate" style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>{voucher.code}</CCardTitle>
+                                  <CCardText className='truncate' style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>Price: {voucher.price}</CCardText>
+                                  <CCardText className='truncate' style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>Description: {voucher.description}</CCardText>
+                                  <CCardText className='truncate' style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>Quantity: {voucher.quantity}</CCardText>
+                                  <CCardText className='truncate' style={{ fontSize: '1rem', marginBottom: '1rem' }}>Expired Time: {voucher.expTime}</CCardText>
                                   <div className='d-flex justify-content-end'>
                                     <CButton color="danger" size="sm" className="ml-2" onClick={() => handleVoucherDelete(index)}>Delete</CButton>
                                   </div>
@@ -413,7 +351,7 @@ const EventCreate = () => {
                         </CRow>
                       </CCardBody>
                     </CCard>
-                    <CButton type="submit" style={{ backgroundColor: '#7ED321' }} className="w-100 mt-4">{id !== undefined ? 'Edit Event' : 'Create Event'}</CButton>
+                    <CButton type="submit" style={{ backgroundColor: '#7ED321' }} className="w-100 mt-4">{eventId !== undefined ? 'Edit Event' : 'Create Event'}</CButton>
                   </CForm>
                 </CCardBody>
               </CCard>
@@ -423,8 +361,6 @@ const EventCreate = () => {
         <AppFooter />
       </div>
 
-      {/* Toasts */}
-      <CToaster className="p-3" placement="top-end" push={toast} ref={toaster} />
       {/* Modal Game Selection */}
       <CModal size="xl" alignment="center" visible={showGameModal} onClose={() => setShowGameModal(false)}>
         <CModalHeader>
@@ -444,21 +380,21 @@ const EventCreate = () => {
           {filteredGames.length > 0 ? (
             <CRow>
               {filteredGames.map((game, index) => (
-                <CCol md="4" key={game.id || index} className='mb-4'>
+                <CCol md="4" key={game._id || index} className='mb-4'>
                   <CCard style={{ boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', borderRadius: '8px' }}>
                     <CCardImage className="card-image" orientation="top" src={game.imageUrl} style={{ borderTopLeftRadius: '8px', borderTopRightRadius: '8px' }} />
                     <CCardBody style={{ padding: '1rem' }}>
-                      <CCardTitle style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>{game.name}</CCardTitle>
-                      <CCardText style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>Type: {game.type}</CCardText>
+                      <CCardTitle className='truncate' style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>{game.name}</CCardTitle>
+                      <CCardText className='truncate' style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>Type: {game.type}</CCardText>
                       <CCardText className='truncate' style={{ fontSize: '0.875rem', color: '#6c757d', marginBottom: '1rem' }}>Guide: {game.guide}</CCardText>
                       <div className='d-flex justify-content-end'>
                         <CFormCheck
                           className='mb-3'
                           type="checkbox"
-                          checked={selectedGamesModal.some(selectedGame => selectedGame.id === game.id)}
+                          checked={selectedGamesModal.some(selectedGame => selectedGame._id === game._id)}
                           onChange={() => handleGameSelect(game)}
                           button={{ color: 'success', variant: 'outline' }}
-                          id={`btn-check-outlined-${game.id || index}`} // Ensure unique ID
+                          id={`btn-check-outlined-${game._id || index}`} // Ensure unique ID
                           autoComplete="off"
                           label="Use"
                           style={{ marginRight: '0.5rem' }}
@@ -504,23 +440,23 @@ const EventCreate = () => {
           {filteredVouchers.length > 0 ? (
             <CRow>
               {filteredVouchers.map((voucher, index) => (
-                <CCol md="4" key={voucher.id || index} className='mb-4'>
+                <CCol md="4" key={voucher._id || index} className='mb-4'>
                   <CCard style={{ boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', borderRadius: '8px' }}>
                     <CCardImage className="card-image" orientation="top" src={voucher.imageUrl} style={{ borderTopLeftRadius: '8px', borderTopRightRadius: '8px' }} />
                     <CCardBody style={{ padding: '1rem' }}>
-                      <CCardTitle style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>{voucher.code}</CCardTitle>
-                      <CCardText style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>Price: {voucher.price}</CCardText>
-                      <CCardText style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>Description: {voucher.description}</CCardText>
-                      <CCardText style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>Quantity: {voucher.quantity}</CCardText>
-                      <CCardText style={{ fontSize: '1rem', marginBottom: '1rem' }}>Expired Time: {voucher.expTime}</CCardText>
+                      <CCardTitle className='truncate' style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>{voucher.code}</CCardTitle>
+                      <CCardText className='truncate' style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>Price: {voucher.price}</CCardText>
+                      <CCardText className='truncate' style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>Description: {voucher.description}</CCardText>
+                      <CCardText className='truncate' style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>Quantity: {voucher.quantity}</CCardText>
+                      <CCardText className='truncate' style={{ fontSize: '1rem', marginBottom: '1rem' }}>Expired Time: {voucher.expTime}</CCardText>
                       <div className='d-flex justify-content-end'>
                         <CFormCheck
                           className='mb-3'
                           type="checkbox"
-                          checked={selectedVouchersModal.some(selectedVoucher => selectedVoucher.id === voucher.id)}
+                          checked={selectedVouchersModal.some(selectedVoucher => selectedVoucher._id === voucher._id)}
                           onChange={() => handleVoucherSelect(voucher)}
                           button={{ color: 'success', variant: 'outline' }}
-                          id={`btn-check-outlined-${voucher.id || index}`} // Ensure unique ID
+                          id={`btn-check-outlined-${voucher._id || index}`} // Ensure unique ID
                           autoComplete="off"
                           label="Use"
                           style={{ marginRight: '0.5rem' }}
@@ -546,6 +482,19 @@ const EventCreate = () => {
           </CButton>
         </CModalFooter>
       </CModal>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+        transition:Bounce
+      />
     </div >
   );
 };

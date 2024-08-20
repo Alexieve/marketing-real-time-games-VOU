@@ -19,6 +19,9 @@ const Event = React.lazy(() => import("./views/pages/event_management/Event"));
 const EventCreateEdit = React.lazy(
   () => import("./views/pages/event_management/Event_create_edit"),
 );
+const VoucherEdit = React.lazy(
+  () => import("./views/pages/voucher_management/Voucher_edit"),
+);
 const VoucherCreate = React.lazy(
   () => import("./views/pages/voucher_management/Voucher_create"),
 );
@@ -36,13 +39,13 @@ const App = () => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      // try {
-      //   await request("/api/users/currentuser");
-      //   dispatch(authActions.setIsAuthenticated(true));
-      // } catch (error) {
-      //   dispatch(authActions.setIsAuthenticated(false));
-      // }
-      dispatch(authActions.setIsAuthenticated(true));
+      try {
+        await request("/api/users/currentuser");
+        dispatch(authActions.setIsAuthenticated(true));
+      } catch (error) {
+        dispatch(authActions.setIsAuthenticated(false));
+      }
+      // dispatch(authActions.setIsAuthenticated(true));
     };
 
     checkAuth();
@@ -85,7 +88,7 @@ const App = () => {
             }
           />
           <Route
-            path="/events/edit/:id"
+            path="/events/edit/:eventId"
             name="Event Create Page"
             element={
               // <ProtectedRoute>
@@ -94,20 +97,26 @@ const App = () => {
             }
           />
           <Route
-            path="/voucher/create/:id"
+            path="/voucher/create"
             element={
-              <ProtectedRoute>
-                <VoucherCreate />
-              </ProtectedRoute>
+              // <ProtectedRoute>
+              <VoucherCreate />
+              // </ProtectedRoute>
             }
           />
           <Route
             path="/voucher"
             element={
-              <ProtectedRoute>
-                <Voucher />
-              </ProtectedRoute>
+              // <ProtectedRoute>
+              <Voucher />
+              // </ProtectedRoute>
             }
+          />
+          <Route
+            exact
+            path="/voucher/edit/:id"
+            name="Voucher edit Page"
+            element={<VoucherEdit />}
           />
           <Route path="/404" element={<Page404 />} />
           <Route path="/500" element={<Page500 />} />

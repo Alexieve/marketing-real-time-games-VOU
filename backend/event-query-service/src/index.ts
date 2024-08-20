@@ -1,41 +1,46 @@
 import express from 'express';
-import mongoose from 'mongoose';
+import { connectToDatabase } from './connection';
 import { json } from 'body-parser';
 const cors = require('cors');
 
-// Routes
-import eventRoutes from './routes/Event';
+// Routes 
+import eventQueryRoutes from './routes/EventQuery';
+import voucherQueryRoutes from './routes/VoucherQuery';
+import voucherByIdQueryRoutes from './routes/VoucherByIdQuery';
+import gameQueryRoutes from './routes/GameQuery';
+
+// Subscriber
+import { connectRabbitMQ, subscribeToExchanges } from './utils/subscriber';
 
 // Middlewares
 import { errorHandler } from './middlewares/error-handler';
 import { NotFoundError } from './errors/not-found-error';
 
 const app = express();
+const port = 3000;
 
-const StartServer = async () => {
+app.use(json());
+app.use(cors());
 
-    await mongoose
-        .connect("mongodb://mongodb-event-query-srv:27017/event")
-        .then(() => {
-            console.log('Mongo connected successfully.');
-        })
-        .catch((error) => console.log(error));
+/** Routes */
+app.use(eventQueryRoutes);
+app.use(voucherQueryRoutes);
+app.use(gameQueryRoutes);
+app.use(voucherByIdQueryRoutes);
 
-    app.use(json());
-    app.use(cors());
+app.use(errorHandler);
 
-    /** Routes */
-    app.use(eventRoutes);
+// // Try to throw not found error 
+app.all('*', async (req, res) => {
+    throw new NotFoundError();
+});
 
-    // // Try to throw not found error
-    app.all('*', async (req, res) => {
-        throw new NotFoundError();
-    });
-    app.use(errorHandler);
-
-    app.listen(3002, () => {
-        console.log('Event service listening on port 3002');
-    });
-};
-
-StartServer();
+app.listen(port, async () => {
+    console.log(`Event query service listening on port ${port}`);
+    //Pending for 5 seconds
+    await connectToDatabase();
+    // Connect to RabbitMQ
+    await connectRabbitMQ();
+    // Start the subscriber 
+    await subscribeToExchanges();
+});
