@@ -6,7 +6,7 @@ import { Game } from '../models/GameQueryModel';
 let connection: Connection;
 let channel: Channel;
 
-const amqp_url_docker = 'amqp://rabbitmq-srv:5672';
+const amqp_url_docker = 'amqp://rabbitmq:5672';
 
 export const connectRabbitMQ = async () => {
     try {
@@ -70,6 +70,7 @@ export const subscribeToExchanges = async () => {
                             description: event_msg.description,
                             startTime: event_msg.startTime,
                             endTime: event_msg.endTime,
+                            brand: event_msg.brand,
                             vouchers: vouchers,
                             games: games,
                         });
@@ -112,6 +113,7 @@ export const subscribeToExchanges = async () => {
                             description: event_msg.description,
                             startTime: event_msg.startTime,
                             endTime: event_msg.endTime,
+                            brand: event_msg.brand,
                             vouchers: vouchers,
                             games: games,
                         }, { new: true });

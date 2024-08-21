@@ -10,6 +10,7 @@ interface EventAttrs {
     description: string;
     startTime: Date;
     endTime: Date;
+    brand: string;
     games: GameAttrs[];
     vouchers: VoucherAttrs[];
 }
@@ -27,6 +28,7 @@ interface EventDoc extends mongoose.Document {
     description: string;
     startTime: Date;
     endTime: Date;
+    brand: string;
     games: GameAttrs[];
     vouchers: VoucherAttrs[];
 }
@@ -38,6 +40,7 @@ const EventSchema = new mongoose.Schema({
     description: { type: String, required: true },
     startTime: { type: Date, required: true },
     endTime: { type: Date, required: true },
+    brand: { type: String, required: true },
     games: { type: [GameSchema], required: false },
     vouchers: { type: [VoucherSchema], required: false }
 });

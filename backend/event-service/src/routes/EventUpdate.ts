@@ -33,9 +33,12 @@ router.put('/api/events/edit/:eventId', upload.single('imageUrl'), eventValidato
     try {
         const { eventId } = req.params;
         // Extract the required fields from the request body
-        const { name, description, startTime, endTime, vouchers, games } = req.body;
+        const { name, description, startTime, endTime, brand } = req.body;
         const imageFile = req.file;
         const fileType = imageFile?.mimetype;
+        // Json string to array
+        const vouchers = JSON.parse(req.body.vouchers);
+        const games = JSON.parse(req.body.games);
 
         if (!imageFile) {
             throw new BadRequestError('No image uploaded');
@@ -60,6 +63,7 @@ router.put('/api/events/edit/:eventId', upload.single('imageUrl'), eventValidato
             description,
             startTime,
             endTime,
+            brand,
         };
 
         event.set(updateData);
@@ -102,6 +106,7 @@ router.put('/api/events/edit/:eventId', upload.single('imageUrl'), eventValidato
             description: description,
             startTime: startTime,
             endTime: endTime,
+            brand: brand,
             vouchers: vouchers,
             games: games
         }

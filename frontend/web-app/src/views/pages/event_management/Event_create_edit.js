@@ -5,6 +5,9 @@ import axios from 'axios';
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import '../../../scss/event/event.scss';
+import { useSelector } from 'react-redux';
+import moment from 'moment';
+
 import {
   CCard,
   CCardBody,
@@ -38,12 +41,14 @@ const EventCreate = () => {
   const { eventId } = useParams();
   const location = useLocation();
   const navigate = useNavigate();
+  const user = useSelector((state) => state.auth.user);
   const [eventData, setEventData] = useState({
     name: "",
     imageUrl: "",
     description: "",
     startTime: "",
     endTime: "",
+    brand: user ? user.name : ""
   });
   const [selectedGames, setSelectedGames] = useState([]);
   const [selectedGamesModal, setSelectedGamesModal] = useState([]);
@@ -58,16 +63,20 @@ const EventCreate = () => {
   useEffect(() => {
     const fetchData = async () => {
       if (eventId !== undefined) {
-        const { name, imageUrl, description, startTime, endTime, games, vouchers } = location.state.item;
-        setEventData({ name, imageUrl, description, startTime, endTime });
+        const { name, imageUrl, description, games, vouchers } = location.state.item;
+        let { startTime, endTime } = location.state.item;
+        startTime = moment(startTime).format("YYYY-MM-DDTkk:mm");
+        endTime = moment(endTime).format("YYYY-MM-DDTkk:mm");
+        setEventData({ name, imageUrl, description, startTime, endTime, brand: user ? user.name : "" });
         setImagePreview(imageUrl);
         setSelectedGames(games);
         setSelectedVouchers(vouchers);
         // Create Blob object from the image URL and assign it to the imageUrl property
         // This is necessary for the file input to work correctly
-        const image = await fetch(response.data.imageUrl)
+        console.log(imageUrl);
+        const image = await fetch(imageUrl)
         const blob = await image.blob();
-        const file = new File([blob], response.data.imageUrl.split('/').pop(), { type: blob.type });
+        const file = new File([blob], imageUrl.split('/').pop(), { type: blob.type });
         setEventData((prevData) => ({
           ...prevData,
           imageUrl: file
@@ -172,7 +181,7 @@ const EventCreate = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { name, imageUrl, description, startTime, endTime } = eventData;
+    const { name, imageUrl, description, startTime, endTime, brand } = eventData;
     if (!name || !imageUrl || !startTime || !description || !endTime || selectedGames.length === 0 || selectedVouchers.length === 0) {
       toast.warning('Please fill in all fields');
       return;
@@ -190,6 +199,7 @@ const EventCreate = () => {
       formData.append('description', description);
       formData.append('startTime', startTime);
       formData.append('endTime', endTime);
+      formData.append('brand', brand);
       formData.append('games', JSON.stringify(selectedGames.map(game => game._id)));
       formData.append('vouchers', JSON.stringify(selectedVouchers.map(voucher => voucher._id)));
 
@@ -448,7 +458,7 @@ const EventCreate = () => {
                       <CCardText className='truncate' style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>Price: {voucher.price}</CCardText>
                       <CCardText className='truncate' style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>Description: {voucher.description}</CCardText>
                       <CCardText className='truncate' style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>Quantity: {voucher.quantity}</CCardText>
-                      <CCardText className='truncate' style={{ fontSize: '1rem', marginBottom: '1rem' }}>Expired Time: {voucher.expTime}</CCardText>
+                      <CCardText className='truncate' style={{ fontSize: '1rem', marginBottom: '1rem' }}>Expired Time: {moment(voucher.expTime).format("L") + ' ' + moment(voucher.expTime).format("LT")}</CCardText>
                       <div className='d-flex justify-content-end'>
                         <CFormCheck
                           className='mb-3'

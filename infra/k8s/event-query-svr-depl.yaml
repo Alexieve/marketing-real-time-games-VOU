@@ -12,6 +12,13 @@ spec:
       labels:
         app: event-query
     spec:
+      initContainers:
+        - name: wait-for-rabbitmq
+          image: busybox
+          command: ['sh', '-c', 'until nc -z rabbitmq 5672; do echo waiting for rabbitmq; sleep 2; done;']
+        - name: wait-for-redis
+          image: busybox:1.31
+          command: ['sh', '-c', 'until nc -zv redis 6379; do echo "Waiting for Redis..."; sleep 5; done']
       containers:
         - name: event-query
           image: nlhkha03/event-query

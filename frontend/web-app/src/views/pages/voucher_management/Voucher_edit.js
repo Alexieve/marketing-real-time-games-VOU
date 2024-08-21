@@ -4,6 +4,8 @@ import { useParams } from 'react-router-dom';
 import { ToastContainer, toast } from "react-toastify";
 import '../../../scss/event/event.scss';
 import "react-toastify/dist/ReactToastify.css";
+import moment from 'moment';
+
 import axios from 'axios';
 import {
     CCard,
@@ -46,6 +48,8 @@ const VoucherEdit = () => {
         // Fetch voucher data using the provided ID
         axios.get(`/api/events_query/get_vouchers/${id}`)
             .then(async function (response) {
+                let time = response.data.expTime;
+                response.data.expTime = moment(time).format("YYYY-MM-DDTkk:mm");
                 setVoucherData(response.data);
                 setImagePreview(response.data.imageUrl);
                 // Create Blob object from the image URL and assign it to the imageUrl property

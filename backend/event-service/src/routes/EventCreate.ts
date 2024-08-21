@@ -32,7 +32,7 @@ const generateImageHashFromBuffer = (buffer: Buffer): string => {
 router.post('/api/events/create', upload.single('imageUrl'), eventValidator, validateRequest, async (req: Request, res: Response, next: NextFunction) => {
     try {
         // Extract the required fields from the request body
-        const { name, description, startTime, endTime } = req.body;
+        const { name, description, startTime, endTime, brand } = req.body;
         const imageFile = req.file;
         const fileType = imageFile?.mimetype;
         // Json string to array
@@ -52,6 +52,7 @@ router.post('/api/events/create', upload.single('imageUrl'), eventValidator, val
             description,
             startTime,
             endTime,
+            brand,
         });
 
         await event.save();
@@ -90,6 +91,7 @@ router.post('/api/events/create', upload.single('imageUrl'), eventValidator, val
             description: description,
             startTime: startTime,
             endTime: endTime,
+            brand: brand,
             vouchers: vouchers,
             games: games
         }

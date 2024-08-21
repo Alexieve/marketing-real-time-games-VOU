@@ -50,8 +50,6 @@ route.post('/api/auth/register/brand', brandRegisterValidator, validateRequest,
 
         return res.status(201).send(brand);
     });
-return res.status(201).send(brand);
-});
 
 route.post('/api/auth/register/customer', customerRegisterValidator, validateRequest,
     async (req: Request, res: Response) => {

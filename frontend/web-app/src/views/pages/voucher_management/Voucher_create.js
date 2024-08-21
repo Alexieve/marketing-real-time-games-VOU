@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react';
 import { AppSidebar, AppFooter, AppHeader } from '../../../components/index';
-import { useLocation, useNavigate } from 'react-router-dom';
 import { ToastContainer, toast } from "react-toastify";
+import { useSelector } from 'react-redux';
 import "react-toastify/dist/ReactToastify.css";
 import '../../../scss/event/event.scss';
 import axios from 'axios';
@@ -22,9 +22,7 @@ import {
 } from '@coreui/react';
 
 const VoucherCreate = () => {
-    const location = useLocation();
-    const { state } = location;
-    const navigate = useNavigate();
+    const user = useSelector((state) => state.auth.user);
     const [voucherData, setVoucherData] = useState({
         code: "",
         qrCodeUrl: "",
@@ -34,7 +32,7 @@ const VoucherCreate = () => {
         quantity: 0,
         expTime: "",
         status: "active",
-        brand: state ? state.name : ""
+        brand: user ? user.name : ""
     });
 
     const [imagePreview, setImagePreview] = useState(null);
@@ -95,6 +93,23 @@ const VoucherCreate = () => {
                     'Content-Type': 'multipart/form-data'
                 }
             });
+
+            // Empty the form fields
+            setVoucherData({
+                code: "",
+                qrCodeUrl: "",
+                imageUrl: "",
+                price: "",
+                description: "",
+                quantity: 0,
+                expTime: "",
+                status: "active",
+                brand: user ? user.name : ""
+            });
+            // Clear the image preview
+            setImagePreview(null);
+            // Set the Image URL input field to null
+            document.getElementById('imageUrl').value = "";
 
             window.scrollTo(0, 0);
             toast.success("Voucher created successfully");
@@ -216,18 +231,6 @@ const VoucherCreate = () => {
                                                 <option value="active">Active</option>
                                                 <option value="inactive">Inactive</option>
                                             </CFormSelect>
-                                        </CInputGroup>
-
-                                        <CInputGroup className="mb-3">
-                                            <CInputGroupText id="basic-addon1">Brand</CInputGroupText>
-                                            <CFormInput
-                                                type="text"
-                                                id="brand"
-                                                name="brand"
-                                                value={voucherData.brand}
-                                                onChange={handleChange}
-                                                required
-                                            />
                                         </CInputGroup>
                                         <CButton type="submit" style={{ backgroundColor: '#7ED321' }} className="w-100 mt-4">Create Voucher</CButton>
                                     </CForm>

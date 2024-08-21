@@ -1,6 +1,6 @@
 import amqplib, { Connection, Channel } from 'amqplib';
 
-const amqp_url_docker = 'amqp://rabbitmq-srv:5672';
+const amqp_url_docker = 'amqp://rabbitmq:5672';
 
 let conn: Connection;
 let channel: Channel;

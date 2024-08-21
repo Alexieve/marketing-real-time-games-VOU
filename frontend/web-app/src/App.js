@@ -4,7 +4,7 @@ import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
 import { CSpinner } from "@coreui/react";
 import "./scss/style.scss";
 import { request } from "./hooks/useRequest";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { authActions } from "./stores/authSlice";
 import routes from "./routes";
 

@@ -6,7 +6,8 @@ deploy:
     - ./infra/tools/*
     - ./infra/database/*
     - ./infra/nginx/*
-      - ./infra/k8s/*
+    - ./infra/k8s/*
+
 portForward:
   - resourceType: deployment
     resourceName: mongodb-event-depl
@@ -17,9 +18,10 @@ portForward:
     port: 27017
     localPort: 8001
   - resourceType: deployment
-    resourceName: rabbitmq-depl
+    resourceName: rabbitmq
     port: 15672
     localPort: 15672
+
 build:
   local:
     push: false
@@ -32,14 +34,14 @@ build:
       manual:
       - src: "src/**/*.ts"
         dest: .
-   - image: vmquynh/user
+  - image: vmquynh/user
     context: backend/user-service
     docker:
       dockerfile: Dockerfile
     sync:
       manual:
       - src: "src/**/*.ts"
-        dest: . 
+        dest: .
   - image: vmquynh/web-app
     context: frontend/web-app
     docker:
@@ -47,4 +49,28 @@ build:
     sync:
       manual:
       - src: "src/**/*.js"
+        dest: .
+  - image: nlhkha03/event
+    context: backend/event-service
+    docker:
+      dockerfile: Dockerfile
+    sync:
+      manual:
+      - src: "src/**/*.ts"
+        dest: .
+  - image: nlhkha03/event-query
+    context: backend/event-query-service
+    docker:
+      dockerfile: Dockerfile
+    sync:
+      manual:
+      - src: "src/**/*.ts"
+        dest: .
+  - image: nlhkha03/image
+    context: backend/image-service
+    docker:
+      dockerfile: Dockerfile
+    sync:
+      manual:
+      - src: "src/**/*.ts"
         dest: .
