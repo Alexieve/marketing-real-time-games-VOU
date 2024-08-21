@@ -35,7 +35,7 @@ async (req: Request, res: Response) => {
                 return;
             });
         }
-        // console.log("Load all games: ", JSON.parse(data));
+        console.log("Load all games: ", JSON.parse(data));
         res.send(data);
     });
 });
@@ -43,7 +43,7 @@ async (req: Request, res: Response) => {
 route.post('/api/game/update', gameInforValidator, 
 async (req: Request, res: Response) => {
     const updatedGame = req.body;
-    // console.log("Update game: ", updatedGame);
+    console.log("Update game: ", updatedGame);
 
     fs.readFile("games.json", "utf8", (err: any, data: string) => {
         // if not exist, create new file

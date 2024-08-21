@@ -15,6 +15,11 @@ spec:
       containers:
         - name: image
           image: nlhkha03/image
+          ports:
+            - containerPort: 3000
+          volumeMounts:
+            - name: image-storage
+              mountPath: /app/image
       volumes:
         - name: image-storage
           persistentVolumeClaim:

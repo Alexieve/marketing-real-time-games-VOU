@@ -81,7 +81,15 @@ const App = () => {
           )}
           {user?.role === "Brand" && (
             <>
-              <Route path="/" element={<Navigate to="/event" replace />} />
+              <Route path="/" element={<Navigate to="/events" replace />} />
+              <Route
+                path="/event/edit"
+                element={<Navigate to="/events" replace />}
+              />
+              <Route
+                path="/voucher/edit"
+                element={<Navigate to="/voucher" replace />}
+              />
               <Route
                 path="/report"
                 element={<Navigate to="/report/brand" replace />}
