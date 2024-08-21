@@ -42,6 +42,14 @@ build:
       manual:
       - src: "src/**/*.ts"
         dest: .
+  - image: vmquynh/game
+    context: backend/game-service
+    docker:
+      dockerfile: Dockerfile
+    sync:
+      manual:
+      - src: "src/**/*.ts"
+        dest: .
   - image: vmquynh/web-app
     context: frontend/web-app
     docker:
