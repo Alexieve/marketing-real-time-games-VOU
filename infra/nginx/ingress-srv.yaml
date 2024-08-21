@@ -24,6 +24,13 @@ spec:
                 name: user-srv
                 port: 
                   number: 3000 
+          - path: /api/game/
+            pathType: Prefix
+            backend:
+              service:
+                name: game-srv
+                port: 
+                  number: 3000 
           - path: /
             pathType: Prefix
             backend:

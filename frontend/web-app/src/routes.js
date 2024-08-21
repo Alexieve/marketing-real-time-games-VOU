@@ -8,6 +8,9 @@ const Register = React.lazy(() => import("./views/pages/register/Register"));
 const UserManagement = React.lazy(
   () => import("./views/pages/user_management/UserManagement"),
 );
+const GameManagement = React.lazy(
+  () => import("./views/pages/game_management/game"),
+);
 const ReportAdmin = React.lazy(
   () => import("./views/pages/report_admin/Report_Admin"),
 );
@@ -55,7 +58,15 @@ const routes = [
       </RoleBasedGuard>
     ),
   },
-  // Bổ sung Game ở đây
+  {
+    path: "/game",
+    name: "Game Management",
+    element: (
+      <RoleBasedGuard accessibleRoles={["Admin"]}>
+        <GameManagement />
+      </RoleBasedGuard>
+    ),
+  },
   {
     path: "/report/admin",
     name: "Admin Report",
