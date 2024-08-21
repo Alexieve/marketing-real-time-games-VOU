@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import { json } from 'body-parser';
 import path from 'path';
 import fs from 'fs';
@@ -9,7 +9,7 @@ router.use(json());
 // Absolute path to the directory where images will be stored
 const imageDirectory = path.join(__dirname, '../../image/');
 
-router.delete('/api/image/deleting/:imageName', async (req: Request, res: Response) => {
+router.delete('/api/image/deleting/:imageName', async (req: Request, res: Response, next: NextFunction) => {
     try {
         // Take out the old image hash
         const { imageName } = req.params;
@@ -22,9 +22,11 @@ router.delete('/api/image/deleting/:imageName', async (req: Request, res: Respon
                 }
             });
         }
+        console.log("Image deleted successfully");
         res.status(200).send({ message: 'Image deleted successfully' });
-    } catch (err) {
-        res.status(500).send({ message: 'Deleting image failed' });
+    } catch (error) {
+        console.log(error);
+        next(error); // Pass the error to the error-handling middleware
     }
 });
 

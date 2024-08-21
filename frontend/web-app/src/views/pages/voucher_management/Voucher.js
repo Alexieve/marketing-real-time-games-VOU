@@ -38,7 +38,7 @@ const Voucher = () => {
 
     useEffect(() => {
         const fetchData = () => {
-            axios.get('/api/events_query/get_vouchers')
+            axios.get(`/api/events_query/get_vouchers/${user.name}`)
                 .then(response => {
                     setVoucherData(response.data);
                     console.log(response.data);

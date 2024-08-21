@@ -1,11 +1,12 @@
 import express from 'express';
-import { json } from 'body-parser';
 const cors = require('cors');
 
 // Routes
 import { ImageFetchingRoutes } from './routes/ImageFetching';
 import { ImageUploadingRoutes } from './routes/ImageUploading';
 import { ImageDeletingRoutes } from './routes/ImageDeleting';
+
+import { errorHandler } from './middlewares/error-handler';
 
 // Middlewares
 // import { errorHandler } from './middlewares/error-handler';
@@ -21,6 +22,7 @@ app.use(cors());
 app.use(ImageFetchingRoutes);
 app.use(ImageUploadingRoutes);
 app.use(ImageDeletingRoutes);
+app.use(errorHandler);
 
 // // Try to throw not found error
 // app.all('*', async (req, res) => {
