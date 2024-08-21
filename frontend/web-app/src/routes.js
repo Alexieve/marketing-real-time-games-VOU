@@ -77,15 +77,6 @@ const routes = [
       </RoleBasedGuard>
     ),
   },
-  {
-    path: "/report/game",
-    name: "Report Admin Game",
-    element: (
-      <RoleBasedGuard accessibleRoles={["Admin"]}>
-        <ReportAdmin_Game />
-      </RoleBasedGuard>
-    ),
-  },
   // {
   //   path: "/game",
   //   name: "Game",

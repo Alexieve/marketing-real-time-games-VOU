@@ -1,4 +1,4 @@
-import express, { Request, Response } from 'express';
+import express, { Request, Response, NextFunction } from 'express';
 import multer, { FileFilterCallback } from 'multer';
 import path from 'path';
 import fs from 'fs';
@@ -28,7 +28,7 @@ const upload = multer({
     }
 });
 
-router.post('/api/image/uploading', upload.single('imageUrl'), async (req: Request, res: Response) => {
+router.post('/api/image/uploading', upload.single('imageUrl'), async (req: Request, res: Response, next: NextFunction) => {
     try {
         // Take out the old image hash
         const { oldImageName } = req.body;
@@ -41,10 +41,11 @@ router.post('/api/image/uploading', upload.single('imageUrl'), async (req: Reque
                 }
             });
         }
-
+        console.log("Image uploaded successfully");
         res.status(201).send({ message: 'Image uploaded successfully' });
-    } catch (err) {
-        res.status(500).send({ message: 'Uploading image failed' });
+    } catch (error) {
+        console.log(error);
+        next(error); // Pass the error to the error-handling middleware
     }
 });
 

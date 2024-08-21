@@ -105,7 +105,7 @@ const EventCreate = () => {
 
   const handleVoucherSelectClicked = async () => {
     if (vouchers.length === 0) {
-      await axios.get(`/api/events_query/get_vouchers`)
+      await axios.get(`/api/events_query/get_vouchers/${user.name}`)
         .then(response => { setVouchers(response.data); })
         .catch(error => console.error('Error fetching vouchers data:', error));
     }

@@ -44,7 +44,7 @@ const Event = () => {
 
   useEffect(() => {
     const fetchData = () => {
-      axios.get('/api/events_query/get_events')
+      axios.get(`/api/events_query/get_events/${user.name}`)
         .then(response => {
           setEventData(response.data);
         })
