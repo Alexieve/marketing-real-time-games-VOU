@@ -2,7 +2,7 @@
 
 // Đặt màu nền cho các ô CCard
 .custom-card {
-  background-color: #EAE7D6; // Màu nền ô (thay đổi theo nhu cầu của bạn)
+  background-color: #ffe4b5; // Màu nền ô (thay đổi theo nhu cầu của bạn)
   border: 1px solid #333; // Màu sắc của khung bao quanh
   //color: #1A1A1A; // Màu sắc của chữ
   border-radius: 8px; // Bán kính góc của khung
@@ -11,7 +11,7 @@
 
 // Tùy chỉnh tiêu đề của các ô CCard
 .custom-card .card-header {
-  background-color: #2D99AE; // Màu nền tiêu đề
+  background-color: #FA8072; // Màu nền tiêu đề
   color: #FFFFFF; // Màu chữ tiêu đề
   font-weight: bold; // Đặt chữ tiêu đề đậm
 }
@@ -36,11 +36,11 @@
   color: #5D786F; // Màu chữ tab
 }
 
-.nav-tabs .nav-link.active {
-  background-color: #5D786F; // Màu nền của tab đang hoạt động
-  color: #FFFFFF; // Màu chữ của tab đang hoạt động
-  border-color: #2A2A2A; // Màu viền của tab đang hoạt động
-}
+// .nav-tabs .nav-link.active {
+//   background-color: #5D786F; // Màu nền của tab đang hoạt động
+//   color: #FFFFFF; // Màu chữ của tab đang hoạt động
+//   border-color: #2A2A2A; // Màu viền của tab đang hoạt động
+// }
 
 // Tùy chỉnh các biểu đồ
 .chart-container {

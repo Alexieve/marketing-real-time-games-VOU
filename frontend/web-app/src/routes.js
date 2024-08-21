@@ -1,10 +1,8 @@
 import React from "react";
-import AuthGuard from "./guards/AuthGuard";
 import GuestGuard from "./guards/GuestGuard";
 import RoleBasedGuard from "./guards/RoleBasedGuard";
 
 // Import các component cần thiết
-const Dashboard = React.lazy(() => import("./views/dashboard/Dashboard"));
 const Login = React.lazy(() => import("./views/pages/login/Login"));
 const Register = React.lazy(() => import("./views/pages/register/Register"));
 const UserManagement = React.lazy(
@@ -13,13 +11,9 @@ const UserManagement = React.lazy(
 const ReportAdmin = React.lazy(
   () => import("./views/pages/report_admin/Report_Admin"),
 );
-const ReportAdmin_User = React.lazy(
-  () => import("./views/pages/report_admin/Report_Admin_User"),
+const ReportBrand = React.lazy(
+  () => import("./views/pages/report_brand/Report_Brand"),
 );
-const ReportAdmin_Game = React.lazy(
-  () => import("./views/pages/report_admin/Report_Admin_Game"),
-);
-// const Game = React.lazy(() => import("./views/pages/game/Game"));
 const Event = React.lazy(() => import("./views/pages/event_management/Event"));
 const EventCreateEdit = React.lazy(
   () => import("./views/pages/event_management/Event_create_edit"),
@@ -64,9 +58,10 @@ const routes = [
       </RoleBasedGuard>
     ),
   },
+  // Bổ sung Game ở đây
   {
-    path: "/report",
-    name: "Report Admin",
+    path: "/report/admin",
+    name: "Admin Report",
     element: (
       <RoleBasedGuard accessibleRoles={["Admin"]}>
         <ReportAdmin />
@@ -74,11 +69,11 @@ const routes = [
     ),
   },
   {
-    path: "/report/users",
-    name: "Report Admin user",
+    path: "/report/brand",
+    name: "Brand Report",
     element: (
-      <RoleBasedGuard accessibleRoles={["Admin"]}>
-        <ReportAdmin_User />
+      <RoleBasedGuard accessibleRoles={["Brand"]}>
+        <ReportBrand />
       </RoleBasedGuard>
     ),
   },

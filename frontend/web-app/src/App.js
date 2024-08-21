@@ -68,13 +68,25 @@ const App = () => {
           <Route path="/404" element={<Page404 />} />
           <Route path="/500" element={<Page500 />} />
           {user?.role === "Admin" && (
-            <Route
-              path="/"
-              element={<Navigate to="/user-management" replace />}
-            />
+            <>
+              <Route
+                path="/"
+                element={<Navigate to="/user-management" replace />}
+              />
+              <Route
+                path="/report"
+                element={<Navigate to="/report/admin" replace />}
+              />
+            </>
           )}
           {user?.role === "Brand" && (
-            <Route path="/" element={<Navigate to="/event" replace />} />
+            <>
+              <Route path="/" element={<Navigate to="/event" replace />} />
+              <Route
+                path="/report"
+                element={<Navigate to="/report/brand" replace />}
+              />
+            </>
           )}
           <Route
             path="*"
