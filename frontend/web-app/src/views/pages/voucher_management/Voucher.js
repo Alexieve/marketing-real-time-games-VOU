@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { AppSidebar, AppFooter, AppHeader } from '../../../components/index';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { useSelector } from 'react-redux';
+import moment from 'moment';
 
 import {
     CCard,
@@ -15,18 +17,28 @@ import {
     CCardText,
     CButton,
     CCardImage,
+    CInputGroup,
+    CInputGroupText,
+    CModal,
+    CModalHeader,
+    CModalBody,
+    CModalFooter
 } from '@coreui/react';
-
+import { CIcon } from '@coreui/icons-react'
+import { cilSearch } from '@coreui/icons';
 import '../../../scss/event/event.scss';
 
-const Event = () => {
+const Voucher = () => {
     const [voucherData, setVoucherData] = useState([]);
     const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
+    const [selectedVoucher, setSelectedVoucher] = useState(null);
+    const [visible, setVisible] = useState(false); // For modal visibility
+    const user = useSelector((state) => state.auth.user);
 
     useEffect(() => {
         const fetchData = () => {
-            axios.get('http://localhost:8000/vouchers')
+            axios.get('/api/events_query/get_vouchers')
                 .then(response => {
                     setVoucherData(response.data);
                     console.log(response.data);
@@ -38,13 +50,13 @@ const Event = () => {
         fetchData();
     }, []);
 
-    const handleDelete = (id) => {
-        axios.delete(`http://localhost:8000/vouchers/${id}`)
+    const handleDelete = (_id) => {
+        axios.delete(`/api/vouchers/delete/${_id}`)
             .then(response => {
                 if (response.status === 200) {
                     // Remove the deleted voucher from the voucherData state
-                    setVoucherData(voucherData.filter((voucher) => voucher.id !== id));
-                    console.log('Event deleted successfully');
+                    setVoucherData(voucherData.filter((voucher) => voucher._id !== _id));
+                    console.log('Voucher deleted successfully');
                 } else {
                     console.error('Failed to delete voucher');
                 }
@@ -52,6 +64,18 @@ const Event = () => {
             .catch(error => {
                 console.error('Error deleting voucher:', error);
             });
+    };
+
+    const openDeleteConfirmation = (voucher) => {
+        setSelectedVoucher(voucher);
+        setVisible(true); // Show modal
+    };
+
+    const confirmDelete = () => {
+        if (selectedVoucher) {
+            handleDelete(selectedVoucher._id);
+            setVisible(false); // Close modal
+        }
     };
 
     const handleSearchChange = (e) => {
@@ -91,26 +115,34 @@ const Event = () => {
             <div className="wrapper d-flex flex-column min-vh-100">
                 <AppHeader />
                 <div className="body flex-grow-1 m-2">
-                    <div className='d-flex mb-3'>
-                        <CFormInput
-                            type="text"
-                            placeholder="Search events"
-                            value={searchQuery}
-                            onChange={handleSearchChange}
-                        />
+                    <div className="d-flex justify-content-between align-items-center mb-3">
+                        <CInputGroup>
+                            <CInputGroupText>
+                                <CIcon icon={cilSearch} />
+                            </CInputGroupText>
+                            <CFormInput
+                                type="text"
+                                placeholder="Search vouchers"
+                                value={searchQuery}
+                                onChange={handleSearchChange}
+                            />
+                        </CInputGroup>
+                        <Link to="/voucher/create" className="btn btn-success text-white no-wrap mx-2">
+                            Create Voucher
+                        </Link>
                     </div>
                     <CRow className='m-0'>
                         {currentItems.map((voucher) => (
-                            <CCol md="4" key={voucher.id} className='mb-4'>
-                                <Link to={`/voucher/create/${voucher.id}`} className="card-link">
+                            <CCol md="4" key={voucher._id} className='mb-4'>
+                                <Link to={`/voucher/edit/${voucher._id}`} className="card-link">
                                     <CCard>
                                         <CCardImage className="card-image" orientation="top" src={voucher.imageUrl} />
                                         <CCardBody>
                                             <CCardTitle>{voucher.code}</CCardTitle>
                                             <CCardText>Price: {voucher.price}</CCardText>
                                             <CCardText>Quantity: {voucher.quantity}</CCardText>
-                                            <CCardText>Expiration Time: {voucher.expTime}</CCardText>
-                                            <CButton color="danger" onClick={(e) => { e.stopPropagation(); e.preventDefault(); handleDelete(voucher.id); }}>Delete</CButton>
+                                            <CCardText>Expiration Time: {moment(voucher.expTime).format("L") + ' ' + moment(voucher.expTime).format("LT")}</CCardText>
+                                            <CButton color="danger" onClick={(e) => { e.stopPropagation(); e.preventDefault(); openDeleteConfirmation(voucher); }}>Delete</CButton>
                                         </CCardBody>
                                     </CCard>
                                 </Link>
@@ -129,8 +161,20 @@ const Event = () => {
                 </div>
                 <AppFooter />
             </div>
+            <CModal visible={visible} onClose={() => setVisible(false)}>
+                <CModalHeader>
+                    <h5>Confirm Deletion</h5>
+                </CModalHeader>
+                <CModalBody>
+                    Are you sure you want to delete this voucher?
+                </CModalBody>
+                <CModalFooter>
+                    <CButton color="danger" onClick={confirmDelete}>Delete</CButton>
+                    <CButton color="secondary" onClick={() => setVisible(false)}>Cancel</CButton>
+                </CModalFooter>
+            </CModal>
         </div >
     );
 };
 
-export default Event;
+export default Voucher;

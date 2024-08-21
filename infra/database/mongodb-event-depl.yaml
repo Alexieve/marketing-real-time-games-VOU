@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongodb-event-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mongodb-event
+  template:
+    metadata:
+      labels:
+        app: mongodb-event
+    spec:
+      containers:
+        - name: mongodb-event
+          image: mongo:latest
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - name: mongodb-event-storage
+              mountPath: /data/db
+      volumes:
+        - name: mongodb-event-storage
+          persistentVolumeClaim:
+            claimName: mongodb-event-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongodb-event-srv
+spec:
+  selector:
+    app: mongodb-event
+  type: ClusterIP
+  ports:
+    - name: db
+      protocol: TCP
+      port: 27017
+      targetPort: 27017

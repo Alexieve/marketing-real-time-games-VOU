@@ -18,14 +18,17 @@ const ReportBrand = React.lazy(
   () => import("./views/pages/report_brand/Report_Brand"),
 );
 const Event = React.lazy(() => import("./views/pages/event_management/Event"));
-const EventCreate = React.lazy(
-  () => import("./views/pages/event_management/Event_create"),
+const EventCreateEdit = React.lazy(
+  () => import("./views/pages/event_management/Event_create_edit"),
 );
 const Voucher = React.lazy(
   () => import("./views/pages/voucher_management/Voucher"),
 );
 const VoucherCreate = React.lazy(
   () => import("./views/pages/voucher_management/Voucher_create"),
+);
+const VoucherEdit = React.lazy(
+  () => import("./views/pages/voucher_management/Voucher_edit"),
 );
 const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
 const Page500 = React.lazy(() => import("./views/pages/page500/Page500"));
@@ -86,7 +89,25 @@ const routes = [
     ),
   },
   {
-    path: "/event",
+    path: "/report/game",
+    name: "Report Admin Game",
+    element: (
+      <RoleBasedGuard accessibleRoles={["Admin"]}>
+        <ReportAdmin_Game />
+      </RoleBasedGuard>
+    ),
+  },
+  // {
+  //   path: "/game",
+  //   name: "Game",
+  //   element: (
+  //     <RoleBasedGuard accessibleRoles={["Admin"]}>
+  //       <Game />
+  //     </RoleBasedGuard>
+  //   ),
+  // },
+  {
+    path: "/events",
     name: "Event",
     element: (
       <RoleBasedGuard accessibleRoles={["Brand"]}>
@@ -95,11 +116,20 @@ const routes = [
     ),
   },
   {
-    path: "/event/create/:id",
+    path: "/events/create",
     name: "Create Event",
     element: (
       <RoleBasedGuard accessibleRoles={["Brand"]}>
-        <EventCreate />
+        <EventCreateEdit />
+      </RoleBasedGuard>
+    ),
+  },
+  {
+    path: "/events/edit/:eventId",
+    name: "Edit Event",
+    element: (
+      <RoleBasedGuard accessibleRoles={["Brand"]}>
+        <EventCreateEdit />
       </RoleBasedGuard>
     ),
   },
@@ -113,11 +143,20 @@ const routes = [
     ),
   },
   {
-    path: "/voucher/create/:id",
+    path: "/voucher/create",
     name: "Create Voucher",
     element: (
       <RoleBasedGuard accessibleRoles={["Brand"]}>
         <VoucherCreate />
+      </RoleBasedGuard>
+    ),
+  },
+  {
+    path: "/voucher/edit/:id",
+    name: "Edit Voucher",
+    element: (
+      <RoleBasedGuard accessibleRoles={["Brand"]}>
+        <VoucherEdit />
       </RoleBasedGuard>
     ),
   },

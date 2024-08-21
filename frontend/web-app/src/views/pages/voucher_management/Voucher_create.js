@@ -1,6 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { AppSidebar, AppFooter, AppHeader } from '../../../components/index';
-import { useParams, useLocation } from 'react-router-dom';
+import { ToastContainer, toast } from "react-toastify";
+import { useSelector } from 'react-redux';
+import "react-toastify/dist/ReactToastify.css";
 import '../../../scss/event/event.scss';
 import axios from 'axios';
 import {
@@ -15,19 +17,12 @@ import {
     CRow,
     CCol,
     CFormTextarea,
-    CToast,
-    CToastHeader,
-    CToastBody,
-    CToaster,
     CInputGroup,
     CInputGroupText
 } from '@coreui/react';
 
-const EventCreate = () => {
-
-    const { id } = useParams();
-    const location = useLocation();
-    const { state } = location;
+const VoucherCreate = () => {
+    const user = useSelector((state) => state.auth.user);
     const [voucherData, setVoucherData] = useState({
         code: "",
         qrCodeUrl: "",
@@ -37,107 +32,10 @@ const EventCreate = () => {
         quantity: 0,
         expTime: "",
         status: "active",
-        brand: ""
+        brand: user ? user.name : ""
     });
 
-    const [toast, addToast] = useState(0);
-    const toaster = useRef();
     const [imagePreview, setImagePreview] = useState(null);
-
-    useEffect(() => {
-        if (localStorage.getItem('formSubmittedSuccess') === 'true') {
-            addToast(successToast);
-            localStorage.removeItem('formSubmittedSuccess');
-        }
-        if (id !== "-1") {
-            axios.get(`http://localhost:8000/vouchers/${id}`)
-                .then(response => {
-                    setVoucherData(response.data);
-                    setImagePreview(response.data.imageUrl);
-                })
-                .catch(error => {
-                    console.error('Error fetching event data:', error);
-                });
-        }
-        else {
-            setVoucherData(
-                {
-                    code: "",
-                    qrCodeUrl: "",
-                    imageUrl: "",
-                    price: "",
-                    description: "",
-                    quantity: 0,
-                    expTime: "",
-                    status: "active",
-                    brand: state ? state.name : ""
-                }
-            );
-        }
-    }, []);
-
-    const warningToast = ({ message }) => (
-        <CToast>
-            <CToastHeader closeButton>
-                <svg
-                    className="rounded me-2"
-                    width="20"
-                    height="20"
-                    xmlns="http://www.w3.org/2000/svg"
-                    preserveAspectRatio="xMidYMid slice"
-                    focusable="false"
-                    role="img"
-                >
-                    <rect width="100%" height="100%" fill="#ffcc00"></rect>
-                </svg>
-                <div className="fw-bold me-auto">Warning</div>
-                <small>Just now</small>
-            </CToastHeader>
-            <CToastBody>{message}.</CToastBody>
-        </CToast>
-    );
-
-    const successToast = (
-        <CToast>
-            <CToastHeader closeButton>
-                <svg
-                    className="rounded me-2"
-                    width="20"
-                    height="20"
-                    xmlns="http://www.w3.org/2000/svg"
-                    preserveAspectRatio="xMidYMid slice"
-                    focusable="false"
-                    role="img"
-                >
-                    <rect width="100%" height="100%" fill="#28a745"></rect>
-                </svg>
-                <div className="fw-bold me-auto">Success</div>
-                <small>Just now</small>
-            </CToastHeader>
-            <CToastBody>Voucher {(id == -1) ? 'created' : 'edited'} successfully!</CToastBody>
-        </CToast>
-    );
-
-    const ErrorToast = ({ message }) => (
-        <CToast>
-            <CToastHeader closeButton>
-                <svg
-                    className="rounded me-2"
-                    width="20"
-                    height="20"
-                    xmlns="http://www.w3.org/2000/svg"
-                    preserveAspectRatio="xMidYMid slice"
-                    focusable="false"
-                    role="img"
-                >
-                    <rect width="100%" height="100%" fill="#dc3545"></rect>
-                </svg>
-                <div className="fw-bold me-auto">Error</div>
-                <small>Just now</small>
-            </CToastHeader>
-            <CToastBody>{message}</CToastBody>
-        </CToast>
-    );
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
@@ -161,72 +59,69 @@ const EventCreate = () => {
         const { code, qrCodeUrl, imageUrl, price, description, quantity, expTime, status, brand } = voucherData;
 
         if (!code || !qrCodeUrl || !imageUrl || !price || !description || !quantity || !expTime || !status || !brand) {
-            addToast(warningToast({ message: 'Please fill in all fields' }));
+            toast.warning("Please fill in all fields");
             return;
         }
         if (quantity < 0) {
-            addToast(warningToast({ message: 'Quantity must be a positive number' }));
+            toast.warning("Quantity must be a positive number");
             return;
         }
         if (price < 0) {
-            addToast(warningToast({ message: 'Price must be a positive number' }));
+            toast.warning("Price must be a positive number");
             return;
         }
         if (new Date(expTime) < new Date()) {
-            addToast(warningToast({ message: 'Expiration time must be in the future' }));
+            toast.warning("Expiration time must be in the future");
             return;
         }
-        // Convert image file to base64 string
-        const toBase64 = (file) => new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
-            reader.onerror = (error) => reject(error);
-        });
-
-        const isBase64Image = (url) => {
-            const base64Pattern = /^data:image\/[a-zA-Z]+;base64,/;
-            return base64Pattern.test(url);
-        };
 
         try {
+            // Create a new Formdata object
+            const formData = new FormData();
+            formData.append('code', code);
+            formData.append('imageUrl', imageUrl);
+            formData.append('qrCodeUrl', qrCodeUrl);
+            formData.append('price', price);
+            formData.append('description', description);
+            formData.append('quantity', quantity);
+            formData.append('expTime', expTime);
+            formData.append('status', status);
+            formData.append('brand', brand);
 
-            const base64Image = isBase64Image(imageUrl) ? imageUrl : await toBase64(imageUrl);
+            const response = await axios.post('/api/vouchers/create', formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            });
 
-            const payload = {
-                code,
-                qrCodeUrl,
-                imageUrl: base64Image,
-                price,
-                description,
-                quantity,
-                expTime,
-                status,
-                brand
-            };
+            // Empty the form fields
+            setVoucherData({
+                code: "",
+                qrCodeUrl: "",
+                imageUrl: "",
+                price: "",
+                description: "",
+                quantity: 0,
+                expTime: "",
+                status: "active",
+                brand: user ? user.name : ""
+            });
+            // Clear the image preview
+            setImagePreview(null);
+            // Set the Image URL input field to null
+            document.getElementById('imageUrl').value = "";
 
-            let response;
-            if (id == "-1") {
-                response = await axios.post('http://localhost:8000/vouchers', payload, {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-            }
-            else {
-                response = await axios.put(`http://localhost:8000/vouchers/${id}`, payload, {
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                });
-            }
-
-            console.log(`Voucher ${(id == -1) ? 'created' : 'edited'} successfully:`, response.data);
-            localStorage.setItem('formSubmittedSuccess', 'true');
-            window.location.reload();
+            window.scrollTo(0, 0);
+            toast.success("Voucher created successfully");
 
         } catch (error) {
-            addToast(ErrorToast({ message: error.message }));
+            if (error.response.data.errors.length > 0) {
+                for (let i = 0; i < error.response.data.errors.length; i++) {
+                    toast.error(error.response.data.errors[i].message);
+                }
+            } else {
+                toast.error("An error occurred. Please try again later");
+            }
         }
     };
 
@@ -239,7 +134,7 @@ const EventCreate = () => {
                     <CRow className="justify-content-center mb-4">
                         <CCol md="6">
                             <CCard className="shadow-lg">
-                                <CCardHeader className="bg-primary text-white">Voucher information</CCardHeader>
+                                <CCardHeader className="bg-primary text-white">Create New Voucher</CCardHeader>
                                 <CCardBody>
                                     <CForm onSubmit={handleSubmit}>
                                         <CInputGroup className="mb-3">
@@ -273,7 +168,7 @@ const EventCreate = () => {
                                                 id="imageUrl"
                                                 name="imageUrl"
                                                 onChange={handleFileChange}
-                                                required={id === "-1"}
+                                                required
                                             />
                                         </CInputGroup>
                                         {imagePreview && <CCardImage className="card-image mb-3" orientation="top" src={imagePreview} />}
@@ -337,20 +232,7 @@ const EventCreate = () => {
                                                 <option value="inactive">Inactive</option>
                                             </CFormSelect>
                                         </CInputGroup>
-
-                                        <CInputGroup className="mb-3">
-                                            <CInputGroupText id="basic-addon1">Brand</CInputGroupText>
-                                            <CFormInput
-                                                type="text"
-                                                id="brand"
-                                                name="brand"
-                                                value={voucherData.brand}
-                                                onChange={handleChange}
-                                                required
-                                                readOnly
-                                            />
-                                        </CInputGroup>
-                                        <CButton type="submit" color="primary" className="w-100 mt-4">{id !== "-1" ? 'Edit Voucher' : 'Create Voucher'}</CButton>
+                                        <CButton type="submit" style={{ backgroundColor: '#7ED321' }} className="w-100 mt-4">Create Voucher</CButton>
                                     </CForm>
                                 </CCardBody>
                             </CCard>
@@ -359,11 +241,21 @@ const EventCreate = () => {
                 </div>
                 <AppFooter />
             </div>
-
-            {/* Toasts */}
-            <CToaster className="p-3" placement="top-end" push={toast} ref={toaster} />
+            <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+                transition:Bounce
+            />
         </div>
     );
 };
 
-export default EventCreate;
+export default VoucherCreate;

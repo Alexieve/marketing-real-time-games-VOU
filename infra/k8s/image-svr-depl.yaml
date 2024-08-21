@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: image-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: image
+  template:
+    metadata:
+      labels:
+        app: image
+    spec:
+      containers:
+        - name: image
+          image: nlhkha03/image
+      volumes:
+        - name: image-storage
+          persistentVolumeClaim:
+            claimName: image-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: image-srv
+spec:
+  selector:
+    app: image
+  ports:
+    - name: image
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
+
+          
