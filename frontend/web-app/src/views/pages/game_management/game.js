@@ -24,7 +24,7 @@ const GameManagement = () => {
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        const data = await request("api/game/load-all", "GET");
+        const data = await request("api/events_query/get_games", "GET");
         setGames(data);
         setSelectedGame(data[0]);
       } catch (error) {
@@ -40,7 +40,7 @@ const GameManagement = () => {
     if (type === "file") {
       setSelectedGame({
         ...selectedGame,
-        image: URL.createObjectURL(files[0]),
+        imageUrl: URL.createObjectURL(files[0]),
       });
     } else {
       setSelectedGame({
@@ -51,17 +51,18 @@ const GameManagement = () => {
   };
 
   const handleGameChange = (e) => {
-    const gameId = parseInt(e.target.value, 10);
-    const game = games.find((g) => g.id === gameId);
+    const gameId = e.target.value;
+    const game = games.find((g) => g._id === gameId);
     setSelectedGame(game);
   };
 
   const handleUpdateGame = async () => {
     try {
-      await request("api/game/update", "POST", selectedGame);
+      // await request("api/game/update", "POST", selectedGame);
       const updatedGames = games.map((game) =>
-        game.id === selectedGame.id ? selectedGame : game,
+        game._id === selectedGame._id ? selectedGame : game,
       );
+      console.log("Updated Games", updatedGames);
       setGames(updatedGames);
     } catch (error) {
       console.error(error);
@@ -104,11 +105,11 @@ const GameManagement = () => {
                     <CFormLabel htmlFor="gameSelect">Select Game</CFormLabel>
                     <CFormSelect
                       id="gameSelect"
-                      value={selectedGame.id}
+                      value={selectedGame._id}
                       onChange={handleGameChange}
                     >
                       {games.map((game) => (
-                        <option key={game.id} value={game.id}>
+                        <option key={game._id} value={game._id}>
                           {game.name}
                         </option>
                       ))}
@@ -137,16 +138,18 @@ const GameManagement = () => {
 
                     <CRow className="mt-4">
                       <CCol md={6}>
-                        <CFormLabel htmlFor="gameImage">Game Image</CFormLabel>
+                        <CFormLabel htmlFor="gameImageUrl">
+                          Game Image
+                        </CFormLabel>
                         <CFormInput
                           type="file"
-                          id="gameImage"
-                          name="image"
+                          id="gameImageUrl"
+                          name="imageUrl"
                           onChange={handleInputChange}
                         />
-                        {selectedGame.image && (
+                        {selectedGame.imageUrl && (
                           <img
-                            src={selectedGame.image}
+                            src={selectedGame.imageUrl}
                             alt="Selected Game"
                             style={{
                               marginTop: "10px",
@@ -171,13 +174,11 @@ const GameManagement = () => {
 
                     <CRow className="mt-4">
                       <CCol md={12}>
-                        <CFormLabel htmlFor="gameInstructions">
-                          Game Instructions
-                        </CFormLabel>
+                        <CFormLabel htmlFor="gameGuide">Game Guide</CFormLabel>
                         <CFormTextarea
-                          id="gameInstructions"
-                          name="instructions"
-                          value={selectedGame.instructions}
+                          id="gameGuide"
+                          name="guide"
+                          value={selectedGame.guide}
                           onChange={handleInputChange}
                           rows="5"
                         />

@@ -81,9 +81,9 @@ const Login = () => {
               <CCard className="p-4">
                 <CCardBody>
                   <CForm noValidate onSubmit={handleLogin}>
-                    <h1>Login haha</h1>
+                    <h1>Login</h1>
                     <p className="text-body-secondary">
-                      Sign In to your account
+                      Log In to your account
                     </p>
                     <CInputGroup className="mb-3">
                       <CInputGroupText>@</CInputGroupText>
@@ -138,7 +138,7 @@ const Login = () => {
               >
                 <CCardBody className="text-center">
                   <div>
-                    <h2>Sign up</h2>
+                    <h2>Register</h2>
                     <p>Don't have an account?</p>
                     <p>Register now and get access to the best events!</p>
                     <Link to="/register">

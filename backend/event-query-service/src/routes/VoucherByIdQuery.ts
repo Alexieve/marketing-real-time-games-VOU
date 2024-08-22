@@ -6,7 +6,7 @@ const router = express.Router();
 
 router.use(express.json());
 
-router.get('/api/events_query/get_vouchers/:id', async (req: Request, res: Response, next: NextFunction) => {
+router.get('/api/events_query/get_voucher_byId/:id', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id } = req.params;
         const voucher = await Voucher.findOne({ _id: id });

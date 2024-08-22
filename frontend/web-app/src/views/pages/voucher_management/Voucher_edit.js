@@ -46,7 +46,7 @@ const VoucherEdit = () => {
 
     useEffect(() => {
         // Fetch voucher data using the provided ID
-        axios.get(`/api/events_query/get_vouchers/${id}`)
+        axios.get(`/api/events_query/get_voucher_byId/${id}`)
             .then(async function (response) {
                 let time = response.data.expTime;
                 response.data.expTime = moment(time).format("YYYY-MM-DDTkk:mm");
