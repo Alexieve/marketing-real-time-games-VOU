@@ -8,16 +8,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { authActions } from "./stores/authSlice";
 import routes from "./routes";
 
-// Containers
-const DefaultLayout = React.lazy(() => import("./layout/DefaultLayout"));
-
-// Pages
-const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
-const Page500 = React.lazy(() => import("./views/pages/page500/Page500"));
-
-// Guards
-import AuthGuard from "./guards/AuthGuard";
-
 const App = () => {
   const dispatch = useDispatch();
   const { isInitialized, user } = useSelector((state) => state.auth);
@@ -65,8 +55,6 @@ const App = () => {
           {routes.map((route, idx) => (
             <Route key={idx} path={route.path} element={route.element} />
           ))}
-          <Route path="/404" element={<Page404 />} />
-          <Route path="/500" element={<Page500 />} />
           {user?.role === "Admin" && (
             <>
               <Route
@@ -96,14 +84,6 @@ const App = () => {
               />
             </>
           )}
-          <Route
-            path="*"
-            element={
-              <AuthGuard>
-                <DefaultLayout />
-              </AuthGuard>
-            }
-          />
         </Routes>
       </Suspense>
     </BrowserRouter>
