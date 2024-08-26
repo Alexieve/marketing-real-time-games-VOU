@@ -59,7 +59,7 @@ const Login = () => {
 
     if (form.checkValidity()) {
       try {
-        const user = await request("api/auth/login", "post", formValues);
+        const { user } = await request("api/auth/login", "post", formValues);
         dispatch(authActions.login({ user }));
         navigate("/");
       } catch (errors) {

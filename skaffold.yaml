@@ -77,11 +77,3 @@ build:
       manual:
       - src: "src/**/*.js"
         dest: .
-  # - image: vmquynh/mobile-app
-  #   context: frontend/mobile-app
-  #   docker:
-  #     dockerfile: Dockerfile
-  #   sync:
-  #     manual:
-  #     - src: "**/*.tsx"
-  #       dest: .

@@ -6,7 +6,7 @@ import { CAlert, CContainer } from "@coreui/react";
 const RoleBasedGuard = ({ children, accessibleRoles }) => {
   const { user } = useSelector((state) => state.auth);
 
-  if (!accessibleRoles.includes(user.role)) {
+  if (user === null || !accessibleRoles.includes(user.role)) {
     return (
       <CContainer
         className="d-flex align-items-center justify-content-center"

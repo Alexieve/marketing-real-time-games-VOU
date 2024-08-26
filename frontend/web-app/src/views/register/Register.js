@@ -23,7 +23,7 @@ import {
   cilPhone,
   cilUser,
 } from "@coreui/icons";
-import { authActions } from "../../../stores/authSlice";
+import { authActions } from "../../stores/authSlice";
 import { useDispatch } from "react-redux";
 
 const Register = () => {
@@ -74,7 +74,7 @@ const Register = () => {
 
     if (form.checkValidity()) {
       try {
-        const user = await request(
+        const { user } = await request(
           "api/auth/register/brand",
           "POST",
           formValues,

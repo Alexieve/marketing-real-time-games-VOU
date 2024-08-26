@@ -54,7 +54,8 @@ async (req: Request, res: Response) => {
     req.session = {
         jwt: userJwt
     };
-    return res.status(200).send(existingUser);
+
+    return res.status(200).send({user: existingUser, token: userJwt});
 });
 
 export {route as loginRouter};

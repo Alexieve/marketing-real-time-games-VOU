@@ -1,56 +1,60 @@
-import React, { useState } from 'react';
-import { View, StyleSheet, Alert, Modal, TouchableOpacity, Text, TouchableWithoutFeedback, Keyboard, SafeAreaView } from 'react-native';
-import { Input, Button, Icon } from '@rneui/themed';
-import { Picker } from '@react-native-picker/picker';
+import React from 'react';
+import { View, StyleSheet, TouchableWithoutFeedback, Keyboard, SafeAreaView } from 'react-native';
+import { Input, Button, Text, CheckBox } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
 import { useForm, Controller } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
+import { authActions } from '../slices/authSlice';
+import { request } from '../utils/request';
+import localhost from '../url.config';
+import FlashMessage, { showMessage } from 'react-native-flash-message';
 
 const RegisterScreen = () => {
-  const [gender, setGender] = useState('Male');
-  const [isPickerVisible, setIsPickerVisible] = useState(false);
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const { control, handleSubmit, formState: { errors }, watch } = useForm();
 
-  const { control, handleSubmit, watch, formState: { errors } } = useForm();
+  // Watch the password field to compare with confirmPassword
   const password = watch('password');
 
-  const onSubmit = (data: any) => {
-    if (data.password !== data.confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match');
-      return;
+  const onSubmit = async (data: any) => {
+    try {
+      const { user, token } = await request(`${localhost}/api/auth/register/customer`, 'post', data);
+      dispatch(authActions.login({ user, token }));
+      navigation.navigate('Home' as never);
+    } catch (err: any) {
+      showMessage({
+        message: "Registration Failed",
+        description: err[0].message || "An error occurred during registration. Please try again.",
+        type: "danger",
+      });
     }
-    console.log('Full Name:', data.fullName, 'Email:', data.email, 'Phone Number:', data.phoneNumber, 'Password:', data.password, 'Gender:', gender);
-    navigation.navigate('Login' as never);
   };
 
   return (
     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
       <SafeAreaView style={styles.container}>
         <View style={styles.formContainer}>
-          <Text style={styles.header}>Create an Account</Text>
+          <Text h3 style={styles.header}>Create Account</Text>
 
           <Controller
             control={control}
-            name="fullName"
-            rules={{ required: 'Full Name is required' }}
+            name="name"
+            rules={{
+              required: 'Name is required',
+            }}
             render={({ field: { onChange, onBlur, value } }) => (
               <Input
-                placeholder="Full Name"
+                placeholder="Name"
                 onBlur={onBlur}
                 onChangeText={onChange}
                 value={value}
-                leftIcon={<Icon name="user" type="font-awesome" />}
+                leftIcon={{ type: 'font-awesome', name: 'user' }}
                 inputContainerStyle={styles.inputContainer}
-                errorMessage={errors.fullName?.message?.toString()}
+                errorMessage={errors.name?.message?.toString()}
               />
             )}
           />
-
-          <Text style={styles.label}>Gender</Text>
-          <TouchableOpacity onPress={() => setIsPickerVisible(true)}>
-            <View style={styles.pickerButton}>
-              <Text style={styles.pickerButtonText}>{gender}</Text>
-            </View>
-          </TouchableOpacity>
 
           <Controller
             control={control}
@@ -69,27 +73,9 @@ const RegisterScreen = () => {
                 onChangeText={onChange}
                 value={value}
                 autoCapitalize="none"
-                leftIcon={<Icon name="envelope" type="font-awesome" />}
+                leftIcon={{ type: 'font-awesome', name: 'envelope' }}
                 inputContainerStyle={styles.inputContainer}
                 errorMessage={errors.email?.message?.toString()}
-              />
-            )}
-          />
-
-          <Controller
-            control={control}
-            name="phoneNumber"
-            rules={{ required: 'Phone Number is required' }}
-            render={({ field: { onChange, onBlur, value } }) => (
-              <Input
-                placeholder="Phone Number"
-                onBlur={onBlur}
-                onChangeText={onChange}
-                value={value}
-                keyboardType="phone-pad"
-                leftIcon={<Icon name="phone" type="font-awesome" />}
-                inputContainerStyle={styles.inputContainer}
-                errorMessage={errors.phoneNumber?.message?.toString()}
               />
             )}
           />
@@ -111,7 +97,7 @@ const RegisterScreen = () => {
                 onChangeText={onChange}
                 value={value}
                 secureTextEntry
-                leftIcon={<Icon name="lock" type="font-awesome" />}
+                leftIcon={{ type: 'font-awesome', name: 'lock' }}
                 inputContainerStyle={styles.inputContainer}
                 errorMessage={errors.password?.message?.toString()}
               />
@@ -122,7 +108,7 @@ const RegisterScreen = () => {
             control={control}
             name="confirmPassword"
             rules={{
-              required: 'Confirm Password is required',
+              required: 'Please confirm your password',
               validate: value =>
                 value === password || 'Passwords do not match',
             }}
@@ -133,12 +119,66 @@ const RegisterScreen = () => {
                 onChangeText={onChange}
                 value={value}
                 secureTextEntry
-                leftIcon={<Icon name="lock" type="font-awesome" />}
+                leftIcon={{ type: 'font-awesome', name: 'lock' }}
                 inputContainerStyle={styles.inputContainer}
                 errorMessage={errors.confirmPassword?.message?.toString()}
               />
             )}
           />
+
+          <Controller
+            control={control}
+            name="phonenum"
+            rules={{
+              required: 'Phone number is required',
+              pattern: {
+                value: /^[0-9]{10}$/,
+                message: 'Invalid phone number',
+              },
+            }}
+            render={({ field: { onChange, onBlur, value } }) => (
+              <Input
+                placeholder="Phone Number"
+                onBlur={onBlur}
+                onChangeText={onChange}
+                value={value}
+                leftIcon={{ type: 'font-awesome', name: 'phone' }}
+                inputContainerStyle={styles.inputContainer}
+                errorMessage={errors.phonenum?.message?.toString()}
+              />
+            )}
+          />
+
+          <Text style={styles.label}>Gender</Text>
+          <Controller
+            control={control}
+            name="gender"
+            defaultValue="Male"
+            rules={{
+              required: 'Gender is required',
+            }}
+            render={({ field: { onChange, value } }) => (
+              <View style={styles.genderContainer}>
+                <CheckBox
+                  center
+                  title="Male"
+                  checkedIcon="dot-circle-o"
+                  uncheckedIcon="circle-o"
+                  checked={value === 'Male'}
+                  onPress={() => onChange('Male')}
+                />
+                <CheckBox
+                  center
+                  title="Female"
+                  checkedIcon="dot-circle-o"
+                  uncheckedIcon="circle-o"
+                  checked={value === 'Female'}
+                  onPress={() => onChange('Female')}
+                />
+              </View>
+            )}
+          />
+          {errors.gender && <Text style={styles.errorText}>{errors.gender.message?.toString()}</Text>}
 
           <Button
             title="Register"
@@ -148,33 +188,13 @@ const RegisterScreen = () => {
           />
 
           <Text style={styles.footerText}>
-            Already have an account? 
-            <Text 
-              style={styles.linkText} 
-              onPress={() => navigation.navigate('Login' as never)}
-            >
-              Login
+            Already have an account?{' '}
+            <Text style={styles.linkText} onPress={() => navigation.navigate('Login' as never)}>
+              Sign In
             </Text>
           </Text>
-
-          <Modal visible={isPickerVisible} transparent={true} animationType="slide">
-            <View style={styles.modalContainer}>
-              <View style={styles.modalContent}>
-                <Text style={styles.modalHeader}>Select Gender</Text>
-                <Picker
-                  selectedValue={gender}
-                  onValueChange={(itemValue) => setGender(itemValue)}
-                  style={styles.picker}
-                >
-                  <Picker.Item label="Male" value="Male" />
-                  <Picker.Item label="Female" value="Female" />
-                  <Picker.Item label="Other" value="Other" />
-                </Picker>
-                <Button title="Done" onPress={() => setIsPickerVisible(false)} />
-              </View>
-            </View>
-          </Modal>
         </View>
+        <FlashMessage position="top" />
       </SafeAreaView>
     </TouchableWithoutFeedback>
   );
@@ -183,42 +203,40 @@ const RegisterScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#f7f7f7',
   },
   formContainer: {
     flexGrow: 1,
-    padding: 20,
     justifyContent: 'center',
+    alignItems: 'center',
+    padding: 20,
   },
   header: {
     marginBottom: 20,
     color: '#333',
-    textAlign: 'center',
-    fontSize: 24,
   },
   inputContainer: {
     borderBottomColor: '#ccc',
-    marginBottom: 10,
+  },
+  genderContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    marginVertical: 10,
   },
   label: {
+    alignSelf: 'flex-start',
     marginLeft: 10,
     marginBottom: 5,
     color: '#333',
     fontSize: 16,
   },
-  pickerButton: {
-    paddingVertical: 15,
-    paddingHorizontal: 10,
-    backgroundColor: '#f0f0f0',
-    borderRadius: 5,
-    marginBottom: 20,
-  },
-  pickerButtonText: {
-    fontSize: 16,
-    color: '#333',
+  errorText: {
+    color: 'red',
+    marginLeft: 10,
+    marginBottom: 10,
   },
   button: {
-    backgroundColor: '#28a745',
+    backgroundColor: '#007bff',
   },
   buttonContainer: {
     width: '100%',
@@ -227,29 +245,9 @@ const styles = StyleSheet.create({
   footerText: {
     marginTop: 20,
     color: '#999',
-    textAlign: 'center',
   },
   linkText: {
     color: '#007bff',
-  },
-  modalContainer: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0,0,0,0.5)',
-  },
-  modalContent: {
-    backgroundColor: '#fff',
-    padding: 20,
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
-  },
-  modalHeader: {
-    textAlign: 'center',
-    fontSize: 18,
-    marginBottom: 10,
-  },
-  picker: {
-    width: '100%',
   },
 });
 

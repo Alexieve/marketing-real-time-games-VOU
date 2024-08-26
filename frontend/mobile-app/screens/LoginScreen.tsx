@@ -3,23 +3,33 @@ import { View, StyleSheet, TouchableWithoutFeedback, Keyboard, SafeAreaView } fr
 import { Input, Button, Text } from '@rneui/themed';
 import { useNavigation } from '@react-navigation/native';
 import { useForm, Controller } from 'react-hook-form';
+import { useDispatch } from 'react-redux';
+import { authActions } from '../slices/authSlice';
 import { request } from '../utils/request';
+import localhost from '../url.config';
+import FlashMessage, { showMessage } from 'react-native-flash-message';
 
 const LoginScreen = () => {
   const navigation = useNavigation();
+  const dispatch = useDispatch();
   const { control, handleSubmit, formState: { errors } } = useForm();
 
   const onSubmit = async (data: any) => {
+    const mockData = {
+      email: 'vuminhquynh75@gmail.com',
+      password: '123456',
+    };
     try {
-      console.log('Data:', data);
-      // const user = await request("/api/auth/login", "post", data);
-      // console.log('User:', user);
-
+      const { user, token } = await request(`${localhost}/api/auth/login`, 'post', mockData);
+      dispatch(authActions.login({ user, token }));
       navigation.navigate('Home' as never);
-    } catch (error) {
-      console.log('Login failed:', error);
+    } catch (err: any) {
+      showMessage({
+        message: "Login Failed",
+        description: err[0].message || "An error occurred. Please try again.",
+        type: "danger",
+      });
     }
-    
   };
 
   return (
@@ -43,7 +53,7 @@ const LoginScreen = () => {
                 placeholder="Email"
                 onBlur={onBlur}
                 onChangeText={onChange}
-                value={value}
+                value={'vuminhquynh75@gmail.com'}
                 autoCapitalize="none"
                 leftIcon={{ type: 'font-awesome', name: 'envelope' }}
                 inputContainerStyle={styles.inputContainer}
@@ -67,7 +77,7 @@ const LoginScreen = () => {
                 placeholder="Password"
                 onBlur={onBlur}
                 onChangeText={onChange}
-                value={value}
+                value={'123456'}
                 secureTextEntry
                 leftIcon={{ type: 'font-awesome', name: 'lock' }}
                 inputContainerStyle={styles.inputContainer}
@@ -90,6 +100,7 @@ const LoginScreen = () => {
             </Text>
           </Text>
         </View>
+        <FlashMessage position="top" />
       </SafeAreaView>
     </TouchableWithoutFeedback>
   );

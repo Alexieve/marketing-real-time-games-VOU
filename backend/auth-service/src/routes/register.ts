@@ -48,7 +48,7 @@ route.post('/api/auth/register/brand', brandRegisterValidator, validateRequest,
             jwt: userJwt
         };
 
-        return res.status(201).send(brand);
+        return res.status(201).send({user: brand, token: userJwt});
     });
 
 route.post('/api/auth/register/customer', customerRegisterValidator, validateRequest,
@@ -69,7 +69,7 @@ route.post('/api/auth/register/customer', customerRegisterValidator, validateReq
             jwt: userJwt
         };
 
-        return res.status(201).send(customer);
+        return res.status(201).send({user: customer, token: userJwt});
     });
 
 export { route as registerRouter };

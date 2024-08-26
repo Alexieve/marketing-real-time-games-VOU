@@ -55,6 +55,11 @@ const App = () => {
           {routes.map((route, idx) => (
             <Route key={idx} path={route.path} element={route.element} />
           ))}
+          {user === null && (
+            <>
+              <Route path="/" element={<Navigate to="/login" replace />} />
+            </>
+          )}
           {user?.role === "Admin" && (
             <>
               <Route
