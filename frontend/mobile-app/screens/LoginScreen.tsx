@@ -20,7 +20,7 @@ const LoginScreen = () => {
       password: '123456',
     };
     try {
-      const { user, token } = await request(`${localhost}/api/auth/login`, 'post', mockData);
+      const { user, token } = await request(`/api/auth/login`, 'post', mockData);
       dispatch(authActions.login({ user, token }));
       navigation.navigate('Home' as never);
     } catch (err: any) {

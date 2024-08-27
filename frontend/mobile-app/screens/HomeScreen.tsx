@@ -3,12 +3,14 @@ import { View, StyleSheet } from 'react-native';
 import { Header, Icon } from '@rneui/themed';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useNavigationState, useNavigation } from '@react-navigation/native';
+import { request } from '../utils/request';
 
 import EventScreen from './EventScreen';
 import SearchScreen from './SearchScreen';
 import FavouriteScreen from './FavouriteScreen';
 import VoucherScreen from './VoucherScreen';
 import Menu from './Menu';
+import { useSelector } from 'react-redux';
 
 const Tab = createBottomTabNavigator();
 
@@ -17,14 +19,16 @@ const HomeScreen = () => {
   const [isMenuVisible, setIsMenuVisible] = useState(false);
   const navigationState = useNavigationState(state => state);
   const navigation = useNavigation(); 
+  const { token } = useSelector((state: any) => state.auth);
 
   useEffect(() => {
     const currentRouteName = navigationState.routes[navigationState.index].name;
     setHeaderTitle(currentRouteName);
   }, [navigationState]);
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
     setIsMenuVisible(false);
+    await request(`/api/auth/logout`, 'post', null, token);
     navigation.navigate('Login' as never); 
   };
 

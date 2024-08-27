@@ -2,12 +2,13 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ingress-srv
+  namespace: default
   annotations:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
   rules:
-    - host: vou-system.com
+    - host:
       http:
         paths:
           - path: /api/auth/
@@ -24,36 +25,36 @@ spec:
                 name: user-srv
                 port: 
                   number: 3000
-          - path : /api/events_query/?(.*)
-            pathType: ImplementationSpecific
+          - path : /api/events_query/
+            pathType: Prefix
             backend:
               service:
                 name: event-query-srv
                 port: 
                   number: 3000
-          - path: /api/events/?(.*)
-            pathType: ImplementationSpecific
+          - path: /api/events/
+            pathType: Prefix
             backend:
               service:
                 name: event-srv
                 port: 
                   number: 3000
-          - path: /api/vouchers/?(.*)
-            pathType: ImplementationSpecific
+          - path: /api/vouchers/
+            pathType: Prefix
             backend:
               service:
                 name: event-srv
                 port: 
                   number: 3000
-          - path: /api/event_create_bff/?(.*)
-            pathType: ImplementationSpecific
+          - path: /api/event_create_bff/
+            pathType: Prefix
             backend:
               service:
                 name: event-create-bff-srv
                 port: 
                   number: 3000
-          - path: /api/image/?(.*)
-            pathType: ImplementationSpecific
+          - path: /api/image/
+            pathType: Prefix
             backend:
               service:
                 name: image-srv

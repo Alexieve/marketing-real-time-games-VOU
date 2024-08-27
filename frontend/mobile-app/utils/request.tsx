@@ -1,17 +1,23 @@
 import axios from 'axios';
-export async function request(url: string, method: string, body: any = null, token: string | null = null) {
+import localhost from '../url.config';
+
+export async function request(
+    url: string, 
+    method: string, 
+    body: any = null, 
+    token: string | null = null
+) {
     let data = null;
     try {
         const response = await axios({
             method: method,
-            url: url,
+            url: localhost + url,
             data: body,
-            headers: token ? { Authorization: `Bearer ${token}` } : {},
+            headers: { cookie: token ? `session=${token}` : '' },
         });
         data = response.data;
     } catch (err: any) {
-        console.log('Error:', err);
-        throw err.response.data.errors;
+        throw err.response ? err.response.data.errors : err;
     }
     return data;
 };
