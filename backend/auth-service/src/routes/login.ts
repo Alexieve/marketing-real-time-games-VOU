@@ -54,7 +54,6 @@ async (req: Request, res: Response) => {
     req.session = {
         jwt: userJwt
     };
-    console.log(req.headers);
 
     return res.status(200).send({user: existingUser, token: userJwt});
 });

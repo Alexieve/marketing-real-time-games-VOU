@@ -2,8 +2,6 @@ import React, { useEffect, useState } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Avatar, Button, Overlay } from "@rneui/themed";
 import { request } from "../utils/request";
-import axios from "axios";
-import localhost from "../url.config";
 import { useSelector } from "react-redux";
 
 const Menu = ({

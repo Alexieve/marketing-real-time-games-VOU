@@ -13,7 +13,6 @@ export async function request(
             method: method,
             url: localhost + url,
             data: body,
-            headers: { cookie: token ? `session=${token}` : '' },
         });
         data = response.data;
     } catch (err: any) {
