@@ -4,7 +4,6 @@ import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
 import moment from 'moment';
-
 import {
     CCard,
     CCardBody,
@@ -22,10 +21,11 @@ import {
     CModal,
     CModalHeader,
     CModalBody,
-    CModalFooter
+    CModalFooter,
+    CAlert
 } from '@coreui/react';
 import { CIcon } from '@coreui/icons-react'
-import { cilSearch } from '@coreui/icons';
+import { cilSearch, cilInfo } from '@coreui/icons';
 import '../../../scss/event/event.scss';
 
 const Voucher = () => {
@@ -38,10 +38,9 @@ const Voucher = () => {
 
     useEffect(() => {
         const fetchData = () => {
-            axios.get(`/api/events_query/get_vouchers/${user.name}`)
+            axios.get(`/api/event_command/get_vouchers/${user.id}`)
                 .then(response => {
                     setVoucherData(response.data);
-                    console.log(response.data);
                 })
                 .catch(error => {
                     console.error('Error fetching voucher data:', error);
@@ -51,7 +50,7 @@ const Voucher = () => {
     }, []);
 
     const handleDelete = (_id) => {
-        axios.delete(`/api/vouchers/delete/${_id}`)
+        axios.delete(`/api/event_command/voucher/delete/${_id}`)
             .then(response => {
                 if (response.status === 200) {
                     // Remove the deleted voucher from the voucherData state
@@ -114,7 +113,7 @@ const Voucher = () => {
             <AppSidebar />
             <div className="wrapper d-flex flex-column min-vh-100">
                 <AppHeader />
-                <div className="body flex-grow-1 m-2">
+                <div className="body flex-grow-1 m-4">
                     <div className="d-flex justify-content-between align-items-center mb-3">
                         <CInputGroup>
                             <CInputGroupText>
@@ -127,28 +126,37 @@ const Voucher = () => {
                                 onChange={handleSearchChange}
                             />
                         </CInputGroup>
-                        <Link to="/voucher/create" className="btn btn-success text-white no-wrap mx-2">
+                        <Link to="/vouchers/create" className="btn btn-success text-white no-wrap mx-2">
                             Create Voucher
                         </Link>
                     </div>
-                    <CRow className='m-0'>
-                        {currentItems.map((voucher) => (
-                            <CCol md="4" key={voucher._id} className='mb-4'>
-                                <Link to={`/voucher/edit/${voucher._id}`} className="card-link">
-                                    <CCard>
-                                        <CCardImage className="card-image" orientation="top" src={voucher.imageUrl} />
-                                        <CCardBody>
-                                            <CCardTitle>{voucher.code}</CCardTitle>
-                                            <CCardText>Price: {voucher.price}</CCardText>
-                                            <CCardText>Quantity: {voucher.quantity}</CCardText>
-                                            <CCardText>Expiration Time: {moment(voucher.expTime).format("L") + ' ' + moment(voucher.expTime).format("LT")}</CCardText>
-                                            <CButton color="danger" onClick={(e) => { e.stopPropagation(); e.preventDefault(); openDeleteConfirmation(voucher); }}>Delete</CButton>
-                                        </CCardBody>
-                                    </CCard>
-                                </Link>
-                            </CCol>
-                        ))}
-                    </CRow>
+                    {currentItems.length > 0 ? (
+                        <CRow>
+                            {currentItems.map((voucher) => (
+                                <CCol md="4" key={voucher._id} className='mb-4'>
+                                    <Link to={`/vouchers/edit/${voucher._id}`} className="card-link">
+                                        <CCard>
+                                            <CCardImage className="card-image" orientation="top" src={voucher.imageUrl} />
+                                            <CCardBody>
+                                                <CCardTitle>{voucher.code}</CCardTitle>
+                                                <CCardText>Price: {voucher.price}</CCardText>
+                                                <CCardText>Quantity: {voucher.quantity}</CCardText>
+                                                <CCardText>Expiration Time: {moment(voucher.expTime).format("L") + ' ' + moment(voucher.expTime).format("LT")}</CCardText>
+                                                <CButton color="danger" onClick={(e) => { e.stopPropagation(); e.preventDefault(); openDeleteConfirmation(voucher); }}>Delete</CButton>
+                                            </CCardBody>
+                                        </CCard>
+                                    </Link>
+                                </CCol>
+                            ))}
+                        </CRow>
+                    ) : (
+                        <div style={{ height: '50vh', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                            <CAlert color="primary" className="d-flex align-items-center">
+                                <CIcon icon={cilInfo} className="flex-shrink-0 me-2" width={24} height={24} />
+                                <div>No voucher found</div>
+                            </CAlert>
+                        </div>
+                    )}
                     <div style={{ display: 'flex', justifyContent: 'center', marginTop: '20px' }}>
                         <CPagination>
                             {Array.from({ length: totalPages }, (_, index) => (

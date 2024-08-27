@@ -1,14 +1,15 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { Game } from '../models/GameQueryModel';
+import { Voucher } from '../models/VoucherCommandModel';
 
 const router = express.Router();
 
 router.use(express.json());
 
-router.get('/api/event_query/get_games', async (req: Request, res: Response, next: NextFunction) => {
+router.get('/api/event_command/voucher_detail/:id', async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const games = await Game.find({});
-        res.status(200).send(games);
+        const { id } = req.params;
+        const voucher = await Voucher.findById(id);
+        res.status(200).send(voucher);
     }
     catch (error) {
         console.log(error);

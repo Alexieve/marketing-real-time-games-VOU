@@ -48,7 +48,7 @@ const EventSchema = new mongoose.Schema({
 EventSchema.statics.build = (attrs: EventAttrs) => {
     return new Event(attrs);
 }
-const Event = mongoose.model<EventDoc, EventModel>('Events', EventSchema);
+const Event = mongoose.model<EventDoc, EventModel>('Events', EventSchema, 'Events');
 
 
 export { Event };

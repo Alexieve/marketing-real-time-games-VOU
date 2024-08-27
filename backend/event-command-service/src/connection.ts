@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 
 export const connectToDatabase = async () => {
-    const mongoURI = 'mongodb://mongodb-event-srv:27017/event';
+    const mongoURI = 'mongodb://mongodb-event-srv:27017/event_command';
 
     try {
         await mongoose

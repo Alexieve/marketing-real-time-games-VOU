@@ -58,8 +58,8 @@ build:
       manual:
       - src: "src/**/*.js"
         dest: .
-  - image: nlhkha03/event
-    context: backend/event-service
+  - image: nlhkha03/event-command
+    context: backend/event-command-service
     docker:
       dockerfile: Dockerfile
     sync:
@@ -82,3 +82,4 @@ build:
       manual:
       - src: "src/**/*.ts"
         dest: .
+ 
