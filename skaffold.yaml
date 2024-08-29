@@ -17,11 +17,6 @@ portForward:
     resourceName: mongodb-event-query-depl
     port: 27017
     localPort: 8001
-  - resourceType: deployment
-    resourceName: rabbitmq
-    port: 15672
-    localPort: 15672
-
 build:
   local:
     push: false

@@ -20,7 +20,7 @@ app.set('trust proxy', true);
 app.use(json());
 app.use(cookieSession({
     signed: false,
-    secure: true,
+    // secure: true,
 }));
 app.use(cors());
 

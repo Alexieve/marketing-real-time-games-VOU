@@ -7,7 +7,7 @@ metadata:
     nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
   rules:
-    - host: vou-system.com
+    - host:
       http:
         paths:
           - path: /api/auth/
@@ -38,8 +38,8 @@ spec:
                 name: event-command-srv
                 port: 
                   number: 3000
-          - path: /api/image/?(.*)
-            pathType: ImplementationSpecific
+          - path: /api/image/
+            pathType: Prefix
             backend:
               service:
                 name: image-srv

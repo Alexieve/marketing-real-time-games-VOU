@@ -1,41 +1,42 @@
 {
-  "main": "node_modules/expo/AppEntry.js",
+  "name": "mobile-app",
+  "version": "1.0.0",
+  "main": "expo/AppEntry.js",
   "scripts": {
     "start": "expo start",
-    "android": "DARK_MODE=media expo start --android",
-    "ios": "DARK_MODE=media expo start --ios",
-    "web": "DARK_MODE=media expo start --web",
-    "eject": "expo eject",
-    "postinstall": "patch-package"
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web"
   },
   "dependencies": {
-    "@gluestack-ui/nativewind-utils": "^1.0.23",
-    "@gluestack-ui/overlay": "^0.1.15",
-    "@gluestack-ui/toast": "^1.0.7",
-    "@react-navigation/bottom-tabs": "^6.5.8",
-    "@react-navigation/native": "^6.1.7",
-    "@react-navigation/stack": "^6.3.17",
-    "babel-plugin-module-resolver": "^5.0.2",
-    "expo": "^51.0.25",
-    "expo-linear-gradient": "~13.0.2",
+    "@expo/metro-runtime": "~3.2.3",
+    "@react-native-picker/picker": "^2.7.5",
+    "@react-navigation/bottom-tabs": "^6.6.1",
+    "@react-navigation/native": "^6.1.18",
+    "@react-navigation/native-stack": "^6.11.0",
+    "@reduxjs/toolkit": "^2.2.7",
+    "@rneui/base": "^4.0.0-rc.7",
+    "@rneui/themed": "^4.0.0-rc.8",
+    "axios": "^1.7.5",
+    "expo": "~51.0.28",
     "expo-status-bar": "~1.12.1",
-    "nativewind": "4.0.36",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-hook-form": "^7.52.2",
     "react-native": "0.74.5",
-    "react-native-gesture-handler": "~2.16.1",
-    "react-native-reanimated": "^3.15.0",
-    "react-native-safe-area-context": "4.10.5",
-    "react-native-screens": "3.31.1",
-    "react-native-svg": "13.4.0",
+    "react-native-flash-message": "^0.4.2",
+    "react-native-gesture-handler": "^2.16.1",
+    "react-native-safe-area-context": "^4.10.5",
+    "react-native-screens": "^3.31.1",
+    "react-native-vector-icons": "^10.1.0",
     "react-native-web": "~0.19.10",
-    "tailwindcss": "^3.4.10"
+    "react-redux": "^9.1.2",
+    "yup": "^1.4.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.24.0",
-    "@babel/preset-env": "^7.22.9",
-    "jscodeshift": "0.15.2",
-    "prettier": "^3.3.3"
+    "@babel/core": "^7.20.0",
+    "@types/react": "~18.2.45",
+    "typescript": "^5.3.3"
   },
   "private": true
 }

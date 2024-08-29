@@ -50,8 +50,8 @@ const customerRegisterValidator = [
     .withMessage('Password must be between 6 and 20 characters'),
 
   body('gender')
-    .isIn(['Nam', 'Nữ'])
-    .withMessage('Gender must be "Nam" or "Nữ"')
+    .isIn(['Male', 'Female'])
+    .withMessage('Gender must be "Male" or "Female"')
 ];
 
 const loginValidator = [

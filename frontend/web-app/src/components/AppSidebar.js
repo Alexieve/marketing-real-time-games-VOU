@@ -24,10 +24,10 @@ const AppSidebar = () => {
   const dispatch = useDispatch();
   const unfoldable = useSelector((state) => state.sidebar.sidebarUnfoldable);
   const sidebarShow = useSelector((state) => state.sidebar.sidebarShow);
-  const user = useSelector((state) => state.auth.user);
-
+  const { user } = useSelector((state) => state.auth);
+  console.log("User:", user);
   const filteredNav = navigation.filter((item) =>
-    item.roles.includes(user.role),
+    item.roles.includes(user?.role),
   );
 
   const visibleChangeHandler = (visible) => {

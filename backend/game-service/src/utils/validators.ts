@@ -13,7 +13,7 @@ const gameInforValidator = [
     .isEmpty()
     .withMessage('Name is required'),
 
-  body('image')
+  body('imageUrl')
     .trim()
     .not()
     .isEmpty()
@@ -23,11 +23,11 @@ const gameInforValidator = [
     .isBoolean()
     .withMessage('Trading must be true or false'),
 
-  body('instructions')
+  body('guide')
     .trim()
     .not()
     .isEmpty()
-    .withMessage('Image is required'),
+    .withMessage('Guide is required'),
 ];
 
 export {gameInforValidator};

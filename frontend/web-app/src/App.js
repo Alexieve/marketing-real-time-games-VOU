@@ -8,16 +8,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { authActions } from "./stores/authSlice";
 import routes from "./routes";
 
-// Containers
-const DefaultLayout = React.lazy(() => import("./layout/DefaultLayout"));
-
-// Pages
-const Page404 = React.lazy(() => import("./views/pages/page404/Page404"));
-const Page500 = React.lazy(() => import("./views/pages/page500/Page500"));
-
-// Guards
-import AuthGuard from "./guards/AuthGuard";
-
 const App = () => {
   const dispatch = useDispatch();
   const { isInitialized, user } = useSelector((state) => state.auth);
@@ -65,8 +55,11 @@ const App = () => {
           {routes.map((route, idx) => (
             <Route key={idx} path={route.path} element={route.element} />
           ))}
-          <Route path="/404" element={<Page404 />} />
-          <Route path="/500" element={<Page500 />} />
+          {user === null && (
+            <>
+              <Route path="/" element={<Navigate to="/login" replace />} />
+            </>
+          )}
           {user?.role === "Admin" && (
             <>
               <Route
@@ -81,21 +74,21 @@ const App = () => {
           )}
           {user?.role === "Brand" && (
             <>
-              <Route path="/" element={<Navigate to="/event" replace />} />
+              <Route path="/" element={<Navigate to="/events" replace />} />
+              <Route
+                path="/event/edit"
+                element={<Navigate to="/events" replace />}
+              />
+              <Route
+                path="/voucher/edit"
+                element={<Navigate to="/voucher" replace />}
+              />
               <Route
                 path="/report"
                 element={<Navigate to="/report/brand" replace />}
               />
             </>
           )}
-          <Route
-            path="*"
-            element={
-              <AuthGuard>
-                <DefaultLayout />
-              </AuthGuard>
-            }
-          />
         </Routes>
       </Suspense>
     </BrowserRouter>
