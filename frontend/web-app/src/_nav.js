@@ -27,7 +27,7 @@ const _nav = [
   {
     component: CNavItem,
     name: "Vouchers",
-    to: "/voucher",
+    to: "/vouchers",
     icon: <CIcon icon={cilGift} customClassName="nav-icon" />,
     roles: ["Brand"], // Chỉ Brand có thể truy cập
   },

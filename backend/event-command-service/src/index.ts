@@ -1,15 +1,19 @@
 import express from 'express';
 import { connectToDatabase } from './connection';
-import bodyParser, { json } from 'body-parser';
 const cors = require('cors');
 
 // Routes
 import eventCreateRouter from './routes/EventCreate';
 import eventDeleteRouter from './routes/EventDelete';
 import eventUpdateRouter from './routes/EventUpdate';
+import eventGetAllRouter from './routes/EventGetAll';
+import eventGetByIdRouter from './routes/EventGetById';
+
 import voucherCreateRouter from './routes/VoucherCreate';
 import voucherDeleteRouter from './routes/VoucherDelete';
 import voucherUpdateRouter from './routes/VoucherUpdate';
+import voucherGetAllRouter from './routes/VoucherGetAll';
+import voucherGetByIdRouter from './routes/VoucherGetById';
 
 import { connectRabbitMQ } from './utils/publisher';
 
@@ -19,17 +23,20 @@ import { NotFoundError } from './errors/not-found-error';
 
 const app = express();
 const port = 3000;
-// Middleware to parse multipart/form-data
-// app.use(express.urlencoded({ extended: true }));
-// app.use(express.json()); 
+app.use(cors());
 
 /** Routes */
 app.use(eventCreateRouter);
 app.use(eventDeleteRouter);
 app.use(eventUpdateRouter);
+app.use(eventGetAllRouter);
+app.use(eventGetByIdRouter);
+
 app.use(voucherCreateRouter);
 app.use(voucherDeleteRouter);
 app.use(voucherUpdateRouter);
+app.use(voucherGetAllRouter);
+app.use(voucherGetByIdRouter);
 
 // // Try to throw not found error
 app.all('*', async (req, res) => {

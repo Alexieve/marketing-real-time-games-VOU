@@ -1,6 +1,6 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { Event } from '../models/EventModel';
-import { Voucher } from '../models/VoucherModel';
+import { Event } from '../models/EventCommandModel';
+import { Voucher } from '../models/VoucherCommandModel';
 import { BadRequestError } from '../errors/bad-request-error';
 import { publishToExchanges } from '../utils/publisher';
 import axios from 'axios';
@@ -9,7 +9,7 @@ const router = express.Router();
 
 router.use(express.json());
 
-router.delete('/api/vouchers/delete/:id', async (req: Request, res: Response, next: NextFunction) => {
+router.delete('/api/event_command/voucher/delete/:id', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id } = req.params;
 
@@ -29,7 +29,7 @@ router.delete('/api/vouchers/delete/:id', async (req: Request, res: Response, ne
         }
 
         // Delete the image from the image service
-        const imageName = result._id + result.imageUrl;
+        const imageName = result.imageUrl.split('/').pop();
         const response = await axios.delete(`http://image-srv:3000/api/image/deleting/${imageName}`);
 
         if (response.status !== 200) {

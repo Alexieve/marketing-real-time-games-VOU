@@ -24,32 +24,18 @@ spec:
                 name: user-srv
                 port: 
                   number: 3000
-          - path : /api/events_query/
-            pathType: Prefix
+          - path : /api/event_query/?(.*)
+            pathType: ImplementationSpecific
             backend:
               service:
                 name: event-query-srv
                 port: 
                   number: 3000
-          - path: /api/events/
-            pathType: Prefix
+          - path: /api/event_command/?(.*)
+            pathType: ImplementationSpecific
             backend:
               service:
-                name: event-srv
-                port: 
-                  number: 3000
-          - path: /api/vouchers/
-            pathType: Prefix
-            backend:
-              service:
-                name: event-srv
-                port: 
-                  number: 3000
-          - path: /api/event_create_bff/
-            pathType: Prefix
-            backend:
-              service:
-                name: event-create-bff-srv
+                name: event-command-srv
                 port: 
                   number: 3000
           - path: /api/image/
@@ -72,4 +58,4 @@ spec:
               service:
                 name: web-app-srv
                 port: 
-                  number: 3000                                                    
+                  number: 3000

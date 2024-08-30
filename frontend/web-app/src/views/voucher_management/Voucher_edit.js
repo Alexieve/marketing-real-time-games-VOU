@@ -19,10 +19,6 @@ import {
     CRow,
     CCol,
     CFormTextarea,
-    CToast,
-    CToastHeader,
-    CToastBody,
-    CToaster,
     CInputGroup,
     CInputGroupText
 } from '@coreui/react';
@@ -46,7 +42,7 @@ const VoucherEdit = () => {
 
     useEffect(() => {
         // Fetch voucher data using the provided ID
-        axios.get(`/api/events_query/get_voucher_byId/${id}`)
+        axios.get(`/api/event_command/voucher_detail/${id}`)
             .then(async function (response) {
                 let time = response.data.expTime;
                 response.data.expTime = moment(time).format("YYYY-MM-DDTkk:mm");
@@ -118,7 +114,7 @@ const VoucherEdit = () => {
             formData.append('status', status);
             formData.append('brand', brand);
 
-            const response = await axios.put(`/api/vouchers/update/${id}`, formData, {
+            const response = await axios.put(`/api/event_command/voucher/update/${id}`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }

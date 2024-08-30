@@ -1,16 +1,16 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: event-depl
+  name: event-command-depl
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: event
+      app: event-command
   template:
     metadata:
       labels:
-        app: event
+        app: event-command
     spec:
       initContainers:
         - name: wait-for-rabbitmq
@@ -20,18 +20,18 @@ spec:
           image: busybox:1.31
           command: ['sh', '-c', 'until nc -zv redis 6379; do echo "Waiting for Redis..."; sleep 5; done']
       containers:
-        - name: event
-          image: nlhkha03/event
+        - name: event-command
+          image: nlhkha03/event-command
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: event-srv
+  name: event-command-srv
 spec:
   selector:
-    app: event
+    app: event-command
   ports:
-    - name: event
+    - name: event-command
       protocol: TCP
       port: 3000
       targetPort: 3000

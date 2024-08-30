@@ -44,8 +44,16 @@ build:
       manual:
       - src: "src/**/*.ts"
         dest: .
-  - image: nlhkha03/event
-    context: backend/event-service
+  - image: vmquynh/web-app
+    context: frontend/web-app
+    docker:
+      dockerfile: Dockerfile
+    sync:
+      manual:
+      - src: "src/**/*.js"
+        dest: .
+  - image: nlhkha03/event-command
+    context: backend/event-command-service
     docker:
       dockerfile: Dockerfile
     sync:
@@ -68,11 +76,4 @@ build:
       manual:
       - src: "src/**/*.ts"
         dest: .
-  - image: vmquynh/web-app
-    context: frontend/web-app
-    docker:
-      dockerfile: Dockerfile
-    sync:
-      manual:
-      - src: "src/**/*.js"
-        dest: .
+ 

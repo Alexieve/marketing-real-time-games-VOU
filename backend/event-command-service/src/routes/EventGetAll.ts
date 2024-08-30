@@ -1,14 +1,13 @@
 import express, { Request, Response, NextFunction } from 'express';
-import { Event } from '../models/EventQueryModel';
+import { Event } from '../models/EventCommandModel';
 
 const router = express.Router();
 
 router.use(express.json());
 
-router.get('/api/event_query/get_events/:brand', async (req: Request, res: Response, next: NextFunction) => {
+router.get('/api/event_command/get_events/:brand', async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { brand } = req.params;
-        // Find all events for the specified brand
         const events = await Event.find({ brand: brand });
         res.status(200).send(events);
     }

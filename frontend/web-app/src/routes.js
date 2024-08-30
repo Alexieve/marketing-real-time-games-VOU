@@ -112,7 +112,7 @@ const routes = [
     ),
   },
   {
-    path: "/voucher",
+    path: "/vouchers",
     name: "Voucher",
     element: (
       <RoleBasedGuard accessibleRoles={["Brand"]}>
@@ -121,7 +121,7 @@ const routes = [
     ),
   },
   {
-    path: "/voucher/create",
+    path: "/vouchers/create",
     name: "Create Voucher",
     element: (
       <RoleBasedGuard accessibleRoles={["Brand"]}>
@@ -130,7 +130,7 @@ const routes = [
     ),
   },
   {
-    path: "/voucher/edit/:id",
+    path: "/vouchers/edit/:id",
     name: "Edit Voucher",
     element: (
       <RoleBasedGuard accessibleRoles={["Brand"]}>

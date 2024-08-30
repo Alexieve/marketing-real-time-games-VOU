@@ -6,7 +6,6 @@ const cors = require('cors');
 // Routes 
 import eventQueryRoutes from './routes/EventQuery';
 import voucherQueryRoutes from './routes/VoucherQuery';
-import voucherByIdQueryRoutes from './routes/VoucherByIdQuery';
 import gameQueryRoutes from './routes/GameQuery';
 
 // Subscriber
@@ -26,7 +25,6 @@ app.use(cors());
 app.use(eventQueryRoutes);
 app.use(voucherQueryRoutes);
 app.use(gameQueryRoutes);
-app.use(voucherByIdQueryRoutes);
 
 app.use(errorHandler);
 

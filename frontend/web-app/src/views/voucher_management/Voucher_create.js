@@ -32,7 +32,7 @@ const VoucherCreate = () => {
         quantity: 0,
         expTime: "",
         status: "active",
-        brand: user ? user.name : ""
+        brand: user ? user.id : ""
     });
 
     const [imagePreview, setImagePreview] = useState(null);
@@ -88,7 +88,7 @@ const VoucherCreate = () => {
             formData.append('status', status);
             formData.append('brand', brand);
 
-            const response = await axios.post('/api/vouchers/create', formData, {
+            const response = await axios.post('/api/event_command/voucher/create', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
@@ -104,7 +104,7 @@ const VoucherCreate = () => {
                 quantity: 0,
                 expTime: "",
                 status: "active",
-                brand: user ? user.name : ""
+                brand: user ? user.id : ""
             });
             // Clear the image preview
             setImagePreview(null);
