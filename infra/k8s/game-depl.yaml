@@ -12,12 +12,16 @@ spec:
       labels:
         app: game
     spec:
+      initContainers:
+        - name: wait-for-postgres
+          image: busybox
+          command: ['sh', '-c', 'until nc -z postgres-game-srv 5432; do echo waiting for postgres; sleep 2; done;']
+        - name: wait-for-redis
+          image: busybox:1.31
+          command: ['sh', '-c', 'until nc -zv redis 6379; do echo "Waiting for Redis..."; sleep 5; done']
       containers:
         - name: game
           image: vmquynh/game
-          volumeMounts:
-            - mountPath: "/app/data"
-              name: game-storage
           env:
             - name: JWT_KEY
               valueFrom:
@@ -34,10 +38,6 @@ spec:
               value: "game-admin"
             - name: DB_PASSWORD
               value: "game-admin"
-      volumes:
-        - name: game-storage
-          persistentVolumeClaim:
-            claimName: blob-pvc
 ---
 apiVersion: v1
 kind: Service

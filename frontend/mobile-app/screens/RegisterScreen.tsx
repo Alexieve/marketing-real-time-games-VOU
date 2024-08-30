@@ -19,7 +19,7 @@ const RegisterScreen = () => {
 
   const onSubmit = async (data: any) => {
     try {
-      const { user, token } = await request(`${localhost}/api/auth/register/customer`, 'post', data);
+      const { user, token } = await request(`/api/auth/register/customer`, 'post', data);
       dispatch(authActions.login({ user, token }));
       navigation.navigate('Home' as never);
     } catch (err: any) {

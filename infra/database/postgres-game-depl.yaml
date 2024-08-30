@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: postgres-game-depl
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres-game
+  template:
+    metadata:
+      labels:
+        app: postgres-game
+    spec:
+      containers:
+        - name: postgres-game
+          image: postgres:latest
+          ports:
+            - containerPort: 5432
+          env:
+            - name: POSTGRES_DB
+              value: game-db
+            - name: POSTGRES_USER
+              value: game-admin
+            - name: POSTGRES_PASSWORD
+              value: game-admin
+          volumeMounts:
+          - name: postgres-game-storage
+            mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: postgres-game-storage
+        persistentVolumeClaim:
+          claimName: postgres-game-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-game-srv
+spec:
+  type: NodePort
+  ports:
+    - name: db
+      protocol: TCP
+      port: 5432
+      targetPort: 5432
+      nodePort: 31423
+  selector:
+    app: postgres-game

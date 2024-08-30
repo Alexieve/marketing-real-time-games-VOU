@@ -1,23 +1,22 @@
 apiVersion: v1
 kind: PersistentVolume
 metadata:
-  name: blob-pv
+  name: postgres-game-pv
 spec:
-  capacity:
-    storage: 100Mi
   accessModes:
     - ReadWriteOnce
+  capacity:
+    storage: 500Mi
   hostPath:
-    path: "/mnt/data"
-
+    path: /mnt/data/postgres-game
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
 metadata:
-  name: blob-pvc
+  name: postgres-game-pvc
 spec:
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
-      storage: 100Mi
+      storage: 500Mi
