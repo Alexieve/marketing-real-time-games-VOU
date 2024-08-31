@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { AppSidebar, AppFooter, AppHeader } from '../../components/index';
 import { useParams } from 'react-router-dom';
 import { ToastContainer, toast } from "react-toastify";
-import '../../../scss/event/event.scss';
+import '../../scss/event/event.scss';
 import "react-toastify/dist/ReactToastify.css";
 import moment from 'moment';
 

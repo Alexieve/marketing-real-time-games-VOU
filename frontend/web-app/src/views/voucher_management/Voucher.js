@@ -26,7 +26,7 @@ import {
 } from '@coreui/react';
 import { CIcon } from '@coreui/icons-react'
 import { cilSearch, cilInfo } from '@coreui/icons';
-import '../../../scss/event/event.scss';
+import '../../scss/event/event.scss';
 
 const Voucher = () => {
     const [voucherData, setVoucherData] = useState([]);

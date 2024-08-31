@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { AppSidebar, AppFooter, AppHeader } from "../../../components/index";
+import { AppSidebar, AppFooter, AppHeader } from "../../components/index";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useSelector } from 'react-redux';
@@ -10,7 +10,7 @@ import {
 } from '@coreui/react';
 import CIcon from '@coreui/icons-react';
 import { cilSearch, cilInfo } from '@coreui/icons';
-import '../../../scss/event/event.scss';
+import '../../scss/event/event.scss';
 import CustomDateRangePicker from './CustomDateRangePicker';
 
 const Event = () => {
