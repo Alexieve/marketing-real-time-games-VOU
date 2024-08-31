@@ -4,13 +4,14 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import HomeScreen from '../screens/HomeScreen';
+import Quiz from '../screens/HQ-Trivia/Quiz';
 
 const Stack = createNativeStackNavigator();
 
 const AppNavigation = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
+      <Stack.Navigator initialRouteName="Quiz">
         <Stack.Screen
           name="Login"
           component={LoginScreen}
@@ -24,6 +25,11 @@ const AppNavigation = () => {
         <Stack.Screen
           name="Home"
           component={HomeScreen}
+          options={{ headerShown: false }} // Ẩn header
+        />
+        <Stack.Screen
+          name="Quiz"
+          component={Quiz}
           options={{ headerShown: false }} // Ẩn header
         />
       </Stack.Navigator>
