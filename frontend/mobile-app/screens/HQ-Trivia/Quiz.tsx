@@ -1,111 +1,144 @@
-import React, { useState } from "react";
+import React, { useEffect } from "react";
 import {
-  View,
   SafeAreaView,
   StatusBar,
-  Image,
-  Animated,
-  ScrollView,
+  View,
   StyleSheet,
+  Image,
+  ScrollView,
+  TouchableOpacity,
+  Text,
 } from "react-native";
+import FlashMessage, { showMessage } from 'react-native-flash-message';
 import { COLORS, SIZES } from "../../constants";
-import * as Speech from "expo-speech"; // Import expo-speech
+import { useSelector } from "react-redux";
+import { quizActions } from "../../slices/quizSlice";
+import Animation from "../../components/HQ-Trivia/Animation";
 import data from "../../data/QuizData";
-import ProgressBar from "../../components/ProgressBar";
-import Question from "../../components/Question";
-import Options from "../../components/Options";
-import NextButton from "../../components/NextButton";
-import ScoreModal from "../../components/ScoreModal";
+import { useNavigation } from "@react-navigation/native";
+import Icon from "react-native-vector-icons/Ionicons";
+import { fetchPlayLog, fetchPoints, fetchExchangeLog, fetchPlayTurn } from "../../thunks/quizThunk";
+import { useAppDispatch } from "../../store";
+import { unwrapResult } from "@reduxjs/toolkit";
+import PlayLog from "../../components/HQ-Trivia/PlayLog"; // Import the new component
+import ExchangeLog from "../../components/HQ-Trivia/ExchangeLog"; // Import the new component
+import GamePlay from "../../components/HQ-Trivia/GamePlay";
 
 const Quiz = () => {
-  const allQuestions = data;
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [currentOptionSelected, setCurrentOptionSelected] = useState<
-    null | string
-  >(null);
-  const [correctOption, setCorrectOption] = useState<null | string>(null);
-  const [isOptionsDisabled, setIsOptionsDisabled] = useState(false);
-  const [score, setScore] = useState(0);
-  const [showNextButton, setShowNextButton] = useState(false);
-  const [showScoreModal, setShowScoreModal] = useState(false);
-  const [progress, setProgress] = useState(new Animated.Value(0));
+  const dispatch = useAppDispatch();
+  const navigation = useNavigation();
 
-  const validateAnswer = (selectedOption: any) => {
-    let correct_option = allQuestions[currentQuestionIndex]["correct_option"];
-    setCurrentOptionSelected(selectedOption);
-    setCorrectOption(correct_option);
-    setIsOptionsDisabled(true);
+  const { point, hasStarted, playlog, exchangeLog } = useSelector((state: any) => state.quiz);
 
-    if (selectedOption == correct_option) {
-      setScore(score + 1);
-      Speech.speak("Congratulations. You are correct.");
+  const goBack = () => {
+    if (hasStarted) {
+      dispatch(quizActions.resetQuiz());
     } else {
-      Speech.speak(`Oh no, you are wrong. The answer is ${correct_option}`);
+      navigation.goBack();
     }
-
-    setShowNextButton(true);
   };
 
-  const handleNext = () => {
-    if (currentQuestionIndex == allQuestions.length - 1) {
-      setShowScoreModal(true);
+  const startQuiz = async () => {
+    const res = await dispatch(fetchPlayTurn({ customerID: 1, eventID: "66c6f1c4c33e15ad0805fc98" }));
+    const playturn = unwrapResult(res);
+    console.log(playturn);
+    if (playturn > 0) {
+      dispatch(quizActions.initializeQuiz(data));
     } else {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-      setCurrentOptionSelected(null);
-      setCorrectOption(null);
-      setIsOptionsDisabled(false);
-      setShowNextButton(false);
+      showMessage({
+        message: "Oh no!",
+        description: "You don't have enough play turn.",
+        type: "danger",
+      });
     }
-    Animated.timing(progress, {
-      toValue: currentQuestionIndex + 1,
-      duration: 1000,
-      useNativeDriver: false,
-    }).start();
+    
   };
 
-  const restartQuiz = () => {
-    setShowScoreModal(false);
-    setCurrentQuestionIndex(0);
-    setScore(0);
-    setCurrentOptionSelected(null);
-    setCorrectOption(null);
-    setIsOptionsDisabled(false);
-    setShowNextButton(false);
-    Animated.timing(progress, {
-      toValue: 0,
-      duration: 1000,
-      useNativeDriver: false,
-    }).start();
+  const viewPlayLog = async () => {
+    const res = await dispatch(
+      fetchPlayLog({ customerID: 1, eventID: "66c6f1c4c33e15ad0805fc98" })
+    );
+    const play = unwrapResult(res);
+    dispatch(quizActions.toggleShowPlayLog(play));
+  };
+
+  const viewExchangeLog = async () => {
+    const res = await dispatch(
+      fetchExchangeLog({ customerID: 1, eventID: "66c6f1c4c33e15ad0805fc98" })
+    );
+    const exchanges = unwrapResult(res);
+    dispatch(quizActions.toggleShowExchangeLog(exchanges));
+  }
+
+  useEffect(() => {
+    const customerID = 1;
+    const eventID = "66c6f1c4c33e15ad0805fc98";
+    dispatch(fetchPoints({ customerID, eventID }));
+  }, [dispatch, point]);
+
+  const renderGameHomePage = () => {
+    return (
+      <>
+        <TouchableOpacity style={styles.button} onPress={startQuiz}>
+          <Icon
+            name="play-circle"
+            size={24}
+            color={COLORS.white}
+            style={styles.icon}
+          />
+          <Text style={styles.buttonText}>Start Quiz</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={viewPlayLog}>
+          <Icon
+            name="document-text-outline"
+            size={24}
+            color={COLORS.white}
+            style={styles.icon}
+          />
+          <Text style={styles.buttonText}>View Play Log</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={viewExchangeLog}>
+          <Icon
+            name="gift"
+            size={24}
+            color={COLORS.white}
+            style={styles.icon}
+          />
+          <Text style={styles.buttonText}>View Exchange Log</Text>
+        </TouchableOpacity>
+        <Image
+          source={require("../../assets/images/DottedBG.png")}
+          style={styles.backgroundImage}
+          resizeMode={"contain"}
+        />
+        {playlog?.length > 0 && <PlayLog />}
+        {exchangeLog?.length > 0 && <ExchangeLog />}
+      </>
+    );
   };
 
   return (
     <SafeAreaView style={styles.safeAreaView}>
-      <StatusBar barStyle="light-content" backgroundColor={COLORS.primary} />
+      <StatusBar
+        translucent
+        backgroundColor={COLORS.primary}
+        barStyle="dark-content"
+      />
+
+      <View style={styles.header}>
+        <TouchableOpacity style={styles.backButton} onPress={goBack}>
+          <Icon name="arrow-back" size={24} color={COLORS.white} />
+        </TouchableOpacity>
+        <Text style={styles.titleText}>HQ Trivia</Text>
+        <View style={styles.scoreContainer}>
+          <Text style={styles.scoreText}>Point: {point}</Text>
+        </View>
+      </View>
+
       <ScrollView contentContainerStyle={styles.scrollViewContentContainer}>
         <View style={styles.container}>
-          <ProgressBar
-            progress={progress}
-            totalQuestions={allQuestions.length}
-          />
-          <Question
-            currentQuestion={allQuestions[currentQuestionIndex]}
-            currentIndex={currentQuestionIndex}
-            totalQuestions={allQuestions.length}
-          />
-          <Options
-            options={allQuestions[currentQuestionIndex]?.options}
-            validateAnswer={validateAnswer}
-            correctOption={correctOption || ""}
-            currentOptionSelected={currentOptionSelected ?? ""}
-            isOptionsDisabled={isOptionsDisabled}
-          />
-          <NextButton showNextButton={showNextButton} handleNext={handleNext} />
-          <ScoreModal
-            showScoreModal={showScoreModal}
-            score={score}
-            totalQuestions={allQuestions.length}
-            restartQuiz={restartQuiz}
-          />
+          <Animation />
+          {!hasStarted ? renderGameHomePage() : <GamePlay />}
           <Image
             source={require("../../assets/images/DottedBG.png")}
             style={styles.backgroundImage}
@@ -113,11 +146,62 @@ const Quiz = () => {
           />
         </View>
       </ScrollView>
+      <FlashMessage position="top" />
     </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  header: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingHorizontal: 16,
+    height: 60,
+    backgroundColor: COLORS.primary,
+  },
+  titleText: {
+    color: COLORS.white,
+    fontSize: 20,
+    fontWeight: "bold",
+  },
+  backButton: {
+    backgroundColor: COLORS.accent,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  scoreContainer: {
+    backgroundColor: COLORS.accent,
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderRadius: 5,
+  },
+  scoreText: {
+    color: COLORS.white,
+    fontSize: 16,
+    fontWeight: "bold",
+  },
+  button: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 20,
+    width: "100%",
+    backgroundColor: COLORS.accent,
+    padding: 20,
+    borderRadius: 5,
+  },
+  buttonText: {
+    fontSize: 20,
+    color: COLORS.white,
+    textAlign: "center",
+    marginLeft: 10,
+  },
+  icon: {
+    marginRight: 10,
+  },
   safeAreaView: {
     flex: 1,
   },

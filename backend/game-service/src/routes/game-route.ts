@@ -7,7 +7,7 @@ const route = express.Router();
 route.get('/api/game/game-config/:gameID', 
 async (req: Request, res: Response) => {
     try {
-        if (req.params.gameID) {
+        if (req.params.gameID !== ':gameID') {
             const gameID = parseInt(req.params.gameID as string);
             const game = await Game.getGameByID(gameID);
             res.send(game);

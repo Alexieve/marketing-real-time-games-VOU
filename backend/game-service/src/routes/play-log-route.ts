@@ -8,7 +8,7 @@ import { EventGame } from '../models/event-game';
 import { RedisClient } from '@vmquynh-vou/shared';
 const route = express.Router();
 
-route.get('/api/game/check-play-turn/:eventID/:customerID',
+route.get('/api/game/check-play-turn/:eventID/:customerID', // Check play turn
 async (req: Request, res: Response) => {
     try {
         if (req.params.eventID && req.params.customerID) {
@@ -37,7 +37,7 @@ async (req: Request, res: Response) => {
     }
 });
 
-route.put('/api/game/add-play-turn/:eventID/:customerID',
+route.put('/api/game/add-play-turn/:eventID/:customerID', // Add play turn
 async (req: Request, res: Response) => {
     try {
         if (req.params.eventID && req.params.customerID) {
@@ -61,7 +61,7 @@ async (req: Request, res: Response) => {
     }
 });
 
-route.get('/api/game/play-log/:eventID/:customerID', 
+route.get('/api/game/play-log/:eventID/:customerID', // Get play log
 async (req: Request, res: Response) => {
     try {
         if (req.params.eventID && req.params.customerID) {
@@ -78,7 +78,7 @@ async (req: Request, res: Response) => {
     }
 });
 
-route.post('/api/game/play-log',
+route.post('/api/game/play-log', // Add playlog and decrease play turn
 async (req: Request, res: Response) => {
     const {customerID, eventID} = req.body;
     console.log(req.body);
