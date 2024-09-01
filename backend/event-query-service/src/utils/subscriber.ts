@@ -7,9 +7,9 @@ import { event_deleted } from './exchanges/event_deleted';
 import { voucher_created } from './exchanges/voucher_created';
 import { voucher_deleted } from './exchanges/voucher_deleted';
 import { voucher_updated } from './exchanges/voucher_updated';
-import { game_created } from './exchanges/game_created';
-import { game_deleted } from './exchanges/game_deleted';
-import { game_updated } from './exchanges/game_updated';
+import { game_created } from './exchanges/tmp/game_created';
+import { game_deleted } from './exchanges/tmp/game_deleted';
+import { game_updated } from './exchanges/tmp/game_updated';
 
 let connection: Connection;
 let channel: Channel;

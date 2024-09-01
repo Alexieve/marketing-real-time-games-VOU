@@ -45,7 +45,8 @@ const VoucherEdit = () => {
         axios.get(`/api/event_command/voucher_detail/${id}`)
             .then(async function (response) {
                 let time = response.data.expTime;
-                response.data.expTime = moment(time).format("YYYY-MM-DDTkk:mm");
+                response.data.expTime = moment(time).format("YYYY-MM-DDTHH:mm");
+                console.log(response.data.expTime);
                 setVoucherData(response.data);
                 setImagePreview(response.data.imageUrl);
                 // Create Blob object from the image URL and assign it to the imageUrl property
@@ -74,6 +75,10 @@ const VoucherEdit = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
+        if (name == "expTime" && new Date(value) < new Date()) {
+            toast.warning("Expiration time must be in the future");
+            return;
+        }
         setVoucherData((prevData) => ({
             ...prevData,
             [name]: value
@@ -96,7 +101,8 @@ const VoucherEdit = () => {
             toast.warning("Price must be a positive number");
             return;
         }
-        if (new Date(expTime) < new Date()) {
+
+        if (new Date(expTime) <= new Date()) {
             toast.warning("Expiration time must be in the future");
             return;
         }
@@ -155,6 +161,7 @@ const VoucherEdit = () => {
                                                 value={voucherData.code}
                                                 onChange={handleChange}
                                                 required
+                                                disabled={(new Date(voucherData.expTime) < new Date()) ? true : false}
                                             />
                                         </CInputGroup>
 
@@ -167,6 +174,7 @@ const VoucherEdit = () => {
                                                 value={voucherData.qrCodeUrl}
                                                 onChange={handleChange}
                                                 required
+                                                disabled={(new Date(voucherData.expTime) < new Date()) ? true : false}
                                             />
                                         </CInputGroup>
 
@@ -178,9 +186,14 @@ const VoucherEdit = () => {
                                                 name="imageUrl"
                                                 onChange={handleFileChange}
                                                 required={false} // Image is not required when editing
+                                                disabled={(new Date(voucherData.expTime) < new Date()) ? true : false}
                                             />
                                         </CInputGroup>
-                                        {imagePreview && <CCardImage className="card-image mb-3" orientation="top" src={imagePreview} />}
+                                        {imagePreview &&
+                                            <div className="imageContainer mb-3">
+                                                <CCardImage className="image" src={imagePreview} />
+                                            </div>
+                                        }
                                         <CInputGroup className="mb-3">
                                             <CInputGroupText id="basic-addon1">Price</CInputGroupText>
                                             <CFormInput
@@ -190,6 +203,7 @@ const VoucherEdit = () => {
                                                 value={voucherData.price}
                                                 onChange={handleChange}
                                                 required
+                                                disabled={(new Date(voucherData.expTime) < new Date()) ? true : false}
                                             />
                                         </CInputGroup>
 
@@ -201,6 +215,7 @@ const VoucherEdit = () => {
                                                 value={voucherData.description}
                                                 onChange={handleChange}
                                                 required
+                                                disabled={(new Date(voucherData.expTime) < new Date()) ? true : false}
                                             />
                                         </CInputGroup>
 
@@ -213,6 +228,7 @@ const VoucherEdit = () => {
                                                 value={voucherData.quantity}
                                                 onChange={handleChange}
                                                 required
+                                                disabled={(new Date(voucherData.expTime) < new Date()) ? true : false}
                                             />
                                         </CInputGroup>
 
@@ -225,6 +241,7 @@ const VoucherEdit = () => {
                                                 value={voucherData.expTime}
                                                 onChange={handleChange}
                                                 required
+                                                disabled={(new Date(voucherData.expTime) < new Date()) ? true : false}
                                             />
                                         </CInputGroup>
 
@@ -236,6 +253,7 @@ const VoucherEdit = () => {
                                                 value={voucherData.status}
                                                 onChange={handleChange}
                                                 required
+                                                disabled={(new Date(voucherData.expTime) < new Date()) ? true : false}
                                             >
                                                 <option value="active">Active</option>
                                                 <option value="inactive">Inactive</option>
@@ -251,6 +269,7 @@ const VoucherEdit = () => {
                                                 value={voucherData.brand}
                                                 onChange={handleChange}
                                                 required
+                                                disabled={(new Date(voucherData.expTime) < new Date()) ? true : false}
                                                 readOnly
                                             />
                                         </CInputGroup>

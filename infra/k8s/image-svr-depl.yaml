@@ -19,7 +19,7 @@ spec:
             - containerPort: 3000
           volumeMounts:
             - name: image-storage
-              mountPath: /app/image
+              mountPath: /app/images
       volumes:
         - name: image-storage
           persistentVolumeClaim:

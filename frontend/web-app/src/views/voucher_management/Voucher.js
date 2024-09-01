@@ -3,6 +3,7 @@ import { AppSidebar, AppFooter, AppHeader } from '../../components/index';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
 import { useSelector } from 'react-redux';
+import { ToastContainer, toast } from "react-toastify";
 import moment from 'moment';
 import {
     CCard,
@@ -43,7 +44,13 @@ const Voucher = () => {
                     setVoucherData(response.data);
                 })
                 .catch(error => {
-                    console.error('Error fetching voucher data:', error);
+                    if (error.response.data.errors.length > 0) {
+                        for (let i = 0; i < error.response.data.errors.length; i++) {
+                            toast.error(error.response.data.errors[i].message);
+                        }
+                    } else {
+                        toast.error("An error occurred. Please try again later");
+                    }
                 });
         };
         fetchData();
@@ -61,7 +68,13 @@ const Voucher = () => {
                 }
             })
             .catch(error => {
-                console.error('Error deleting voucher:', error);
+                if (error.response.data.errors.length > 0) {
+                    for (let i = 0; i < error.response.data.errors.length; i++) {
+                        toast.error(error.response.data.errors[i].message);
+                    }
+                } else {
+                    toast.error("An error occurred. Please try again later");
+                }
             });
     };
 
@@ -79,19 +92,6 @@ const Voucher = () => {
 
     const handleSearchChange = (e) => {
         setSearchQuery(e.target.value);
-    };
-
-    const formatDateTime = (dateTime) => {
-        const date = new Date(dateTime);
-        const options = {
-            day: '2-digit',
-            month: '2-digit',
-            year: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: true,
-        };
-        return date.toLocaleString('en-GB', options);
     };
 
     const filteredItems = voucherData.filter(voucher =>
@@ -136,7 +136,9 @@ const Voucher = () => {
                                 <CCol md="4" key={voucher._id} className='mb-4'>
                                     <Link to={`/vouchers/edit/${voucher._id}`} className="card-link">
                                         <CCard>
-                                            <CCardImage className="card-image" orientation="top" src={voucher.imageUrl} />
+                                            <div className="imageContainer">
+                                                <CCardImage className="image" src={voucher.imageUrl} />
+                                            </div>
                                             <CCardBody>
                                                 <CCardTitle>{voucher.code}</CCardTitle>
                                                 <CCardText>Price: {voucher.price}</CCardText>
@@ -174,13 +176,26 @@ const Voucher = () => {
                     <h5>Confirm Deletion</h5>
                 </CModalHeader>
                 <CModalBody>
-                    Are you sure you want to delete this voucher?
+                    {selectedVoucher?.eventId ? 'This voucher is belonged to an event, are you sure you want to delete this voucher?' : 'Are you sure you want to delete this voucher?'}
                 </CModalBody>
                 <CModalFooter>
                     <CButton color="danger" onClick={confirmDelete}>Delete</CButton>
                     <CButton color="secondary" onClick={() => setVisible(false)}>Cancel</CButton>
                 </CModalFooter>
             </CModal>
+            <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="colored"
+                transition:Bounce
+            />
         </div >
     );
 };

@@ -1,6 +1,6 @@
-import { Event } from '../../models/EventQueryModel';
-import { Voucher } from '../../models/VoucherQueryModel';
-import { Game } from '../../models/GameQueryModel';
+import { Event } from '../../../models/EventQueryModel';
+import { Voucher } from '../../../models/VoucherQueryModel';
+import { Game } from '../../../models/GameQueryModel';
 
 export const game_updated = {
     exchange: 'game_updated',
@@ -8,10 +8,11 @@ export const game_updated = {
         try {
             if (msg) {
                 const game_msg = JSON.parse(msg.content.toString());
-                console.log("Received game_updated:", game_msg._id);
-                const game = await Game.findById(game_msg._id);
+                console.log("Received game_updated:", game_msg.gameID);
+                const game = await Game.findOne({ gameID: game_msg.gameID });
                 if (game) {
                     game.set({
+                        gameID: game_msg.gameID,
                         name: game_msg.name,
                         type: game_msg.type,
                         imageUrl: game_msg.imageUrl,

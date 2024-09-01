@@ -145,7 +145,9 @@ const Event = () => {
                                 <CCol md="4" key={event._id} className="mb-4">
                                     <Link to={`/events/edit/${event._id}`} state={{ item: event }} className="card-link">
                                         <CCard className="shadow-sm card-hover">
-                                            <CCardImage className="card-image" orientation="top" src={event.imageUrl} />
+                                            <div className="imageContainer">
+                                                <CCardImage className="image" src={event.imageUrl} />
+                                            </div>
                                             <CCardBody style={{ padding: '1rem' }}>
                                                 <div className="d-flex justify-content-between align-items-center mb-2">
                                                     <CCardTitle style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>

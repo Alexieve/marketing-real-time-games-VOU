@@ -1,6 +1,6 @@
-import { Event } from '../../models/EventQueryModel';
-import { Voucher } from '../../models/VoucherQueryModel';
-import { Game } from '../../models/GameQueryModel';
+import { Event } from '../../../models/EventQueryModel';
+import { Voucher } from '../../../models/VoucherQueryModel';
+import { Game } from '../../../models/GameQueryModel';
 
 export const game_created = {
     exchange: 'game_created',
@@ -8,9 +8,9 @@ export const game_created = {
         try {
             if (msg) {
                 const game_msg = JSON.parse(msg.content.toString());
-                console.log("Received game:", game_msg._id);
+                console.log("Received game:", game_msg.gameID);
                 const game = Game.build({
-                    _id: game_msg._id,
+                    gameID: game_msg.gameID,
                     name: game_msg.name,
                     type: game_msg.type,
                     imageUrl: game_msg.imageUrl,

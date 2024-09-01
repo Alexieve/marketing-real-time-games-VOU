@@ -24,15 +24,15 @@ spec:
                 name: user-srv
                 port: 
                   number: 3000
-          - path : /api/event_query/?(.*)
-            pathType: ImplementationSpecific
+          - path : /api/event_query/
+            pathType: Prefix
             backend:
               service:
                 name: event-query-srv
                 port: 
                   number: 3000
-          - path: /api/event_command/?(.*)
-            pathType: ImplementationSpecific
+          - path: /api/event_command/
+            pathType: Prefix
             backend:
               service:
                 name: event-command-srv
@@ -44,7 +44,21 @@ spec:
               service:
                 name: image-srv
                 port: 
-                  number: 3000 
+                  number: 3000
+          - path: /images/
+            pathType: Prefix
+            backend:
+              service:
+                name: image-srv
+                port: 
+                  number: 3000
+          - path: /assets/
+            pathType: Prefix
+            backend:
+              service:
+                name: image-srv
+                port: 
+                  number: 3000    
           - path: /api/game/
             pathType: Prefix
             backend:

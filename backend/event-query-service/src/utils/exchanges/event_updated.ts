@@ -16,11 +16,11 @@ export const event_updated = {
                     throw new Error("Some vouchers not found");
                 }
                 //Take the games data
-                const games = await Game.find({ _id: { $in: event_msg.games } });
-                if (games.length !== event_msg.games.length) {
-                    console.error("Some games not found");
-                    throw new Error("Some games not found");
-                }
+                // const games = await Game.find({ _id: { $in: event_msg.games } });
+                // if (games.length !== event_msg.games.length) {
+                //     console.error("Some games not found");
+                //     throw new Error("Some games not found");
+                // }
                 // Update the event
                 const event = await Event.findByIdAndUpdate(event_msg._id, {
                     name: event_msg.name,
@@ -30,7 +30,7 @@ export const event_updated = {
                     endTime: event_msg.endTime,
                     brand: event_msg.brand,
                     vouchers: vouchers,
-                    games: games,
+                    gameID: event_msg.gameID,
                 }, { new: true });
 
                 if (!event) {

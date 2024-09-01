@@ -75,15 +75,15 @@ CREATE TABLE PlayLog (
 
 INSERT INTO GameConfig (NAME, TYPE, IMAGEURL, ISEXCHANGE, GUIDE) 
 VALUES
-('HQ Trivia', 'Quiz', NULL, FALSE, 'HQ Trivia guide'),
-('Lắc xì', 'Collect items', NULL, TRUE, 'Lắc xì guide');
+('HQ Trivia', 'Quiz', '/assets/game/HQ.png', FALSE, 'HQ Trivia guide'),
+('Lắc xì', 'Collect items', '/assets/game/lac_xi.jpg', TRUE, 'Lắc xì guide');
 
 INSERT INTO GameItem (GameID, name, imageUrl, description) 
 VALUES 
-(1, 'HQ Point', NULL, 'HQ Point'),
-(2, 'Lắc xì Coin', NULL, 'A collectible coin in Lắc xì.'),
-(2, 'Lắc xì Diamond', NULL, 'A rare diamond in Lắc xì.'),
-(2, 'Lắc xì Gem', NULL, 'A precious gem in Lắc xì.'),
-(2, 'Lắc xì Badge', NULL, 'A badge awarded in Lắc xì events.'),
-(2, 'Lắc xì Token', NULL, 'A special token for Lắc xì exchanges.'),
-(2, 'Lắc xì Trophy', NULL, 'A trophy for top players in Lắc xì.');
+(1, 'HQ Point', '/assets/item/Point.png', 'HQ Point'),
+(2, 'Lắc xì Coin', '/assets/item/Coin.png', 'A collectible coin in Lắc xì.'),
+(2, 'Lắc xì Diamond', '/assets/item/Diamond.png', 'A rare diamond in Lắc xì.'),
+(2, 'Lắc xì Gem', '/assets/item/Gem.png', 'A precious gem in Lắc xì.'),
+(2, 'Lắc xì Badge', '/assets/item/Badge.png', 'A badge awarded in Lắc xì events.'),
+(2, 'Lắc xì Token', '/assets/item/Token.png', 'A special token for Lắc xì exchanges.'),
+(2, 'Lắc xì Trophy', '/assets/item/Trophy.png', 'A trophy for top players in Lắc xì.');

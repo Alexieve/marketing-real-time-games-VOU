@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
 
 interface GameAttrs {
-    _id: mongoose.Types.ObjectId,
+    gameID: mongoose.Types.ObjectId,
     name: string;
     type: string;
     imageUrl: string;
@@ -10,7 +10,7 @@ interface GameAttrs {
 }
 
 interface GameDoc extends Document {
-    _id: mongoose.Types.ObjectId,
+    gameID: mongoose.Types.ObjectId,
     name: string;
     type: string;
     imageUrl: string;
@@ -23,7 +23,7 @@ interface GameModel extends Model<GameDoc> {
 }
 
 const GameSchema = new Schema<GameDoc>({
-    _id: { type: mongoose.Schema.Types.ObjectId, required: true },
+    gameID: { type: mongoose.Schema.Types.ObjectId, required: true },
     name: { type: String, required: true },
     type: { type: String, required: true },
     imageUrl: { type: String, required: true },

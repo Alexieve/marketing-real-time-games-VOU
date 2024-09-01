@@ -171,7 +171,11 @@ const VoucherCreate = () => {
                                                 required
                                             />
                                         </CInputGroup>
-                                        {imagePreview && <CCardImage className="card-image mb-3" orientation="top" src={imagePreview} />}
+                                        {imagePreview &&
+                                            <div className="imageContainer mb-3">
+                                                <CCardImage className="image" src={imagePreview} />
+                                            </div>
+                                        }
                                         <CInputGroup className="mb-3">
                                             <CInputGroupText id="basic-addon1">Price</CInputGroupText>
                                             <CFormInput
