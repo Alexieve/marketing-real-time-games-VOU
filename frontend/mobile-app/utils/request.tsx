@@ -5,10 +5,12 @@ export async function request(
     url: string, 
     method: string, 
     body: any = null, 
-    token: string | null = null
 ) {
     let data = null;
     try {
+        // console.log("Requesting...", localhost + url);
+        // console.log("Method: ", method);
+        // console.log("Body: ", body);
         const response = await axios({
             method: method,
             url: localhost + url,
@@ -16,6 +18,7 @@ export async function request(
         });
         data = response.data;
     } catch (err: any) {
+        console.error("Error from request Utils: ", err.request);
         throw err.response ? err.response.data.errors : err;
     }
     return data;

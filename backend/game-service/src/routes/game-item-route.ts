@@ -32,13 +32,17 @@ async (req: Request, res: Response) => {
     }
 });
 
-route.get('/api/game/customer-item/:itemID', 
+route.get('/api/game/customer-item', 
 async (req: Request, res: Response) => {
     try {
-        const { customerID, eventID } = req.body;
-        if (req.params.itemID !== ":itemID") {
-            const itemID = parseInt(req.params.itemID as string);
-            
+        const customerID = req.query.customerID? parseInt(req.query.customerID as string) : undefined;  
+        const eventID = req.query.eventID? (req.query.eventID as string) : undefined 
+        if (customerID === undefined || eventID === undefined) {
+            throw new BadRequestError("Cannot loading customer item without ID!");
+        }
+        const itemID = req.query.itemID ? parseInt(req.query.itemID as string) : undefined; 
+
+        if (itemID !== undefined) {
             const cacheKey = `customer-item:${customerID}:${eventID}`;
             const cacheData = await RedisClient.get(cacheKey);
             if (cacheData) {
@@ -50,10 +54,10 @@ async (req: Request, res: Response) => {
             
             await RedisClient.set(cacheKey, JSON.stringify(customerItem), 60);
 
-            res.send(customerItem);
+            res.status(200).send(customerItem);
         } else {
             const customerItems = await CustomerItem.getCustomerItems({ customerID, eventID, itemID: null, quantity: null });
-            res.send(customerItems);
+            res.status(200).send(customerItems);
         }        
     } catch (error: any) {
         throw new BadRequestError(error);

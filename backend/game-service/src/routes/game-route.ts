@@ -4,21 +4,21 @@ import { gameInforValidator } from '../utils/validators';
 import { Game } from '../models/game';
 const route = express.Router();
 
-route.get('/api/game/game-config/:gameID',
-    async (req: Request, res: Response) => {
-        try {
-            if (req.params.gameID !== ':gameID') {
-                const gameID = parseInt(req.params.gameID as string);
-                const game = await Game.getGameByID(gameID);
-                res.send(game);
-            } else {
-                const games = await Game.getAllGames();
-                res.send(games);
-            }
-        } catch (error) {
-            throw new BadRequestError("Cannot loading games!");
-        }
-    });
+route.get('/api/game/game-config/:gameID', 
+async (req: Request, res: Response) => {
+    try {
+        if (req.params.gameID !== ':gameID') {
+            const gameID = parseInt(req.params.gameID as string);
+            const game = await Game.getGameByID(gameID);
+            res.send(game);
+        } else {
+            const games = await Game.getAllGames();
+            res.send(games);
+        }        
+    } catch (error) {
+        throw new BadRequestError("Cannot loading games!");
+    }
+});
 
 route.put('/api/game/game-config', gameInforValidator,
     async (req: Request, res: Response) => {

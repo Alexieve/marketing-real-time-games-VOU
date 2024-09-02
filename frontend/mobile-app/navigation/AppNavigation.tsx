@@ -5,6 +5,7 @@ import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import HomeScreen from '../screens/HomeScreen';
 import Quiz from '../screens/HQ-Trivia/Quiz';
+import Shake from '../screens/Lac-xi/Shake';
 
 const Stack = createNativeStackNavigator();
 
@@ -30,6 +31,11 @@ const AppNavigation = () => {
         <Stack.Screen
           name="Quiz"
           component={Quiz}
+          options={{ headerShown: false }} // Ẩn header
+        />
+        <Stack.Screen
+          name="Shake"
+          component={Shake}
           options={{ headerShown: false }} // Ẩn header
         />
       </Stack.Navigator>
