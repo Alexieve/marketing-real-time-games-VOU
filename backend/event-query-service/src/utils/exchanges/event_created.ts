@@ -15,10 +15,10 @@ export const event_created = {
                     throw new Error("Some vouchers not found");
                 }
                 //Take the games data
-                const games = await Game.find({ _id: { $in: event_msg.games } });
-                if (games.length !== event_msg.games.length) {
-                    throw new Error("Some games not found");
-                }
+                // const games = await Game.find({ _id: { $in: event_msg.games } });
+                // if (games.length !== event_msg.games.length) {
+                //     throw new Error("Some games not found");
+                // }
                 // Create the event
                 const event = Event.build({
                     _id: event_msg._id,
@@ -29,7 +29,7 @@ export const event_created = {
                     endTime: event_msg.endTime,
                     brand: event_msg.brand,
                     vouchers: vouchers,
-                    games: games,
+                    gameID: event_msg.gameID,
                 });
                 await event.save();
                 console.log("Event saved");

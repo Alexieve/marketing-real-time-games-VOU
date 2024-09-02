@@ -1,4 +1,5 @@
 import express from 'express';
+import 'express-async-errors'
 import { connectToDatabase } from './connection';
 const cors = require('cors');
 
@@ -21,6 +22,7 @@ import { connectRabbitMQ } from './utils/publisher';
 import { errorHandler } from './middlewares/error-handler';
 import { NotFoundError } from './errors/not-found-error';
 
+
 const app = express();
 const port = 3000;
 app.use(cors());
@@ -39,7 +41,7 @@ app.use(voucherGetAllRouter);
 app.use(voucherGetByIdRouter);
 
 // // Try to throw not found error
-app.all('*', async (req, res) => {
+app.all('*', async (req, res, NextFunction) => {
     throw new NotFoundError();
 });
 

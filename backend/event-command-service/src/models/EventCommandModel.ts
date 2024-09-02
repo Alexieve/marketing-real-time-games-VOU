@@ -8,7 +8,10 @@ interface EventAttrs {
     startTime: Date;
     endTime: Date;
     brand: string;
-    gamesId: mongoose.Types.ObjectId[] | null;
+    game: {
+        gameID: string;
+        playTurn: number;
+    };
 }
 
 // The interface that describe the properties that an event model has
@@ -24,17 +27,23 @@ interface EventDoc extends mongoose.Document {
     startTime: Date;
     endTime: Date;
     brand: string;
-    gamesId: mongoose.Types.ObjectId[] | null;
+    game: {
+        gameID: string;
+        playTurn: number;
+    };
 }
 
-const EventSchema = new mongoose.Schema({
+const EventSchema = new mongoose.Schema<EventDoc>({
     name: { type: String, required: true },
     imageUrl: { type: String, required: false, default: '' },
     description: { type: String, required: true },
     startTime: { type: Date, required: true },
     endTime: { type: Date, required: true },
     brand: { type: String, required: true },
-    gamesId: { type: [mongoose.Schema.Types.ObjectId], required: true }
+    game: {
+        gameID: { type: String, required: true },
+        playTurn: { type: Number, required: true }
+    }
 }, {
     timestamps: true
 });

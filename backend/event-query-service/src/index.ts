@@ -1,4 +1,5 @@
 import express from 'express';
+import 'express-async-errors'
 import { connectToDatabase } from './connection';
 import { json } from 'body-parser';
 const cors = require('cors');
@@ -29,7 +30,7 @@ app.use(gameQueryRoutes);
 app.use(errorHandler);
 
 // // Try to throw not found error 
-app.all('*', async (req, res) => {
+app.all('*', async (req, res, NextFunction) => {
     throw new NotFoundError();
 });
 

@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-import { GameAttrs, GameSchema } from './GameQueryModel';
 import { VoucherAttrs, VoucherSchema } from './VoucherQueryModel';
 
 // The interface that describe the properties that an event has
@@ -11,7 +10,7 @@ interface EventAttrs {
     startTime: Date;
     endTime: Date;
     brand: string;
-    games: GameAttrs[];
+    gameID: string;
     vouchers: VoucherAttrs[];
 }
 
@@ -29,7 +28,7 @@ interface EventDoc extends mongoose.Document {
     startTime: Date;
     endTime: Date;
     brand: string;
-    games: GameAttrs[];
+    gameID: string;
     vouchers: VoucherAttrs[];
 }
 
@@ -41,7 +40,7 @@ const EventSchema = new mongoose.Schema({
     startTime: { type: Date, required: true },
     endTime: { type: Date, required: true },
     brand: { type: String, required: true },
-    games: { type: [GameSchema], required: false },
+    gameID: { type: String, required: false },
     vouchers: { type: [VoucherSchema], required: false }
 });
 

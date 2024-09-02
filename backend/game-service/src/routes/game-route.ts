@@ -1,4 +1,4 @@
-import express, {Request, Response} from 'express';
+import express, { Request, Response } from 'express';
 import { BadRequestError, requestAPI } from '@vmquynh-vou/shared';
 import { gameInforValidator } from '../utils/validators';
 import { Game } from '../models/game';
@@ -20,19 +20,19 @@ async (req: Request, res: Response) => {
     }
 });
 
-route.put('/api/game/game-config', gameInforValidator, 
-async (req: Request, res: Response) => {
-    const updatedGame = req.body;
-    try {
-        await Game.update(updatedGame);
-        const games = await Game.getGameByID(updatedGame.gameID);
-        res.send(games);
-    }
-    catch (error) {
-        throw new BadRequestError("Cannot updating game!");
-    }
+route.put('/api/game/game-config', gameInforValidator,
+    async (req: Request, res: Response) => {
+        const updatedGame = req.body;
+        try {
+            await Game.update(updatedGame);
+            const games = await Game.getGameByID(updatedGame.gameID);
+            res.send(games);
+        }
+        catch (error) {
+            throw new BadRequestError("Cannot updating game!");
+        }
 
-    console.log("Update game: ", updatedGame);
-});
+        console.log("Update game: ", updatedGame);
+    });
 
-export {route as GameRoute};
+export { route as GameRoute };

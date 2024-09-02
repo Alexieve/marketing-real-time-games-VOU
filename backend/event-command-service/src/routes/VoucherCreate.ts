@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction } from 'express';
+import express, { Request, Response } from 'express';
 import { Voucher } from '../models/VoucherCommandModel';
 import { voucherValidator } from '../utils/voucherValidators';
 import { validateRequest } from '../middlewares/validate-request';
@@ -29,6 +29,7 @@ const generateImageHashFromBuffer = (buffer: Buffer): string => {
 
 const uploadImageToService = async (imageFile: Express.Multer.File, imageName: string) => {
     const formData = new FormData();
+    formData.append('objectType', 'voucher');
     formData.append('imageUrl', imageFile.buffer, {
         filename: imageName,
         contentType: imageFile.mimetype,
@@ -40,54 +41,44 @@ const uploadImageToService = async (imageFile: Express.Multer.File, imageName: s
         }
     });
 
-    if (response.status !== 201) {
-        throw new BadRequestError('Image upload failed');
-    }
+    return response.data.imageUrl;
 };
 
-router.post('/api/event_command/voucher/create', upload.single('imageUrl'), voucherValidator, validateRequest, async (req: Request, res: Response, next: NextFunction) => {
-    try {
-        const { code, qrCodeUrl, price, description, quantity, expTime, status, brand } = req.body;
-        const imageFile = req.file;
+router.post('/api/event_command/voucher/create', upload.single('imageUrl'), voucherValidator, validateRequest, async (req: Request, res: Response) => {
+    const { code, qrCodeUrl, price, description, quantity, expTime, status, brand } = req.body;
+    const imageFile = req.file;
 
-        if (!imageFile) {
-            throw new BadRequestError('No image uploaded');
-        }
-
-        const newImageHash = generateImageHashFromBuffer(imageFile.buffer) + '.' + imageFile.mimetype.split('/')[1];
-
-        const newVoucher = Voucher.build({
-            code,
-            qrCodeUrl,
-            imageUrl: '',
-            price,
-            description,
-            quantity,
-            expTime,
-            status,
-            brand,
-            eventId: null
-        });
-
-        await newVoucher.save();
-
-        const ImageName = newVoucher._id + newImageHash;
-        const newImageUrl = `/api/image/fetching/${ImageName}`;
-
-        await uploadImageToService(imageFile, ImageName);
-
-        newVoucher.imageUrl = newImageUrl;
-        await newVoucher.save();
-
-        await publishToExchanges('voucher_created', JSON.stringify(newVoucher.toJSON()));
-
-        console.log('Voucher created successfully');
-        res.status(200).send(newVoucher);
-
-    } catch (error) {
-        console.log(error);
-        next(error);
+    if (!imageFile) {
+        throw new BadRequestError('No image uploaded');
     }
+    const newImageHash = generateImageHashFromBuffer(imageFile.buffer) + '.' + imageFile.mimetype.split('/')[1];
+
+    const newVoucher = Voucher.build({
+        code,
+        qrCodeUrl,
+        imageUrl: '',
+        price,
+        description,
+        quantity,
+        expTime,
+        status,
+        brand,
+        eventId: null
+    });
+
+    await newVoucher.save();
+
+    const ImageName = newVoucher._id + newImageHash;
+
+    const newImageUrl = await uploadImageToService(imageFile, ImageName);
+
+    newVoucher.imageUrl = newImageUrl;
+    await newVoucher.save();
+
+    await publishToExchanges('voucher_created', JSON.stringify(newVoucher.toJSON()));
+
+    console.log('Voucher created successfully');
+    res.status(200).send(newVoucher);
 });
 
 export = router;

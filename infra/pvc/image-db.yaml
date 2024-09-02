@@ -8,7 +8,7 @@ spec:
   capacity:
     storage: 100Mi
   hostPath:
-    path: /app/image
+    path: /app/images
 ---
 apiVersion: v1
 kind: PersistentVolumeClaim
