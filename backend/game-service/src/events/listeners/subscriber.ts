@@ -73,9 +73,9 @@ async function subscribe(subscriptions: Subscription[]) {
 //                         });
 //                         await event.save();
 //                         console.log("Event saved");
-//                         //Update eventId in vouchers
+//                         //Update eventID in vouchers
 //                         for (const voucher of vouchers) {
-//                             voucher.eventId = event_msg._id;
+//                             voucher.eventID = event_msg._id;
 //                             await voucher.save();
 //                         }
 //                     } catch (error) {
@@ -119,15 +119,15 @@ async function subscribe(subscriptions: Subscription[]) {
 //                             throw new Error("Event not found");
 //                         }
 //                         console.log("Event updated");
-//                         // Update eventId in vouchers
+//                         // Update eventID in vouchers
 //                         for (const voucher of vouchers) {
-//                             voucher.eventId = event_msg._id;
+//                             voucher.eventID = event_msg._id;
 //                             await voucher.save();
 //                         }
-//                         // Update eventId in old vouchers which are not in the new vouchers list
+//                         // Update eventID in old vouchers which are not in the new vouchers list
 //                         await Voucher.updateMany(
-//                             { eventId: event_msg._id, _id: { $nin: event_msg.vouchers } },
-//                             { eventId: null }
+//                             { eventID: event_msg._id, _id: { $nin: event_msg.vouchers } },
+//                             { eventID: null }
 //                         );
 //                     } catch (error) {
 //                         console.error('Error processing event_updated:', error);
@@ -140,17 +140,17 @@ async function subscribe(subscriptions: Subscription[]) {
 //             callback: async (msg) => {
 //                 if (msg) {
 //                     try {
-//                         const eventId = msg.content.toString();
-//                         console.log("Received event_deleted:", eventId);
+//                         const eventID = msg.content.toString();
+//                         console.log("Received event_deleted:", eventID);
 //                         //Find the event
-//                         const event = await Event.findByIdAndDelete(eventId);
+//                         const event = await Event.findByIdAndDelete(eventID);
 //                         if (!event) {
 //                             throw new Error("Event not found");
 //                         }
-//                         //Delete the eventId in vouchers
+//                         //Delete the eventID in vouchers
 //                         const result = await Voucher.updateMany(
-//                             { eventId: eventId },
-//                             { eventId: null }
+//                             { eventID: eventID },
+//                             { eventID: null }
 //                         );
 //                         if (!result) {
 //                             throw new Error("Vouchers not found");
@@ -181,7 +181,7 @@ async function subscribe(subscriptions: Subscription[]) {
 //                             expTime: voucher_msg.expTime,
 //                             status: voucher_msg.status,
 //                             brand: voucher_msg.brand,
-//                             eventId: voucher_msg.eventId
+//                             eventID: voucher_msg.eventID
 //                         });
 //                         await voucher.save();
 //                         console.log("Voucher saved");
@@ -202,8 +202,8 @@ async function subscribe(subscriptions: Subscription[]) {
 //                         if (!voucher)
 //                             throw new Error("Voucher not found");
 //                         // Remove the voucher from the event
-//                         if (voucher.eventId !== null) {
-//                             const event = await Event.findByIdAndUpdate(voucher.eventId, { $pull: { vouchers: { _id: voucherId } } });
+//                         if (voucher.eventID !== null) {
+//                             const event = await Event.findByIdAndUpdate(voucher.eventID, { $pull: { vouchers: { _id: voucherId } } });
 //                             if (!event) {
 //                                 throw new Error("Event not found");
 //                             }
@@ -242,10 +242,10 @@ async function subscribe(subscriptions: Subscription[]) {
 //                         });
 //                         await voucher.save();
 //                         // Update the voucher data in the event
-//                         if (voucher.eventId !== null) {
+//                         if (voucher.eventID !== null) {
 //                             const result = await Event.updateOne(
 //                                 {
-//                                     '_id': voucher.eventId,
+//                                     '_id': voucher.eventID,
 //                                     'vouchers._id': voucher._id
 //                                 },
 //                                 {

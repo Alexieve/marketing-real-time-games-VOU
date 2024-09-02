@@ -9,16 +9,16 @@ const router = express.Router();
 
 router.use(express.json());
 
-router.delete('/api/event_command/event/delete/:eventId', async (req: Request, res: Response) => {
-    const { eventId } = req.params;
+router.delete('/api/event_command/event/delete/:eventID', async (req: Request, res: Response) => {
+    const { eventID } = req.params;
     // Find the event by id and delete it
-    const event = await Event.findByIdAndDelete(eventId);
+    const event = await Event.findByIdAndDelete(eventID);
     // If the event is not found, throw an error
     if (!event) {
         throw new BadRequestError('Event not found');
     }
     // Adjust the vouchers by setting the event id to null 
-    await Voucher.updateMany({ eventId: eventId }, { eventId: null });
+    await Voucher.updateMany({ eventID: eventID }, { eventID: null });
 
     // Delete the image from the image service
     const imageName = 'event/' + event.imageUrl.split('/').pop();

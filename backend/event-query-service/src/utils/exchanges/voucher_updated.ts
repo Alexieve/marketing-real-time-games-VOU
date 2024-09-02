@@ -26,10 +26,10 @@ export const voucher_updated = {
                 });
                 await voucher.save();
                 // Update the voucher data in the event
-                if (voucher.eventId !== null) {
+                if (voucher.eventID !== null) {
                     const result = await Event.updateOne(
                         {
-                            '_id': voucher.eventId,
+                            '_id': voucher.eventID,
                             'vouchers._id': voucher._id
                         },
                         {

@@ -10,7 +10,7 @@ interface VoucherAttrs {
   expTime: Date;
   status: string;
   brand: string;
-  eventId: mongoose.Types.ObjectId | null;
+  eventID: mongoose.Types.ObjectId | null;
 }
 
 interface VoucherDoc extends Document {
@@ -23,7 +23,7 @@ interface VoucherDoc extends Document {
   expTime: Date;
   status: string;
   brand: string;
-  eventId: mongoose.Types.ObjectId | null;
+  eventID: mongoose.Types.ObjectId | null;
 }
 
 interface VoucherModel extends Model<VoucherDoc> {
@@ -40,7 +40,7 @@ const voucherSchema = new Schema<VoucherDoc>({
   expTime: { type: Date, required: true },
   status: { type: String, required: true },
   brand: { type: String, required: true },
-  eventId: { type: mongoose.Schema.Types.ObjectId, ref: 'Events', required: false, default: null }
+  eventID: { type: mongoose.Schema.Types.ObjectId, ref: 'Events', required: false, default: null }
 }, {
   timestamps: true
 });

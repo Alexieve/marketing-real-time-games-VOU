@@ -63,7 +63,7 @@ router.post('/api/event_command/voucher/create', upload.single('imageUrl'), vouc
         expTime,
         status,
         brand,
-        eventId: null
+        eventID: null
     });
 
     await newVoucher.save();

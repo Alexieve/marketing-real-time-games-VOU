@@ -18,8 +18,8 @@ router.delete('/api/event_command/voucher/delete/:id', async (req: Request, res:
         throw new BadRequestError('Voucher not found');
     }
     //Remove the voucher from the event
-    if (result.eventId !== null) {
-        const event = await Event.findByIdAndUpdate(result.eventId, { $pull: { vouchers: result._id } });
+    if (result.eventID !== null) {
+        const event = await Event.findByIdAndUpdate(result.eventID, { $pull: { vouchers: result._id } });
         if (!event) {
             throw new BadRequestError('Event not found');
         }

@@ -20,7 +20,7 @@ export const voucher_created = {
                     expTime: voucher_msg.expTime,
                     status: voucher_msg.status,
                     brand: voucher_msg.brand,
-                    eventId: voucher_msg.eventId
+                    eventID: voucher_msg.eventID
                 });
                 await voucher.save();
                 console.log("Voucher saved");

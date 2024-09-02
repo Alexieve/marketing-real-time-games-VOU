@@ -21,7 +21,7 @@ import {
 
 const EventCreate = () => {
 
-    const { eventId } = useParams();
+    const { eventID } = useParams();
     const navigate = useNavigate();
     const user = useSelector((state) => state.auth.user);
     const [eventData, setEventData] = useState({
@@ -47,9 +47,9 @@ const EventCreate = () => {
                 // Fetch games
                 const response = await axios.get('/api/game/game-config/:gameID');
                 setGames(response.data);
-                // Fetch eventId if the page is in edit mode
-                if (eventId !== undefined) {
-                    const response = await axios.get(`/api/event_command/event_detail/${eventId}`);
+                // Fetch eventID if the page is in edit mode
+                if (eventID !== undefined) {
+                    const response = await axios.get(`/api/event_command/event_detail/${eventID}`);
                     const { event, vouchers } = response.data;
                     const { game, name, imageUrl, description } = event;
                     let { startTime, endTime } = event;
@@ -80,10 +80,15 @@ const EventCreate = () => {
             }
         }
         fetchData();
-    }, [eventId]);
+    }, [eventID]);
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
+        if (file.size > 1048576) { // 1 MB in bytes
+            toast.warning('File size exceeds 1 MB. Please choose a smaller file.');
+            e.target.value = ''; // clear the file input
+            return;
+        }
         setEventData((prevData) => ({
             ...prevData,
             imageUrl: file
@@ -207,18 +212,17 @@ const EventCreate = () => {
             formData.append('playTurn', playTurn);
             formData.append('vouchers', JSON.stringify(selectedVouchers.map(voucher => voucher._id)));
 
-            const response = (eventId == undefined) ?
+            const response = (eventID == undefined) ?
                 await axios.post('/api/event_command/event/create', formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
                 }) :
-                await axios.put(`/api/event_command/event/edit/${eventId}`, formData, {
+                await axios.put(`/api/event_command/event/edit/${eventID}`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
                 });
-
             navigate(`/events/edit/${response.data._id}`, {
                 replace: true,
             })
@@ -258,7 +262,7 @@ const EventCreate = () => {
                                                 value={eventData.name}
                                                 onChange={handleChange}
                                                 required
-                                                disabled={eventId === undefined ? false : (new Date() < new Date(eventData.startTime) ? false : true)}
+                                                disabled={eventID === undefined ? false : (new Date() < new Date(eventData.startTime) ? false : true)}
                                             />
                                         </CInputGroup>
                                         <CInputGroup className="mb-3">
@@ -269,7 +273,7 @@ const EventCreate = () => {
                                                 value={eventData.description}
                                                 onChange={handleChange}
                                                 required
-                                                disabled={eventId === undefined ? false : (new Date() < new Date(eventData.startTime) ? false : true)}
+                                                disabled={eventID === undefined ? false : (new Date() < new Date(eventData.startTime) ? false : true)}
                                             />
                                         </CInputGroup>
                                         <CInputGroup className="mb-3">
@@ -278,9 +282,11 @@ const EventCreate = () => {
                                                 type="file"
                                                 id="imageUrl"
                                                 name="imageUrl"
+                                                accept='.png, .jpg'
+                                                size='1048576'
                                                 onChange={handleFileChange}
-                                                required={eventId === undefined}
-                                                disabled={eventId === undefined ? false : (new Date() < new Date(eventData.startTime) ? false : true)}
+                                                required={eventID === undefined}
+                                                disabled={eventID === undefined ? false : (new Date() < new Date(eventData.startTime) ? false : true)}
                                             />
                                         </CInputGroup>
                                         {imagePreview &&
@@ -296,7 +302,7 @@ const EventCreate = () => {
                                                 name="startTime"
                                                 value={eventData.startTime}
                                                 onChange={handleChange}
-                                                disabled={eventId === undefined ? false : (new Date() < new Date(eventData.startTime) ? false : true)}
+                                                disabled={eventID === undefined ? false : (new Date() < new Date(eventData.startTime) ? false : true)}
                                                 required
                                             />
                                         </CInputGroup>
@@ -308,7 +314,7 @@ const EventCreate = () => {
                                                 name="endTime"
                                                 value={eventData.endTime}
                                                 onChange={handleChange}
-                                                disabled={eventId === undefined ? false : (new Date() < new Date(eventData.startTime) ? false : true)}
+                                                disabled={eventID === undefined ? false : (new Date() < new Date(eventData.startTime) ? false : true)}
                                                 required
                                             />
                                         </CInputGroup>
@@ -339,7 +345,7 @@ const EventCreate = () => {
                                                                             autoComplete="off"
                                                                             label="Use"
                                                                             style={{ marginRight: '0.5rem' }}
-                                                                            disabled={eventId === undefined ? false : (new Date() < new Date(eventData.startTime) ? false : true)}
+                                                                            disabled={eventID === undefined ? false : (new Date() < new Date(eventData.startTime) ? false : true)}
                                                                         />
                                                                     </div>
                                                                 </CCardBody>
@@ -359,7 +365,7 @@ const EventCreate = () => {
                                                         value={playTurn}
                                                         onChange={handleChangePlayTurn}
                                                         // Disable play turn input if the selected game is '1' or the event has started in edit mode
-                                                        disabled={selectedGame == '1' || (eventId === undefined ? false : (new Date() < new Date(eventData.startTime) ? false : true))}
+                                                        disabled={selectedGame == '1' || (eventID === undefined ? false : (new Date() < new Date(eventData.startTime) ? false : true))}
                                                         required
                                                     />
                                                 </CInputGroup>
@@ -370,7 +376,7 @@ const EventCreate = () => {
                                                 <h6 className="mb-0">Select Vouchers for Event</h6>
                                                 <CButton className="button-custom" style={{ textDecoration: 'underline' }}
                                                     onClick={handleVoucherSelectClicked}
-                                                    disabled={eventId === undefined ? false : (new Date() < new Date(eventData.startTime) ? false : true)}>
+                                                    disabled={eventID === undefined ? false : (new Date() < new Date(eventData.startTime) ? false : true)}>
                                                     Add
                                                 </CButton>
                                             </CCardHeader>
@@ -399,8 +405,8 @@ const EventCreate = () => {
                                             </CCardBody>
                                         </CCard>
                                         <CButton type="submit" style={{ backgroundColor: '#7ED321' }} className="w-100 mt-4"
-                                            disabled={eventId === undefined ? false : (new Date() < new Date(eventData.startTime) ? false : true)}>
-                                            {eventId !== undefined ? 'Edit Event' : 'Create Event'}
+                                            disabled={eventID === undefined ? false : (new Date() < new Date(eventData.startTime) ? false : true)}>
+                                            {eventID !== undefined ? 'Edit Event' : 'Create Event'}
                                         </CButton>
                                     </CForm>
                                 </CCardBody>

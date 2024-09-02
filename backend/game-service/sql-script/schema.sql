@@ -34,7 +34,7 @@ CREATE TABLE GameItem (
 
 -- Creating table for 'EventGame'
 CREATE TABLE EventGameConfig (
-    EventID TEXT PRIMARY KEY,
+    eventID TEXT PRIMARY KEY,
     GameID INT,
     playTurn INT,
     FOREIGN KEY (GameID) REFERENCES GameConfig(GameID)
@@ -43,33 +43,33 @@ CREATE TABLE EventGameConfig (
 -- Creating table for 'EventGameItem'
 CREATE TABLE EventGameItem (
     CustomerID INT,
-    EventID TEXT,
+    eventID TEXT,
     ItemID INT,
     Quantity INT,
-    PRIMARY KEY (CustomerID, EventID, ItemID),
-    FOREIGN KEY (EventID) REFERENCES EventGameConfig(EventID),
+    PRIMARY KEY (CustomerID, eventID, ItemID),
+    FOREIGN KEY (eventID) REFERENCES EventGameConfig(eventID),
     FOREIGN KEY (ItemID) REFERENCES GameItem(ItemID)
 );
 
 -- Creating table for 'ExchangeLog'
 CREATE TABLE ExchangeLog (
     CustomerID INT,
-    EventID TEXT,
+    eventID TEXT,
 	TimeExchange TIMESTAMP,
     ItemID INT,
 	Quantity INT,
 	Description TEXT,
-    PRIMARY KEY (CustomerID, EventID, TimeExchange, ItemID),
-    FOREIGN KEY (CustomerID, EventID, ItemID) REFERENCES EventGameItem(CustomerID, EventID, ItemID)
+    PRIMARY KEY (CustomerID, eventID, TimeExchange, ItemID),
+    FOREIGN KEY (CustomerID, eventID, ItemID) REFERENCES EventGameItem(CustomerID, eventID, ItemID)
 );
 
 -- Creating table for 'PlayLog'
 CREATE TABLE PlayLog (
     CustomerID INT,
-    EventID TEXT,
+    eventID TEXT,
     Time TIMESTAMP,
-    PRIMARY KEY (CustomerID, EventID, Time),
-    FOREIGN KEY (EventID) REFERENCES EventGameConfig(EventID)
+    PRIMARY KEY (CustomerID, eventID, Time),
+    FOREIGN KEY (eventID) REFERENCES EventGameConfig(eventID)
 );
 
 

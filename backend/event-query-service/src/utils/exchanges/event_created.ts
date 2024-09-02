@@ -33,9 +33,9 @@ export const event_created = {
                 });
                 await event.save();
                 console.log("Event saved");
-                //Update eventId in vouchers
+                //Update eventID in vouchers
                 for (const voucher of vouchers) {
-                    voucher.eventId = event_msg._id;
+                    voucher.eventID = event_msg._id;
                     await voucher.save();
                 }
             } catch (error) {

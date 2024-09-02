@@ -7,17 +7,17 @@ export const event_deleted = {
     callback: async (msg: any) => {
         if (msg) {
             try {
-                const eventId = msg.content.toString();
-                console.log("Received event_deleted:", eventId);
+                const eventID = msg.content.toString();
+                console.log("Received event_deleted:", eventID);
                 //Find the event
-                const event = await Event.findByIdAndDelete(eventId);
+                const event = await Event.findByIdAndDelete(eventID);
                 if (!event) {
                     throw new Error("Event not found");
                 }
-                //Delete the eventId in vouchers
+                //Delete the eventID in vouchers
                 const result = await Voucher.updateMany(
-                    { eventId: eventId },
-                    { eventId: null }
+                    { eventID: eventID },
+                    { eventID: null }
                 );
                 if (!result) {
                     throw new Error("Vouchers not found");

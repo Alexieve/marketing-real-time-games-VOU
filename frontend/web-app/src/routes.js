@@ -103,7 +103,7 @@ const routes = [
     ),
   },
   {
-    path: "/events/edit/:eventId",
+    path: "/events/edit/:eventID",
     name: "Edit Event",
     element: (
       <RoleBasedGuard accessibleRoles={["Brand"]}>

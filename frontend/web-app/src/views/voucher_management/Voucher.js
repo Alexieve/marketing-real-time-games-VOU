@@ -176,7 +176,7 @@ const Voucher = () => {
                     <h5>Confirm Deletion</h5>
                 </CModalHeader>
                 <CModalBody>
-                    {selectedVoucher?.eventId ? 'This voucher is belonged to an event, are you sure you want to delete this voucher?' : 'Are you sure you want to delete this voucher?'}
+                    {selectedVoucher?.eventID ? 'This voucher is belonged to an event, are you sure you want to delete this voucher?' : 'Are you sure you want to delete this voucher?'}
                 </CModalBody>
                 <CModalFooter>
                     <CButton color="danger" onClick={confirmDelete}>Delete</CButton>
