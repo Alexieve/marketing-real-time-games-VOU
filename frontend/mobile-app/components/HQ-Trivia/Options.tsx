@@ -47,13 +47,20 @@ const Options = () => {
           <Text style={styles.optionText}>{option}</Text>
           {option === correctOption ? (
             <View style={styles.iconContainer}>
-              <MaterialCommunityIcons name="check" style={styles.icon} />
+              {/* <MaterialCommunityIcons name="check" style={styles.icon} /> */}
+              <Text style={styles.optionText}>{10 + Math.floor(Math.random() * 10)}</Text>
             </View>
           ) : option === currentOptionSelected ? (
             <View style={styles.iconContainer}>
-              <MaterialCommunityIcons name="close" style={styles.icon} />
+              {/* <MaterialCommunityIcons name="close" style={styles.icon} /> */}
+              <Text style={styles.optionText}>{10 + Math.floor(Math.random() * 10)}</Text>
             </View>
-          ) : null}
+          ) : currentOptionSelected !== null ? (
+            <View style={styles.iconContainer}>
+              {/* <MaterialCommunityIcons name="close" style={styles.icon} /> */}
+              <Text style={styles.optionText}>{10 + Math.floor(Math.random() * 10)}</Text>
+            </View>
+          ): null}
         </TouchableOpacity>
       ))}
     </View>

@@ -77,6 +77,20 @@ class User implements IUser {
         }
     }
 
+    static async findByPhonenum(phonenum: string): Promise<User | null> {
+        try {
+            const res = await db.query(
+                'SELECT * FROM FUNC_FIND_USER_BY_PHONENUM($1)',
+                [phonenum]
+            );
+            if (res.rows.length === 0) return null;
+            return new User(res.rows[0]);
+        } catch (error) {
+            console.error('Error finding user by phonenum:', error);
+            throw error;
+        }
+    }
+
     static async findById(id: number): Promise<User | null> {
         const res = await db.query(
             'SELECT * FROM FUNC_FIND_USER_BY_ID($1)',

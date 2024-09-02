@@ -90,7 +90,7 @@ const Quiz = () => {
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={viewPlayLog}>
           <Icon
-            name="document-text-outline"
+            name="game-controller-outline"
             size={24}
             color={COLORS.white}
             style={styles.icon}
@@ -99,7 +99,7 @@ const Quiz = () => {
         </TouchableOpacity>
         <TouchableOpacity style={styles.button} onPress={viewExchangeLog}>
           <Icon
-            name="gift"
+            name="sync-circle-outline"
             size={24}
             color={COLORS.white}
             style={styles.icon}
@@ -129,7 +129,6 @@ const Quiz = () => {
         <TouchableOpacity style={styles.backButton} onPress={goBack}>
           <Icon name="arrow-back" size={24} color={COLORS.white} />
         </TouchableOpacity>
-        <Text style={styles.titleText}>HQ Trivia</Text>
         <View style={styles.scoreContainer}>
           <Text style={styles.scoreText}>Point: {point}</Text>
         </View>
@@ -159,11 +158,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     height: 60,
     backgroundColor: COLORS.primary,
-  },
-  titleText: {
-    color: COLORS.white,
-    fontSize: 20,
-    fontWeight: "bold",
   },
   backButton: {
     backgroundColor: COLORS.accent,

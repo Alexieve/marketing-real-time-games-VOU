@@ -2,6 +2,7 @@
 // console.log(await RedisClient.get('test'));
 
 import express, {Request, Response} from 'express';
+import { requestAPI } from '@vmquynh-vou/shared';
 import { BadRequestError } from '@vmquynh-vou/shared';
 import { PlayLog } from '../models/playlog';
 import { EventGame } from '../models/event-game';
@@ -37,19 +38,47 @@ async (req: Request, res: Response) => {
     }
 });
 
-route.put('/api/game/add-play-turn/:eventID/:customerID', // Add play turn
+route.put('/api/game/add-play-turn/:eventID/:customerID/:phonenum', // Add play turn
 async (req: Request, res: Response) => {
     try {
-        if (req.params.eventID && req.params.customerID) {
+        if (req.params.eventID && req.params.customerID && req.params.phonenum) {
             const eventID = req.params.eventID as string;
             const customerID = parseInt(req.params.customerID);
-            const cacheKey = `playlog:playTurn:${customerID}:${eventID}`;
-            const cacheData = await RedisClient.get(cacheKey);
+            const phonenum = req.params.phonenum;
+
+            let friend = null;
+            try {
+                friend = await requestAPI(
+                    `http://user-srv:3000/api/user-management/load/by-phonenum/${phonenum}`,
+                    'GET',
+                    null
+                );
+            } catch (error) {
+                throw ("Friend not found!");
+            }
+
+            let cacheKey = `playlog:AddPlayTurn:${customerID}:${eventID}`;
+            let cacheData = await RedisClient.get(cacheKey);
+            if (cacheData) {
+                const giftTurn = parseInt(cacheData as string);
+                if (giftTurn >= 3) {
+                    throw ("Not enough gift turn!");
+                } else {
+                    await RedisClient.set(cacheKey, (giftTurn + 1).toString(), 100);
+                }
+            } else {
+                await RedisClient.set(cacheKey, "1", 100);
+            }
+
+            
+
+            cacheKey = `playlog:playTurn:${friend.id}:${eventID}`;
+            cacheData = await RedisClient.get(cacheKey);
             if (cacheData) {
                 const currentPlayTurn = parseInt(cacheData as string);
                 await RedisClient.set(cacheKey, (currentPlayTurn + 1).toString());
             } else {
-                throw new BadRequestError("Cannot adding to not exists play turn!");
+                await RedisClient.set(cacheKey, "1");
             }
             
             res.send("Add play turn successfully!");

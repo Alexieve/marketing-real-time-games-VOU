@@ -25,4 +25,15 @@ route.get('/api/user-management/load/by-email/:email',
   res.status(200).send(existingUser);
 });
 
+route.get('/api/user-management/load/by-phonenum/:phonenum', 
+  async (req: Request, res: Response) => {
+  const { phonenum } = req.params;
+  console.log(phonenum);
+  const existingUser = await User.findByPhonenum(phonenum);
+  if (!existingUser) {
+    throw new BadRequestError('User not found!');
+  }
+  res.status(200).send(existingUser);
+});
+
 export {route as LoadRoute};
