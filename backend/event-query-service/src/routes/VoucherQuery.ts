@@ -32,4 +32,18 @@ router.get('/api/events_query/get_vouchers/:id', async (req: Request, res: Respo
     res.status(200).send(voucher);
 });
 
+router.get('/api/events_query/get_user_vouchers/:userID', async (req: Request, res: Response) => {
+    const { userID } = req.params;
+    const userVouchers = await UserVoucher.find({ userID: userID });
+    if (!userVouchers) {
+        res.status(200).send({ message: 'User has no voucher' });
+    }
+
+    // Take the vouchers data of the user
+    const vouchers = await Voucher.find({ _id: { $in: userVouchers.map(voucher => voucher.voucherID) } });
+    res.status(200).send(vouchers);
+
+    res.status(200).send(userVouchers);
+});
+
 export = router;

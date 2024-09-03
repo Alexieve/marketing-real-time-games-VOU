@@ -35,6 +35,7 @@ router.get('/api/event_query/get_events_user_favorite/:userID', async (req: Requ
 
     if (userEventFavorites.length === 0) {
         res.status(200).send({ message: 'No favorited events' });
+        return;
     }
     // Take all event data of the favorited events
     const events = await Event.find({ _id: { $in: userEventFavorites.map(favorite => favorite.eventID) } });
@@ -46,6 +47,7 @@ router.get('/api/event_query/get_events_upcoming/', async (req: Request, res: Re
     const events = await Event.find({ startTime: { $lte: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000) } });
     if (events.length === 0) {
         res.status(200).send({ message: 'No upcoming events' });
+        return;
     }
     res.status(200).send(events);
 });
