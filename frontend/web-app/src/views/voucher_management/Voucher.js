@@ -135,16 +135,30 @@ const Voucher = () => {
                             {currentItems.map((voucher) => (
                                 <CCol md="4" key={voucher._id} className='mb-4'>
                                     <Link to={`/vouchers/edit/${voucher._id}`} className="card-link">
-                                        <CCard>
+                                        <CCard className="shadow-sm card-hover">
                                             <div className="imageContainer">
                                                 <CCardImage className="image" src={voucher.imageUrl} />
                                             </div>
-                                            <CCardBody>
-                                                <CCardTitle>{voucher.code}</CCardTitle>
-                                                <CCardText>Price: {voucher.price}</CCardText>
-                                                <CCardText>Quantity: {voucher.quantity}</CCardText>
-                                                <CCardText>Expiration Time: {moment(voucher.expTime).format("L") + ' ' + moment(voucher.expTime).format("LT")}</CCardText>
-                                                <CButton color="danger" onClick={(e) => { e.stopPropagation(); e.preventDefault(); openDeleteConfirmation(voucher); }}>Delete</CButton>
+                                            <CCardBody style={{ padding: '1rem' }}>
+                                                <div className="d-flex justify-content-between align-items-center mb-2">
+                                                    <CCardTitle style={{ fontSize: '1.5rem', fontWeight: 'bold', marginBottom: '0.5rem' }}>
+                                                        {voucher.code}
+                                                    </CCardTitle>
+                                                </div>
+                                                <CCardText style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>
+                                                    <strong>Price:</strong> {voucher.price}
+                                                </CCardText>
+                                                <CCardText style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>
+                                                    <strong>Quantity:</strong> {voucher.quantity}
+                                                </CCardText>
+                                                <CCardText style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>
+                                                    <strong>Expiration Time:</strong> {moment(voucher.expTime).format("L") + ' ' + moment(voucher.expTime).format("LT")}
+                                                </CCardText>
+                                                <div className="d-flex justify-content-end">
+                                                    <CButton color="danger" className="btn-sm" onClick={(e) => {
+                                                        e.stopPropagation(); e.preventDefault(); openDeleteConfirmation(voucher);
+                                                    }}>Delete</CButton>
+                                                </div>
                                             </CCardBody>
                                         </CCard>
                                     </Link>

@@ -1,6 +1,5 @@
 import { Event } from '../../models/EventQueryModel';
 import { Voucher } from '../../models/VoucherQueryModel';
-import { Game } from '../../models/GameQueryModel';
 
 export const voucher_updated = {
     exchange: 'voucher_updated',
@@ -15,7 +14,6 @@ export const voucher_updated = {
                 }
                 voucher.set({
                     code: voucher_msg.code,
-                    qrCodeUrl: voucher_msg.qrCodeUrl,
                     imageUrl: voucher_msg.imageUrl,
                     price: voucher_msg.price,
                     description: voucher_msg.description,
@@ -35,7 +33,6 @@ export const voucher_updated = {
                         {
                             $set: {
                                 'vouchers.$.code': voucher_msg.code,
-                                'vouchers.$.qrCodeUrl': voucher_msg.qrCodeUrl,
                                 'vouchers.$.imageUrl': voucher_msg.imageUrl,
                                 'vouchers.$.price': voucher_msg.price,
                                 'vouchers.$.description': voucher_msg.description,

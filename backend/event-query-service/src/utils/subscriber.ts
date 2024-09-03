@@ -7,9 +7,10 @@ import { event_deleted } from './exchanges/event_deleted';
 import { voucher_created } from './exchanges/voucher_created';
 import { voucher_deleted } from './exchanges/voucher_deleted';
 import { voucher_updated } from './exchanges/voucher_updated';
-import { game_created } from './exchanges/tmp/game_created';
-import { game_deleted } from './exchanges/tmp/game_deleted';
-import { game_updated } from './exchanges/tmp/game_updated';
+import { user_voucher_updated } from './exchanges/user_voucher_updated';
+// import { game_created } from './exchanges/tmp/game_created';
+// import { game_deleted } from './exchanges/tmp/game_deleted';
+// import { game_updated } from './exchanges/tmp/game_updated';
 
 let connection: Connection;
 let channel: Channel;
@@ -59,8 +60,9 @@ export const subscribeToExchanges = async () => {
         voucher_created,
         voucher_deleted,
         voucher_updated,
-        game_created,
-        game_deleted,
-        game_updated
+        user_voucher_updated,
+        // game_created,
+        // game_deleted,
+        // game_updated
     ]);
 };

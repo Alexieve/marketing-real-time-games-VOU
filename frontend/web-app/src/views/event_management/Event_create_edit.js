@@ -84,8 +84,8 @@ const EventCreate = () => {
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
-        if (file.size > 1048576) { // 1 MB in bytes
-            toast.warning('File size exceeds 1 MB. Please choose a smaller file.');
+        if (file.size > 10485760) { // 10 MB in bytes
+            toast.warning('File size exceeds 10 MB. Please choose a smaller file.');
             e.target.value = ''; // clear the file input
             return;
         }

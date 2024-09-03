@@ -2,7 +2,6 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 
 interface VoucherAttrs {
   code: string;
-  qrCodeUrl: string;
   imageUrl: string | '';
   price: number;
   description: string;
@@ -15,7 +14,6 @@ interface VoucherAttrs {
 
 interface VoucherDoc extends Document {
   code: string;
-  qrCodeUrl: string;
   imageUrl: string | '';
   price: number;
   description: string;
@@ -32,7 +30,6 @@ interface VoucherModel extends Model<VoucherDoc> {
 
 const voucherSchema = new Schema<VoucherDoc>({
   code: { type: String, required: true },
-  qrCodeUrl: { type: String, required: true },
   imageUrl: { type: String, required: false, default: '' },
   price: { type: Number, required: true },
   description: { type: String, required: true },

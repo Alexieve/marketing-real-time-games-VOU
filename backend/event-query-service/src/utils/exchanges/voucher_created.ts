@@ -1,6 +1,4 @@
-import { Event } from '../../models/EventQueryModel';
 import { Voucher } from '../../models/VoucherQueryModel';
-import { Game } from '../../models/GameQueryModel';
 
 export const voucher_created = {
     exchange: 'voucher_created',
@@ -12,7 +10,6 @@ export const voucher_created = {
                 const voucher = Voucher.build({
                     _id: voucher_msg._id,
                     code: voucher_msg.code,
-                    qrCodeUrl: voucher_msg.qrCodeUrl,
                     imageUrl: voucher_msg.imageUrl,
                     price: voucher_msg.price,
                     description: voucher_msg.description,

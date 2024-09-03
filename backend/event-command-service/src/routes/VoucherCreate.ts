@@ -45,7 +45,7 @@ const uploadImageToService = async (imageFile: Express.Multer.File, imageName: s
 };
 
 router.post('/api/event_command/voucher/create', upload.single('imageUrl'), voucherValidator, validateRequest, async (req: Request, res: Response) => {
-    const { code, qrCodeUrl, price, description, quantity, expTime, status, brand } = req.body;
+    const { code, price, description, quantity, expTime, status, brand } = req.body;
     const imageFile = req.file;
 
     if (!imageFile) {
@@ -55,7 +55,6 @@ router.post('/api/event_command/voucher/create', upload.single('imageUrl'), vouc
 
     const newVoucher = Voucher.build({
         code,
-        qrCodeUrl,
         imageUrl: '',
         price,
         description,

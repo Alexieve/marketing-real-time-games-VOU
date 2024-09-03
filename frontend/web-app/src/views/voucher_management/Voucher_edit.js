@@ -28,7 +28,6 @@ const VoucherEdit = () => {
     const { id } = useParams(); // Assume ID is always provided
     const [voucherData, setVoucherData] = useState({
         code: "",
-        qrCodeUrl: "",
         imageUrl: "",
         price: "",
         description: "",
@@ -66,6 +65,11 @@ const VoucherEdit = () => {
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
+        if (file.size > 10485760) { // 10 MB in bytes
+            toast.warning('File size exceeds 10 MB. Please choose a smaller file.');
+            e.target.value = ''; // clear the file input
+            return;
+        }
         setVoucherData((prevData) => ({
             ...prevData,
             imageUrl: file
@@ -87,9 +91,9 @@ const VoucherEdit = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        let { code, qrCodeUrl, imageUrl, price, description, quantity, expTime, status, brand } = voucherData;
+        let { code, imageUrl, price, description, quantity, expTime, status, brand } = voucherData;
 
-        if (!code || !qrCodeUrl || !imageUrl || !price || !description || !quantity || !expTime || !status || !brand) {
+        if (!code || !imageUrl || !price || !description || !quantity || !expTime || !status || !brand) {
             toast.warning("Please fill in all fields");
             return;
         }
@@ -112,7 +116,6 @@ const VoucherEdit = () => {
             const formData = new FormData();
             formData.append('code', code);
             formData.append('imageUrl', imageUrl);
-            formData.append('qrCodeUrl', qrCodeUrl);
             formData.append('price', price);
             formData.append('description', description);
             formData.append('quantity', quantity);
@@ -164,20 +167,6 @@ const VoucherEdit = () => {
                                                 disabled={(new Date(voucherData.expTime) < new Date()) ? true : false}
                                             />
                                         </CInputGroup>
-
-                                        <CInputGroup className="mb-3">
-                                            <CInputGroupText id="basic-addon1">QR Code URL</CInputGroupText>
-                                            <CFormInput
-                                                type="text"
-                                                id="qrCodeUrl"
-                                                name="qrCodeUrl"
-                                                value={voucherData.qrCodeUrl}
-                                                onChange={handleChange}
-                                                required
-                                                disabled={(new Date(voucherData.expTime) < new Date()) ? true : false}
-                                            />
-                                        </CInputGroup>
-
                                         <CInputGroup className="mb-3">
                                             <CInputGroupText id="basic-addon1">Image URL</CInputGroupText>
                                             <CFormInput
@@ -196,6 +185,7 @@ const VoucherEdit = () => {
                                         }
                                         <CInputGroup className="mb-3">
                                             <CInputGroupText id="basic-addon1">Price</CInputGroupText>
+                                            <CInputGroupText>$</CInputGroupText>
                                             <CFormInput
                                                 type="number"
                                                 id="price"
@@ -205,6 +195,7 @@ const VoucherEdit = () => {
                                                 required
                                                 disabled={(new Date(voucherData.expTime) < new Date()) ? true : false}
                                             />
+                                            <CInputGroupText>VND</CInputGroupText>
                                         </CInputGroup>
 
                                         <CInputGroup className="mb-3">
