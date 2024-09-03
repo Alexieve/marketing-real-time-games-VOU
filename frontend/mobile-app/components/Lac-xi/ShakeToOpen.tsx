@@ -48,7 +48,7 @@ const ShakeToOpenGift = ({customerID, eventID}: {customerID: any, eventID: strin
 
   const openGift = () => {
     const randomIndex = Math.floor(Math.random() * items.length);
-    const randomItem = items[randomIndex].name;
+    const randomItem = items[randomIndex];
     setItem(randomItem);
     setModalVisible(true);
     dispatch(addPlayLog({ customerID, eventID }));

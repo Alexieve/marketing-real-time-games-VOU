@@ -12,7 +12,7 @@ const Header = ({customerID, eventID}: {customerID: any, eventID: string}) => {
     const dispatch = useAppDispatch();
     const navigation = useNavigation();
   
-    const { screen, myItemsScreen, playturn } = useAppSelector((state: any) => state.shake);
+    const { screen, myItemsScreen, playturn, items, ownItems } = useAppSelector((state: any) => state.shake);
   
     const goBack = () => {
         if (myItemsScreen) {
@@ -42,9 +42,16 @@ const Header = ({customerID, eventID}: {customerID: any, eventID: string}) => {
         };
 
         fetchData();
-    }, [customerID, eventID, dispatch]);
+    }, [customerID, eventID]);
     
-    const goToMyItems = async () => {
+    const goToMyItems = () => {
+        // while (!items) {
+        //     dispatch(fetchItems({ eventID }));
+        // }
+        // while (!ownItems) {
+        //     dispatch(fetchOwnItems({ customerID, eventID }));
+        // }
+        dispatch(fetchOwnItems({ customerID, eventID }));
         dispatch(shakeActions.setMyItemsScreen(true));
     }
 

@@ -17,7 +17,7 @@ async (req: Request, res: Response) => {
             const customerID = parseInt(req.params.customerID)
             const cacheKey = `playlog:playTurn:${customerID}:${eventID}`;
             const cacheData = await RedisClient.get(cacheKey); // số lượt còn lại
-            if (cacheData) { // nếu đang đang còn lượt chơi
+            if (cacheData || cacheData?.toString() === "0") { // nếu đang đang còn lượt chơi
                 res.status(200).send(cacheData.toString());
             } else { // mới bắt đầu chơi
                 const eventConfig = await EventGame.getEventGameByID(eventID);
@@ -110,7 +110,6 @@ async (req: Request, res: Response) => {
 route.post('/api/game/play-log', // Add playlog and decrease play turn
 async (req: Request, res: Response) => {
     const {customerID, eventID} = req.body;
-    console.log(req.body);
     try {
         await PlayLog.add({customerID, eventID, time: null});
 
@@ -119,11 +118,10 @@ async (req: Request, res: Response) => {
         if (cacheData) {
             const playTurn = parseInt(cacheData as string) - 1;
             await RedisClient.set(cacheKey, playTurn.toString());
+            res.send("Add play log successfully!");
         } else {
             throw new BadRequestError("Not enough play turn!");
         }
-
-        res.send("Add play log successfully!");
     }
     catch (error: any) {
         throw new BadRequestError(error);

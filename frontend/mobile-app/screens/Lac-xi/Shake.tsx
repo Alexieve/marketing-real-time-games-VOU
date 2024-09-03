@@ -36,6 +36,7 @@ const Shake = () => {
   const startGame = async () => {
     const res = await dispatch(fetchPlayTurn({ customerID, eventID}));
     const playturn = unwrapResult(res);
+    console.log(playturn);
     if (playturn > 0) { // Fix after checking the API
       dispatch(shakeActions.initializeQuiz());
     } else {
