@@ -53,8 +53,8 @@ const ShakeToOpenGift = ({customerID, eventID}: {customerID: any, eventID: strin
     setModalVisible(true);
     dispatch(addPlayLog({ customerID, eventID }));
     const ownItem = ownItems.find((item: any) => item.itemID === items[randomIndex].itemID) 
-    || { itemID: items[randomIndex].itemID, quantity: 0 };
-    const addItem = [{ itemID: ownItem.itemID, quantity: ownItem.quantity + 1 }];
+    || { itemID: items[randomIndex].itemID, quantity: 1 };
+    const addItem = [{ itemID: ownItem.itemID, quantity: 1 }];
     dispatch(AddItems({ customerID, eventID, items: addItem }));
     dispatch(fetchOwnItems({ customerID, eventID }));
     dispatch(shakeActions.setPlayturn(playturn - 1));

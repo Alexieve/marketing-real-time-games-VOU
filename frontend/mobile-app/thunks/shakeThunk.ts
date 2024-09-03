@@ -2,6 +2,18 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { shakeActions } from "../slices/shakeSlice"; // Import the actions from your slice
 import { request } from "../utils/request";
 
+export const fetchUserByPhone = createAsyncThunk(
+  "shake/fetchUserByPhone",
+  async ({ phonenum }: { phonenum: string }, { dispatch }) => {
+    try {
+      const res = await request(`/api/user-management/load/by-phonenum/${phonenum}`, "get");
+      return res;
+    } catch (error: any) {
+      console.error("Error fetching User by Phone: ", error);
+    }
+  }
+);
+
 export const fetchItems = createAsyncThunk(
   "shake/fetchItems",
   async ({ eventID }: { eventID: string }, { dispatch }) => {

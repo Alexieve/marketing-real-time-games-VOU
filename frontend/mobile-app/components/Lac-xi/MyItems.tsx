@@ -1,14 +1,17 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
   Text,
   Image,
   ScrollView,
+  Button,
+  TouchableOpacity,
 } from "react-native";
 import { COLORS } from "../../constants";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { fetchOwnItems } from "../../thunks/shakeThunk";
+import GiftItemModal from "./GiftItemModal"; // Import the new GiftModal component
 
 const MyItems = ({
   customerID,
@@ -19,10 +22,18 @@ const MyItems = ({
 }) => {
   const dispatch = useAppDispatch();
   const { ownItems, items } = useAppSelector((state: any) => state.shake);
-  
+
+  const [modalVisible, setModalVisible] = useState(false);
+  const [selectedItem, setSelectedItem] = useState<any>(null);
+
   useEffect(() => {
     dispatch(fetchOwnItems({ customerID, eventID }));
   }, []);
+
+  const handleGiftPress = (item: any) => {
+    setSelectedItem(item);
+    setModalVisible(true);
+  };
 
   return (
     <View style={styles.container}>
@@ -30,7 +41,6 @@ const MyItems = ({
       <ScrollView contentContainerStyle={styles.listContent}>
         <View style={styles.itemsContainer}>
           {items.map((item: any, index: number) => {
-            // Find the corresponding item in ownItems
             const ownedItem = ownItems.find(
               (ownItem: any) => ownItem.itemID === item.itemID
             );
@@ -44,13 +54,26 @@ const MyItems = ({
                   resizeMode={"contain"}
                 />
                 <Text style={styles.itemText}>
-                  {item.name}   x {quantity}
+                  {item.name} x {quantity}
                 </Text>
+                <TouchableOpacity style={styles.myItemsButton} onPress={() => handleGiftPress(item)}>
+                  <Text style={styles.myItemsText}>Gift</Text>
+                </TouchableOpacity>
               </View>
             );
           })}
         </View>
       </ScrollView>
+
+      {selectedItem && (
+        <GiftItemModal
+          customerID={customerID}
+          eventID={eventID}
+          visible={modalVisible}
+          onClose={() => setModalVisible(false)}
+          selectedItem={selectedItem}
+        />
+      )}
     </View>
   );
 };
@@ -92,6 +115,18 @@ const styles = StyleSheet.create({
     color: COLORS.white,
     marginTop: 10,
     textAlign: "center",
+  },
+  myItemsButton: {
+    backgroundColor: COLORS.accent,
+    paddingVertical: 8,
+    paddingHorizontal: 16,
+    borderRadius: 20,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  myItemsText: {
+    color: COLORS.white,
+    fontSize: 16,
   },
 });
 

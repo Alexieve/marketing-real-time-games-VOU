@@ -78,18 +78,21 @@ async (req: Request, res: Response) => {
             }
             
             const ExistItem = await CustomerItem.getCustomerItem_By_ItemID({ customerID, eventID, itemID: item.itemID, quantity: null });
+            console.log("ExistItem: ", ExistItem);
 
-            if (ExistItem) {
-                await CustomerItem.update({ customerID, eventID, itemID: item.itemID, quantity: item.quantity });
+            if (ExistItem) { // Add to exists
+                await CustomerItem.update({ customerID, eventID, itemID: item.itemID, quantity: ExistItem.quantity + item.quantity });
+                const description = item.quantity > 0 ? `Receive ${item.quantity} ${dbItem.name}` 
+                                                        : `Exchange ${-item.quantity} ${dbItem.name}`;
                 await ExchangeLog.add({ 
                     customerID, 
                     eventID, 
                     timeExchange: new Date().toISOString().slice(0, 19).replace('T', ' '),
                     itemID: item.itemID, 
-                    quantity: item.quantity - (ExistItem?.quantity ?? 0),
-                    description: `Receive ${item.quantity - (ExistItem?.quantity ?? 0)} ${dbItem.name}`
+                    quantity: item.quantity,
+                    description
                 });
-            } else {
+            } else { // Add to new
                 await CustomerItem.add({ customerID, eventID, itemID: item.itemID, quantity: item.quantity });
                 await ExchangeLog.add({
                     customerID, 
@@ -106,40 +109,6 @@ async (req: Request, res: Response) => {
     }
     catch (error) {
         throw new BadRequestError("Cannot Adding customer item!");
-    }
-});
-
-
-route.put('/api/game/customer-item',
-async (req: Request, res: Response) => {
-    const { customerID, eventID, items } = req.body;
-    try {
-        items.map(async (item: any) => {
-            const dbItem = await GameItem.getGameItem_By_ItemID(item.itemID);
-            if (!dbItem) {
-                throw new BadRequestError("Cannot find item in game!");
-            }
-            
-            const ExistItem = await CustomerItem.getCustomerItem_By_ItemID({ customerID, eventID, itemID: item.itemID, quantity: null });
-            if (ExistItem) {
-                await CustomerItem.update({ customerID, eventID, itemID: item.itemID, quantity: item.quantity });
-                await ExchangeLog.add({ 
-                    customerID, 
-                    eventID, 
-                    timeExchange: new Date().toISOString().slice(0, 19).replace('T', ' '),
-                    itemID: item.itemID, 
-                    quantity: item.quantity - (ExistItem?.quantity ?? 0),
-                    description: `Exchange ${(ExistItem?.quantity ?? 0) - item.quantity} ${dbItem.name}`
-                });
-            }
-            else
-                throw new BadRequestError("Cannot find item in customer!");
-        });
-        await RedisClient.delete(`customer-item:${customerID}:${eventID}`);
-        res.send("Update customer item successfully!");
-    }
-    catch (error) {
-        throw new BadRequestError("Cannot updating customer item!");
     }
 });
 
