@@ -2,7 +2,6 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 
 interface VoucherAttrs {
   code: string;
-  qrCodeUrl: string;
   imageUrl: string | '';
   price: number;
   description: string;
@@ -10,12 +9,11 @@ interface VoucherAttrs {
   expTime: Date;
   status: string;
   brand: string;
-  eventId: mongoose.Types.ObjectId | null;
+  eventID: mongoose.Types.ObjectId | null;
 }
 
 interface VoucherDoc extends Document {
   code: string;
-  qrCodeUrl: string;
   imageUrl: string | '';
   price: number;
   description: string;
@@ -23,7 +21,7 @@ interface VoucherDoc extends Document {
   expTime: Date;
   status: string;
   brand: string;
-  eventId: mongoose.Types.ObjectId | null;
+  eventID: mongoose.Types.ObjectId | null;
 }
 
 interface VoucherModel extends Model<VoucherDoc> {
@@ -32,7 +30,6 @@ interface VoucherModel extends Model<VoucherDoc> {
 
 const voucherSchema = new Schema<VoucherDoc>({
   code: { type: String, required: true },
-  qrCodeUrl: { type: String, required: true },
   imageUrl: { type: String, required: false, default: '' },
   price: { type: Number, required: true },
   description: { type: String, required: true },
@@ -40,7 +37,7 @@ const voucherSchema = new Schema<VoucherDoc>({
   expTime: { type: Date, required: true },
   status: { type: String, required: true },
   brand: { type: String, required: true },
-  eventId: { type: mongoose.Schema.Types.ObjectId, ref: 'Events', required: false, default: null }
+  eventID: { type: mongoose.Schema.Types.ObjectId, ref: 'Events', required: false, default: null }
 }, {
   timestamps: true
 });

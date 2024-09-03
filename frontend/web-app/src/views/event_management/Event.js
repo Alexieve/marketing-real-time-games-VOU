@@ -155,10 +155,10 @@ const Event = () => {
                                                     </CCardTitle>
                                                 </div>
                                                 <CCardText style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>
-                                                    Start time: {formatDateTime(event.startTime)}
+                                                    <strong>Start time:</strong> {formatDateTime(event.startTime)}
                                                 </CCardText>
                                                 <CCardText style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>
-                                                    End time: {formatDateTime(event.endTime)}
+                                                    <strong>End time:</strong> {formatDateTime(event.endTime)}
                                                 </CCardText>
                                                 <div className="d-flex justify-content-end">
                                                     <CButton color="danger" className="btn-sm" onClick={(e) => {

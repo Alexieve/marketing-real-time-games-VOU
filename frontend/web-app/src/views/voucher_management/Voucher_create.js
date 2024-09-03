@@ -25,7 +25,6 @@ const VoucherCreate = () => {
     const user = useSelector((state) => state.auth.user);
     const [voucherData, setVoucherData] = useState({
         code: "",
-        qrCodeUrl: "",
         imageUrl: "",
         price: "",
         description: "",
@@ -39,6 +38,11 @@ const VoucherCreate = () => {
 
     const handleFileChange = (e) => {
         const file = e.target.files[0];
+        if (file.size > 10485760) { // 10 MB in bytes
+            toast.warning('File size exceeds 10 MB. Please choose a smaller file.');
+            e.target.value = ''; // clear the file input
+            return;
+        }
         setVoucherData((prevData) => ({
             ...prevData,
             imageUrl: file
@@ -56,9 +60,9 @@ const VoucherCreate = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const { code, qrCodeUrl, imageUrl, price, description, quantity, expTime, status, brand } = voucherData;
+        const { code, imageUrl, price, description, quantity, expTime, status, brand } = voucherData;
 
-        if (!code || !qrCodeUrl || !imageUrl || !price || !description || !quantity || !expTime || !status || !brand) {
+        if (!code || !imageUrl || !price || !description || !quantity || !expTime || !status || !brand) {
             toast.warning("Please fill in all fields");
             return;
         }
@@ -80,7 +84,6 @@ const VoucherCreate = () => {
             const formData = new FormData();
             formData.append('code', code);
             formData.append('imageUrl', imageUrl);
-            formData.append('qrCodeUrl', qrCodeUrl);
             formData.append('price', price);
             formData.append('description', description);
             formData.append('quantity', quantity);
@@ -97,7 +100,6 @@ const VoucherCreate = () => {
             // Empty the form fields
             setVoucherData({
                 code: "",
-                qrCodeUrl: "",
                 imageUrl: "",
                 price: "",
                 description: "",
@@ -150,18 +152,6 @@ const VoucherCreate = () => {
                                         </CInputGroup>
 
                                         <CInputGroup className="mb-3">
-                                            <CInputGroupText id="basic-addon1">QR Code URL</CInputGroupText>
-                                            <CFormInput
-                                                type="text"
-                                                id="qrCodeUrl"
-                                                name="qrCodeUrl"
-                                                value={voucherData.qrCodeUrl}
-                                                onChange={handleChange}
-                                                required
-                                            />
-                                        </CInputGroup>
-
-                                        <CInputGroup className="mb-3">
                                             <CInputGroupText id="basic-addon1">Image URL</CInputGroupText>
                                             <CFormInput
                                                 type="file"
@@ -186,6 +176,7 @@ const VoucherCreate = () => {
                                                 onChange={handleChange}
                                                 required
                                             />
+                                            <CInputGroupText></CInputGroupText>
                                         </CInputGroup>
 
                                         <CInputGroup className="mb-3">

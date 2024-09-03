@@ -2,7 +2,6 @@ import { body } from 'express-validator';
 
 const voucherValidator = [
     body('code').notEmpty().withMessage('Code is required'),
-    body('qrCodeUrl').notEmpty().withMessage('QR Code URL is required'),
     // body('imageUrl').notEmpty().withMessage('Image URL is required'),
     body('price').notEmpty().withMessage('Price is required'),
     body('description').notEmpty().withMessage('Description is required'),

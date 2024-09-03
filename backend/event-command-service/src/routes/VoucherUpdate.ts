@@ -47,7 +47,7 @@ const uploadImageToService = async (imageFile: Express.Multer.File, newImageName
 
 router.put('/api/event_command/voucher/update/:id', upload.single('imageUrl'), voucherValidator, validateRequest, async (req: Request, res: Response) => {
     const { id } = req.params;
-    const { code, qrCodeUrl, price, description, quantity, expTime, status, brand } = req.body;
+    const { code, price, description, quantity, expTime, status, brand } = req.body;
     const imageFile = req.file;
 
     if (!imageFile) {
@@ -74,7 +74,6 @@ router.put('/api/event_command/voucher/update/:id', upload.single('imageUrl'), v
 
     const updateData = {
         code,
-        qrCodeUrl,
         imageUrl: newImageUrl,
         price,
         description,
@@ -93,4 +92,33 @@ router.put('/api/event_command/voucher/update/:id', upload.single('imageUrl'), v
     res.status(200).send(voucher);
 });
 
+router.put('/api/event_command/voucher/update_quantity/:id', async (req: Request, res: Response) => {
+    const { id } = req.params;
+    const { userID, quantity, eventID } = req.body;
+
+    // Find the voucher
+    const voucher = await Voucher.findById(id);
+    if (!voucher) {
+        throw new BadRequestError('Voucher not found');
+    }
+
+    // Check the voucher quantity is greater than the required quantity to update
+    if (voucher.quantity < quantity) {
+        throw new BadRequestError('Not enough voucher quantity');
+    }
+
+    // Update the voucher quantity
+    voucher.quantity -= quantity;
+    await voucher.save();
+
+    // Publish the event
+    await publishToExchanges('user_voucher_updated', JSON.stringify({
+        voucherID: id,
+        userID,
+        quantity,
+        eventID
+    }));
+    console.log('Voucher updated successfully');
+    res.status(200).send('Voucher quantity updated successfully with ' + quantity);
+});
 export = router;

@@ -1,5 +1,4 @@
 import express, { Request, Response } from 'express';
-import mongoose from 'mongoose';
 import { Event } from '../models/EventCommandModel';
 import { Voucher } from '../models/VoucherCommandModel';
 import { eventValidator } from '../utils/eventValidators';
@@ -20,7 +19,8 @@ const upload = multer({
         if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
             cb(null, true);
         } else {
-            cb(null, false);
+            const error = new BadRequestError('Unsupported file type. Only JPEG and PNG are allowed.');
+            cb(error);
         }
     }
 });
@@ -74,7 +74,7 @@ router.post('/api/event_command/event/create', upload.single('imageUrl'), eventV
 
     await event.save();
 
-    await Voucher.updateMany({ _id: { $in: vouchers } }, { eventId: event._id });
+    await Voucher.updateMany({ _id: { $in: vouchers } }, { eventID: event._id });
 
     const imageName = event._id + newImageHash;
 

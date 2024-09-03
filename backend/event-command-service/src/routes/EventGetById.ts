@@ -6,12 +6,12 @@ const router = express.Router();
 
 router.use(express.json());
 
-router.get('/api/event_command/event_detail/:eventId', async (req: Request, res: Response) => {
-    const { eventId } = req.params;
-    // Find the event by eventId
-    const event = await Event.findById(eventId);
+router.get('/api/event_command/event_detail/:eventID', async (req: Request, res: Response) => {
+    const { eventID } = req.params;
+    // Find the event by eventID
+    const event = await Event.findById(eventID);
     // Find vouchers of event
-    const vouchers = await Voucher.find({ eventId: eventId });
+    const vouchers = await Voucher.find({ eventID: eventID });
     // Attach vouchers to the event
     const payload = {
         event: event,

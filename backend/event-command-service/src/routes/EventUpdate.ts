@@ -46,8 +46,8 @@ const uploadImageToService = async (imageFile: Express.Multer.File, newImageName
     return response.data.imageUrl;
 };
 
-router.put('/api/event_command/event/edit/:eventId', upload.single('imageUrl'), eventValidator, validateRequest, async (req: Request, res: Response) => {
-    const { eventId } = req.params;
+router.put('/api/event_command/event/edit/:eventID', upload.single('imageUrl'), eventValidator, validateRequest, async (req: Request, res: Response) => {
+    const { eventID } = req.params;
     const { name, description, startTime, endTime, brand, gameID, playTurn, vouchers: vouchersJson } = req.body;
     const imageFile = req.file;
 
@@ -58,7 +58,7 @@ router.put('/api/event_command/event/edit/:eventId', upload.single('imageUrl'), 
     const vouchers = JSON.parse(vouchersJson);
 
     const newImageHash = generateImageHashFromBuffer(imageFile.buffer) + '.' + imageFile.mimetype.split('/')[1];
-    const event = await Event.findById(eventId);
+    const event = await Event.findById(eventID);
 
     if (!event) {
         throw new BadRequestError('Event not found');
@@ -89,8 +89,8 @@ router.put('/api/event_command/event/edit/:eventId', upload.single('imageUrl'), 
     });
 
     await event.save();
-    await Voucher.updateMany({ _id: { $in: vouchers } }, { eventId: eventId });
-    await Voucher.updateMany({ eventId: eventId, _id: { $nin: vouchers } }, { eventId: null });
+    await Voucher.updateMany({ _id: { $in: vouchers } }, { eventID: eventID });
+    await Voucher.updateMany({ eventID: eventID, _id: { $nin: vouchers } }, { eventID: null });
 
     const payLoad = {
         _id: event._id,

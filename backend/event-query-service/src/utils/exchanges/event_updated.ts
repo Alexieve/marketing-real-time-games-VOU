@@ -37,15 +37,15 @@ export const event_updated = {
                     throw new Error("Event not found");
                 }
                 console.log("Event updated");
-                // Update eventId in vouchers
+                // Update eventID in vouchers
                 for (const voucher of vouchers) {
-                    voucher.eventId = event_msg._id;
+                    voucher.eventID = event_msg._id;
                     await voucher.save();
                 }
-                // Update eventId in old vouchers which are not in the new vouchers list
+                // Update eventID in old vouchers which are not in the new vouchers list
                 await Voucher.updateMany(
-                    { eventId: event_msg._id, _id: { $nin: event_msg.vouchers } },
-                    { eventId: null }
+                    { eventID: event_msg._id, _id: { $nin: event_msg.vouchers } },
+                    { eventID: null }
                 );
             } catch (error) {
                 console.error('Error processing event_updated:', error);

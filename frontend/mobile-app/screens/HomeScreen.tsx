@@ -2,23 +2,37 @@ import React, { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Header, Icon } from '@rneui/themed';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { useNavigationState, useNavigation } from '@react-navigation/native';
 import { request } from '../utils/request';
 
-import EventScreen from './EventScreen';
+import EventListScreen from './EventListScreen';
+import EventDetailScreen from './EventDetailScreen';
+import ExchangeVoucherScreen from './ExchangeVoucherScreen';
 import SearchScreen from './SearchScreen';
 import FavouriteScreen from './FavouriteScreen';
 import VoucherScreen from './VoucherScreen';
 import Menu from './Menu';
 import { useSelector } from 'react-redux';
 
+import { RootStackParamList } from './RootStackParamList'; // Import the type you just created
+
 const Tab = createBottomTabNavigator();
+const Stack = createNativeStackNavigator<RootStackParamList>();
+
+const EventStack = () => (
+  <Stack.Navigator>
+    <Stack.Screen name="EventList" component={EventListScreen} options={{ headerShown: false }} />
+    <Stack.Screen name="EventDetail" component={EventDetailScreen} options={{ headerShown: false }} />
+    <Stack.Screen name="ExchangeVoucher" component={ExchangeVoucherScreen} options={{ headerShown: false }} />
+  </Stack.Navigator>
+);
 
 const HomeScreen = () => {
   const [headerTitle, setHeaderTitle] = useState('Event');
   const [isMenuVisible, setIsMenuVisible] = useState(false);
   const navigationState = useNavigationState(state => state);
-  const navigation = useNavigation(); 
+  const navigation = useNavigation();
   const { token } = useSelector((state: any) => state.auth);
 
   useEffect(() => {
@@ -29,7 +43,7 @@ const HomeScreen = () => {
   const handleLogout = async () => {
     setIsMenuVisible(false);
     await request(`/api/auth/logout`, 'post', null, token);
-    navigation.navigate('Login' as never); 
+    navigation.navigate('Login' as never);
   };
 
   const handleMenuToggle = () => {
@@ -38,17 +52,14 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
-      {/* Header cố định */}
       <Header
         centerComponent={{ text: headerTitle, style: styles.headerTitle }}
         rightComponent={{ icon: 'menu', color: '#fff', onPress: handleMenuToggle }}
         containerStyle={styles.headerContainer}
       />
 
-      {/* Menu */}
       <Menu isVisible={isMenuVisible} onClose={handleMenuToggle} onLogout={handleLogout} />
 
-      {/* Bottom Navigation với nội dung cuộn */}
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ color, size }) => {
@@ -69,7 +80,7 @@ const HomeScreen = () => {
           headerShown: false,
         })}
       >
-        <Tab.Screen name="Event" component={EventScreen} />
+        <Tab.Screen name="Event" component={EventStack} />
         <Tab.Screen name="Search" component={SearchScreen} />
         <Tab.Screen name="Favourite" component={FavouriteScreen} />
         <Tab.Screen name="Voucher" component={VoucherScreen} />
