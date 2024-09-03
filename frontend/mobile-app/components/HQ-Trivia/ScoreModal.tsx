@@ -17,10 +17,10 @@ const ScoreModal = () => {
   useEffect(() => {
     const customerID = 1;
     const eventID = '66c6f1c4c33e15ad0805fc98';
-    const quantity = point + (10000 * score);
+    const quantity = 10000 * score;
     const items = [{ itemID: 1, quantity}];
     dispatch(AddPointsDB({ customerID, eventID, items}));
-    dispatch(quizActions.setPoint(quantity));
+    dispatch(quizActions.setPoint(point + quantity));
     dispatch(addPlayLog({ customerID, eventID }));
   }, [showScoreModal]);
 
