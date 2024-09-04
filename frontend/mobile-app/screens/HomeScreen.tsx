@@ -11,7 +11,7 @@ import EventDetailScreen from './EventDetailScreen';
 import ExchangeVoucherScreen from './ExchangeVoucherScreen';
 import SearchScreen from './SearchScreen';
 import FavouriteScreen from './FavouriteScreen';
-import VoucherScreen from './VoucherScreen';
+// import VoucherScreen from './VoucherScreen';
 import Menu from './Menu';
 import VoucherScreen from './VoucherScreen';
 import VoucherDetail from './VoucherDetail';
