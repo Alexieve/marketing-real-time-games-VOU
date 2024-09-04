@@ -1,12 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, ImageBackground, TouchableOpacity, ScrollView } from 'react-native';
+import { View,Image, Text, StyleSheet, ImageBackground, TouchableOpacity, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { request } from '../utils/request';
 import localhost from '../url.config';
 import { useSelector } from 'react-redux';
 import { useRoute, useNavigation } from '@react-navigation/native';
-
 
 type game = {
   gameID: string;
@@ -53,11 +51,12 @@ type ApiResponse = {
 
 const DetailScreen = () => {
   const [activeTab, setActiveTab] = useState('ABOUT'); // Quản lý tab hiện tại
-  const [eventData, setEventData] = useState("");
-  const [vouchers, setVouchers] = useState({});
+  // const [eventData, setEventData] = useState("");
+  // const [vouchers, setVouchers] = useState({});
   const [data, setData] = useState<ApiResponse | null>(null);
   const user = useSelector((state) => state.auth.user);
   const [isFavorite, setIsFavorite] = useState(false); // Trạng thái cho icon trái tim
+  const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
 
   const route = useRoute();
   const navigation = useNavigation();
@@ -82,8 +81,16 @@ const DetailScreen = () => {
         const favoriteResponse = await request(`/api/event_query/get_events_user_favorite/${user.id}`, 'get', "a");
 
         const isEventFavorite = favoriteResponse.some(event => event._id === response.event._id);
-        setIsFavorite(isEventFavorite);
-
+        if (Array.isArray(favoriteResponse)) {
+          const isEventFavorite = favoriteResponse.some(event => event._id === response.event._id);
+          setIsFavorite(isEventFavorite);
+        } else {
+          console.error('Favorite response is not an array:', favoriteResponse);
+          setIsFavorite(false);
+        }
+        Image.getSize(localhost + response.event.imageUrl, (width, height) => {
+          setImageSize({ width, height });
+        });
 
       } catch (error) {
         console.error('Error fetching data:', error);
@@ -114,16 +121,17 @@ const toggleFavorite = async () => {
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
-        <ImageBackground source={{ uri: `${data?.event.imageUrl}` }}>
+      <View style={[styles.imageBackgroundContainer, { aspectRatio: imageSize.width / imageSize.height }]}>
+      <ImageBackground source={{uri: localhost + data?.event.imageUrl}} style={styles.imageBackground}>
         
         {/* <ImageBackground source={localhost + data.event.imageUrl} style={styles.imageBackground}> */}
           <View style={styles.header}>
             <TouchableOpacity>
-              <Ionicons name="chevron-back" size={28} color="white" style={styles.iconWithBorder} />
+              <Ionicons name="chevron-back" size={28} color="black" style={styles.iconWithBorder} />
             </TouchableOpacity>
             <View style={styles.headerIcons}>
               <TouchableOpacity onPress={toggleFavorite}>
-                <Ionicons name={isFavorite ? "heart" : "heart-outline"} size={28} color="white" style={styles.iconWithBorder} />
+                <Ionicons name={isFavorite ? "heart" : "heart-outline"} size={28} color="black" style={styles.iconWithBorder} />
               </TouchableOpacity>
             </View>
           </View>
@@ -132,6 +140,7 @@ const toggleFavorite = async () => {
             <Text style={styles.dateText}>{`${data?.event.startTime.split('T')[0]} - ${data?.event.endTime.split('T')[0]}`}</Text>
           </View>
         </ImageBackground>
+        </View>
         <View style={styles.detailsContainer}>
           <Text style={styles.eventTitle}>{data?.event.name}</Text>
           <Text style={styles.eventTime}>Starting {data?.event.startTime.split('T')[1].split('.')[0]}</Text>
@@ -166,13 +175,14 @@ const toggleFavorite = async () => {
         </View>
       </ScrollView>
       <View style={styles.footer}>
-        <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Play Game</Text>
-          <Ionicons name="game-controller-outline" size={20} color="white" style={styles.buttonIcon} />
-        </TouchableOpacity>
+        
         <TouchableOpacity style={styles.button}>
         <Text style={styles.buttonText}>Redeem</Text>
         <Ionicons name="gift-outline" size={20} color="white" style={styles.buttonIcon} />
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.buttonText}>Play Game</Text>
+          <Ionicons name="game-controller-outline" size={20} color="white" style={styles.buttonIcon} />
         </TouchableOpacity>
         
       </View>
@@ -188,9 +198,14 @@ const styles = StyleSheet.create({
   scrollViewContent: {
     flexGrow: 1,
   },
+  imageBackgroundContainer: {
+    width: '100%',
+    height: undefined,
+    // position: 'relative',
+  },
   imageBackground: {
     width: '100%',
-    height: 400,
+    height: '100%',
     justifyContent: 'flex-end',
     position: 'relative',
   },
@@ -213,7 +228,7 @@ const styles = StyleSheet.create({
   },
   iconWithBorder: {
     borderWidth: 2,
-    borderColor: 'white',
+    borderColor: 'black',
     borderRadius: 14, // Cung cấp viền tròn cho các icon
     padding: 5, // Khoảng cách giữa viền và icon
   },
