@@ -6,13 +6,15 @@ import RegisterScreen from '../screens/RegisterScreen';
 import HomeScreen from '../screens/HomeScreen';
 import Quiz from '../screens/HQ-Trivia/Quiz';
 import Shake from '../screens/Lac-xi/Shake';
+import OtpVerificationScreen from '../screens/OtpVerificationScreen';
+import { Button } from 'react-native';
 
 const Stack = createNativeStackNavigator();
 
 const AppNavigation = () => {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Login">
+      <Stack.Navigator initialRouteName="Shake">
         <Stack.Screen
           name="Login"
           component={LoginScreen}
@@ -22,6 +24,21 @@ const AppNavigation = () => {
           name="Register"
           component={RegisterScreen}
           options={{ headerShown: false }} // Ẩn header của màn hình Register
+        />
+        <Stack.Screen
+          name="OtpVerification"
+          component={OtpVerificationScreen}
+          options={({ navigation }) => ({
+            headerShown: true,
+            title: 'OTP Verification',
+            headerLeft: () => (
+              <Button
+                onPress={() => navigation.goBack()}
+                title="Back"
+                color="#007bff"
+              />
+            ),
+          })}
         />
         <Stack.Screen
           name="Home"

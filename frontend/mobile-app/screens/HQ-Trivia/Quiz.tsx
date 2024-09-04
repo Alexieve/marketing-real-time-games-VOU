@@ -97,6 +97,7 @@ const Quiz = () => {
           />
           <Text style={styles.buttonText}>View Play Log</Text>
         </TouchableOpacity>
+        {playlog?.length > 0 && <PlayLog />}
         <TouchableOpacity style={styles.button} onPress={viewExchangeLog}>
           <Icon
             name="sync-circle-outline"
@@ -111,7 +112,6 @@ const Quiz = () => {
           style={styles.backgroundImage}
           resizeMode={"contain"}
         />
-        {playlog?.length > 0 && <PlayLog />}
         {exchangeLog?.length > 0 && <ExchangeLog />}
       </>
     );
