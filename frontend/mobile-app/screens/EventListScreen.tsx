@@ -1,87 +1,245 @@
-import React, { useState } from 'react';
-import { ScrollView, View, Text, StyleSheet, Dimensions, LayoutChangeEvent, Image, Button } from 'react-native';
+import React, { useRef, useState, useEffect } from 'react';
+import { ScrollView, FlatList, View, Text, StyleSheet, Image, ListRenderItem, NativeSyntheticEvent, NativeScrollEvent, Dimensions, TouchableOpacity } from 'react-native';
 import { Card } from '@rneui/themed';
-import { useNavigation } from '@react-navigation/native';
-import { RootStackParamList } from './RootStackParamList'; // Import the type you just created
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useSelector } from 'react-redux';
+import localhost from '../url.config';
+import { useRoute, useNavigation } from '@react-navigation/native';
 
-const EventListScreen = () => {
-  const [contentHeight, setContentHeight] = useState(0);
-  const screenHeight = Dimensions.get('window').height;
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
-  const events = [
-    {
-      _id: '66d530367803a0a1c26e6aef',
-      name: '213',
-      imageUrl: 'http://192.168.68.101/images/event/66d530367803a0a1c26e6aef7211140162d241e4e5fcfee5f7ab3d9c24dbb7fc8efecf264946af0be5fe31e3.png',
-      description: '123',
-      startTime: '2024-09-25T10:24:00.000Z',
-      endTime: '2024-10-03T10:24:00.000Z',
-      brand: '1',
-      game: {
-        gameID: '2',
-        playTurn: 123
-      },
-    },
-    // Add more events as needed
-  ];
+type EventItem = { id: string; name: string; description: string; imageUrl: string };
 
-  const handleLayout = (event: LayoutChangeEvent) => {
-    const { height } = event.nativeEvent.layout;
-    setContentHeight(height);
-  };
+const EventScreen = () => {
+  const [ongoingEvents, setOngoingEvents] = useState<EventItem[]>([]);
+  const [upcomingEvents, setUpcomingEvents] = useState<EventItem[]>([]);
+  const [favoriteEvents, setFavoriteEvents] = useState<EventItem[]>([]); // Replace with your logic for favorite events
 
-  const renderCards = () => {
-    return events.map(event => (
-      <Card key={event._id}>
-        <Card.Title>{event.name}</Card.Title>
-        <Card.Divider />
-        <Image source={{ uri: event.imageUrl }} style={styles.cardImage} />
-        <Text style={styles.cardText}>Description: {event.description}</Text>
-        <Text style={styles.cardText}>StartTime: {event.startTime}</Text>
-        <Text style={styles.cardText}>EndTime: {event.endTime}</Text>
-        <Text style={styles.cardText}>Brand: {event.brand}</Text>
-        <Text style={styles.cardText}>Game: {event.game.gameID}</Text>
-        <Button title="View Details" onPress={() => navigation.navigate('EventDetail', { event: event })} />
-      </Card>
-    ));
+  const { user } = useSelector((state: any) => state.auth);
+
+  const navigation = useNavigation();
+  // console.log(user);
+
+  const screenWidth = Dimensions.get('window').width;
+
+  // Fetch events from the API
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const response = await fetch(`${localhost}/api/event_query/get_events_upcoming/`);
+        const data = await response.json();
+        
+        // Assuming all fetched events are upcoming events
+        const UpcomingEvents = data.map((event: any) => ({
+          id: event._id,
+          name: event.name,
+          description: event.description,
+          imageUrl: `${localhost}${event.imageUrl}`, // Complete the URL
+        }));
+
+        const response1 = await fetch(`${localhost}/api/event_query/get_events_ongoing/`);
+        const data1 = await response1.json();
+        let OngoingEvents = [];
+
+        if(Object.keys(data1).length){
+          OngoingEvents = data1.map((event: any) => ({
+            id: event._id,
+            name: event.name,
+            description: event.description,
+            imageUrl: `${localhost}${event.imageUrl}`, // Complete the URL
+          }));
+        }
+        else{
+          // console.log("No ongoing events!");
+        }
+
+        const favResponse = await fetch(`${localhost}/api/event_query/get_events_user_favorite/${user.id}`);
+        const data2 = await favResponse.json();
+        let favEvents = [];
+
+        if(Object.keys(data2).length){
+          favEvents = data2.map((event: any) => ({
+            id: event._id,
+            name: event.name,
+            description: event.description,
+            imageUrl: `${localhost}${event.imageUrl}`, // Complete the URL
+          }));
+        }
+        else{
+          // console.log("No fav events!");
+        }
+
+        setUpcomingEvents(UpcomingEvents);
+
+        // Set ongoingEvents or favoriteEvents based on your logic
+        // For demonstration purposes, let's assume they are the same
+        setOngoingEvents(OngoingEvents); 
+        setFavoriteEvents(favEvents);
+
+      } catch (error) {
+        console.error('Failed to fetch events:', error);
+      }
+    };
+
+    fetchEvents();
+  }, []);
+
+  // Duplicate events for infinite scroll
+  const duplicatedOngoingEvents = [...ongoingEvents, ...ongoingEvents];
+  const duplicatedUpcomingEvents = [...upcomingEvents, ...upcomingEvents];
+  const duplicatedFavoriteEvents = [...favoriteEvents, ...favoriteEvents];
+
+  // Refs for each FlatList
+  const ongoingRef = useRef<FlatList<EventItem>>(null);
+  const upcomingRef = useRef<FlatList<EventItem>>(null);
+  const favoriteRef = useRef<FlatList<EventItem>>(null);
+
+  const renderItem: ListRenderItem<EventItem> = ({ item }) => (
+    <TouchableOpacity onPress={() => navigation.navigate('EventDetail', { id: item.id })}>
+
+      <View style={styles.cardWrapper}>
+        <Card key={item.id} containerStyle={styles.cardContainer}>
+          <Card.Title>{item.name}</Card.Title>
+          <Card.Divider />
+          <Image source={{ uri: item.imageUrl }} style={styles.cardImage} />
+          <Text style={styles.cardText}>{item.description}</Text>
+        </Card>
+      </View>
+    </TouchableOpacity>
+  );
+
+  const handleScroll = (
+    event: NativeSyntheticEvent<NativeScrollEvent>,
+    events: EventItem[],
+    listRef: React.RefObject<FlatList<EventItem>>
+  ) => {
+    const scrollPosition = event.nativeEvent.contentOffset.x;
+    const contentWidth = event.nativeEvent.contentSize.width;
+    const itemWidth = contentWidth / events.length;
+
+    if (scrollPosition >= itemWidth * (events.length / 2)) {
+      listRef.current?.scrollToOffset({
+        offset: scrollPosition - itemWidth * (events.length / 2),
+        animated: false,
+      });
+    }
   };
 
   return (
-    <View style={styles.container}>
-      {contentHeight > screenHeight ? (
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
-          {renderCards()}
-        </ScrollView>
+    <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+      <Text style={styles.sectionTitle}>Sự kiện đang diễn ra</Text>
+      {ongoingEvents.length > 0 ? (
+        <FlatList
+          ref={ongoingRef}
+          data={[...ongoingEvents, ...ongoingEvents]}  // Duplicate for infinite scroll
+          horizontal
+          renderItem={renderItem}
+          keyExtractor={(item, index) => `${item.id}-${index}`}
+          contentContainerStyle={styles.scrollContainer}
+          showsHorizontalScrollIndicator={false}
+          pagingEnabled
+          onScroll={(event) => handleScroll(event, ongoingEvents, ongoingRef)}
+          scrollEventThrottle={16}
+          snapToInterval={screenWidth}
+          decelerationRate="fast"
+        />
       ) : (
-        <View style={styles.scrollContainer} onLayout={handleLayout}>
-          {renderCards()}
-        </View>
+        <Text style={styles.noEventsText}>Không có sự kiện nào đang diễn ra</Text>
       )}
-    </View>
+
+      <Text style={styles.sectionTitle}>Sự kiện sắp diễn ra</Text>
+      {upcomingEvents.length > 0 ? (
+        <FlatList
+          ref={upcomingRef}
+          data={[...upcomingEvents, ...upcomingEvents]}  // Duplicate for infinite scroll
+          horizontal
+          renderItem={renderItem}
+          keyExtractor={(item, index) => `${item.id}-${index}`}
+          contentContainerStyle={styles.scrollContainer}
+          showsHorizontalScrollIndicator={false}
+          pagingEnabled
+          onScroll={(event) => handleScroll(event, upcomingEvents, upcomingRef)}
+          scrollEventThrottle={16}
+          snapToInterval={screenWidth}
+          decelerationRate="fast"
+        />
+      ) : (
+        <Text style={styles.noEventsText}>Không có sự kiện nào sắp diễn ra</Text>
+      )}
+
+      <Text style={styles.sectionTitle}>Sự kiện yêu thích</Text>
+      {favoriteEvents.length > 0 ? (
+        <FlatList
+          ref={favoriteRef}
+          data={[...favoriteEvents, ...favoriteEvents]}  // Duplicate for infinite scroll
+          horizontal
+          renderItem={renderItem}
+          keyExtractor={(item, index) => `${item.id}-${index}`}
+          contentContainerStyle={styles.scrollContainer}
+          showsHorizontalScrollIndicator={false}
+          pagingEnabled
+          onScroll={(event) => handleScroll(event, favoriteEvents, favoriteRef)}
+          scrollEventThrottle={16}
+          snapToInterval={screenWidth}
+          decelerationRate="fast"
+        />
+      ) : (
+        <Text style={styles.noEventsText}>Không có sự kiện yêu thích nào</Text>
+      )}
+
+      <View style={styles.bottomSpacer} />
+    </ScrollView>
   );
 };
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#f0f0f5',
+    paddingTop: 20,
+  },
+  contentContainer: {
+    paddingBottom: 50,
+  },
+  sectionTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginVertical: 10,
+    marginLeft: 20,
+    color: '#333',
   },
   scrollContainer: {
-    flexGrow: 1,
-    justifyContent: 'center',
-    padding: 20,
+    alignItems: 'center',
+  },
+  cardWrapper: {
+    width: Dimensions.get('window').width,
+    paddingHorizontal: 20,
+  },
+  cardContainer: {
+    borderRadius: 15,
+    elevation: 3,
+    marginHorizontal: 0,
+    backgroundColor: '#ffffff',
   },
   cardImage: {
     width: '100%',
     height: 200,
     marginBottom: 10,
+    borderRadius: 10,
   },
   cardText: {
     fontSize: 16,
     textAlign: 'center',
-    marginBottom: 10,
+    color: '#555',
+  },
+  bottomSpacer: {
+    height: 50,
+  },
+  noEventsText: {
+    fontSize: 18,
+    color: '#000',
+    textAlign: 'center',
+    marginVertical: 20,
   },
 });
 
-export default EventListScreen;
+
+export default EventScreen;

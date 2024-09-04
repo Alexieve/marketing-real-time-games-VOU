@@ -34,7 +34,7 @@ router.get('/api/event_query/get_events_user_favorite/:userID', async (req: Requ
     const userEventFavorites = await UserEventFavorite.find({ userID: userID });
 
     if (userEventFavorites.length === 0) {
-        res.status(200).send({ message: 'No favorited events' });
+        res.status(200).send({});
         return;
     }
     // Take all event data of the favorited events
@@ -43,13 +43,49 @@ router.get('/api/event_query/get_events_user_favorite/:userID', async (req: Requ
 });
 
 router.get('/api/event_query/get_events_upcoming/', async (req: Request, res: Response) => {
-    // Find all upcoming events, startTime that less than current time 1 weeks
-    const events = await Event.find({ startTime: { $lte: new Date(new Date().getTime() + 7 * 24 * 60 * 60 * 1000) } });
+    let UTC = new Date();
+    let now = new Date(UTC.getTime() + 7 * 3600 * 1000);
+    const oneWeek = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
+    // Find all upcoming events, startTime that more than current time 1 weeks
+    const events = await Event.find({
+        startTime: { $lte: oneWeek, $gte: now }
+    });
     if (events.length === 0) {
-        res.status(200).send({ message: 'No upcoming events' });
+        res.status(200).send({});
         return;
     }
     res.status(200).send(events);
 });
+
+router.get('/api/event_query/get_events_ongoing/', async (req: Request, res: Response) => {
+    let UTC = new Date();
+    let now = new Date(UTC.getTime() + 7 * 3600 * 1000);
+    console.log(now);
+    // Find all events that are currently ongoing
+    const ongoingEvents = await Event.find({
+        startTime: { $lte: now },
+        endTime: { $gte: now }
+    });
+
+    if (ongoingEvents.length === 0) {
+        res.status(200).send({});
+        return;
+    }
+
+    res.status(200).send(ongoingEvents);
+});
+
+router.get('/api/event_query/search', async (req: Request, res: Response) => {
+    const query = req.query.query as string;
+    const events = await Event.find({ name: new RegExp(query, 'i') });
+    
+    if (events.length === 0) {
+        res.status(200).send({});
+        return;
+    }
+    res.status(200).send(events);
+});
+
+
 
 export = router;

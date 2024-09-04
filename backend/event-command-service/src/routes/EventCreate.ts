@@ -95,6 +95,13 @@ router.post('/api/event_command/event/create', upload.single('imageUrl'), eventV
         gameID
     };
 
+    // Call API to create gameEvent in game-service
+    await axios.post('http://game-srv:3000/api/game_event/create', {
+        gameID,
+        eventID: event._id,
+        playTurn
+    });
+
     await publishToExchanges('event_created', JSON.stringify(payLoad));
 
     console.log("Event created successfully");

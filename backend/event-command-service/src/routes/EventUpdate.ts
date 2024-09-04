@@ -103,6 +103,14 @@ router.put('/api/event_command/event/edit/:eventID', upload.single('imageUrl'), 
         vouchers,
         gameID
     };
+
+    // Call API to create gameEvent in game-service
+    await axios.post('http://game-srv:3000/api/game_event/create', {
+        gameID,
+        eventID: event._id,
+        playTurn
+    });
+
     await publishToExchanges('event_updated', JSON.stringify(payLoad));
 
     res.status(200).send(payLoad);

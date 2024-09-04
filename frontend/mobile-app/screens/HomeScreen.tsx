@@ -7,7 +7,7 @@ import { useNavigationState, useNavigation } from '@react-navigation/native';
 import { request } from '../utils/request';
 
 import EventListScreen from './EventListScreen';
-import EventDetailScreen from './EventDetailScreen';
+import EventDetail from './EventDetail';
 import ExchangeVoucherScreen from './ExchangeVoucherScreen';
 import SearchScreen from './SearchScreen';
 import FavouriteScreen from './FavouriteScreen';
@@ -15,7 +15,6 @@ import FavouriteScreen from './FavouriteScreen';
 import Menu from './Menu';
 import VoucherScreen from './VoucherScreen';
 import VoucherDetail from './VoucherDetail';
-import EventDetail from './EventDetail';
 
 import { useSelector } from 'react-redux';
 
@@ -26,13 +25,17 @@ const Stack = createNativeStackNavigator<RootStackParamList>();
 const Stack_Voucher = createNativeStackNavigator();
 
 
-const EventStack = () => (
-  <Stack.Navigator>
-    <Stack.Screen name="EventList" component={EventListScreen} options={{ headerShown: false }} />
-    <Stack.Screen name="EventDetail" component={EventDetailScreen} options={{ headerShown: false }} />
-    <Stack.Screen name="ExchangeVoucher" component={ExchangeVoucherScreen} options={{ headerShown: false }} />
-  </Stack.Navigator>
-);
+
+const EventListStack = () => {
+  return (
+    <Stack_Voucher.Navigator initialRouteName="EventListScreen">
+      <Stack_Voucher.Screen name="EventListScreen" component={EventListScreen} options={{ headerShown: false }} />
+      <Stack_Voucher.Screen name="EventSearchScreen" component={SearchScreen} options={{ headerShown: false }} />
+      <Stack_Voucher.Screen name="FavouriteScreen" component={FavouriteScreen} options={{ headerShown: false }} />
+      <Stack_Voucher.Screen name="EventDetail" component={EventDetail} options={{ headerShown: false }} />
+    </Stack_Voucher.Navigator>
+  );
+};
 
 const VoucherStack = () => {
   return (
@@ -95,7 +98,7 @@ const HomeScreen = () => {
           headerShown: false,
         })}
       >
-        <Tab.Screen name="Event" component={EventStack} />
+        <Tab.Screen name="Event" component={EventListStack} />
         <Tab.Screen name="Search" component={SearchScreen} />
         <Tab.Screen name="Favourite" component={FavouriteScreen} />
         <Tab.Screen name="Voucher" component={VoucherStack} />

@@ -7,7 +7,6 @@ const cors = require('cors');
 // Routes 
 import eventQueryRoutes from './routes/EventQuery';
 import voucherQueryRoutes from './routes/VoucherQuery';
-import gameQueryRoutes from './routes/GameQuery';
 
 // Subscriber
 import { connectRabbitMQ, subscribeToExchanges } from './utils/subscriber';
@@ -25,7 +24,6 @@ app.use(cors());
 /** Routes */
 app.use(eventQueryRoutes);
 app.use(voucherQueryRoutes);
-app.use(gameQueryRoutes);
 
 app.use(errorHandler);
 

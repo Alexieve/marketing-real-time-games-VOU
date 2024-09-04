@@ -1,6 +1,5 @@
 import { Event } from '../../models/EventQueryModel';
 import { Voucher } from '../../models/VoucherQueryModel';
-import { Game } from '../../models/GameQueryModel';
 
 export const event_deleted = {
     exchange: 'event_deleted',

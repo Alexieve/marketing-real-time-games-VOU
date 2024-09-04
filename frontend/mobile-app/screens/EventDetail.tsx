@@ -5,6 +5,8 @@ import { Ionicons } from '@expo/vector-icons';
 import { request } from '../utils/request';
 import localhost from '../url.config';
 import { useSelector } from 'react-redux';
+import { useRoute, useNavigation } from '@react-navigation/native';
+
 
 type game = {
   gameID: string;
@@ -57,39 +59,25 @@ const DetailScreen = () => {
   const user = useSelector((state) => state.auth.user);
   const [isFavorite, setIsFavorite] = useState(false); // Trạng thái cho icon trái tim
 
+  const route = useRoute();
+  const navigation = useNavigation();
+  const { id } = route.params;
+  // console.log(id);
+
+
+  // console.log(item);
   // console.log(user);
 
-  const eventSample = {
-    title: "Firemasters",
-    image: "https://vou-system.com/images/event/66d7055a30ff4fe2a559f5b5be9f2bb5b494364462ea1e685268cebf6b0cf7f51bec0e996f3dfc8fddc8ca92.png", // Thay thế bằng đường dẫn hình ảnh của bạn
-    description: "Lorem ipsum dolor sit amet, consectetur elit adipiscing elit. Venenatis pulvinar a amet in, suspendisse vitae, posuere eu tortor et. Und commodo, fermentum, mauris leo eget.",
-    date: "Dec 25",
-    enddate: "Dec 29",
-    time: "08:12 PM",
-    endtime: "09:12 PM",
-    location: `
-      LOCATION: Downtown Concert Hall
-      ADDRESS: 123 Main St, Springfield, IL
-      DIRECTIONS: Take the I-90 exit at Main St and continue straight for 2 miles.
-      PARKING: Available at the venue.
-      ADDITIONAL INFO: Please arrive 30 minutes early to avoid delays.
-      Nearby Landmarks:
-      1. Central Park
-      2. Springfield Museum of Art
-      3. City Library
-    `,
-    vouchers: [
-      { code: 'VOUCHER20', description: '20% off', details: 'Use this voucher to get 20% off on your ticket.' },
-      { code: 'BUY1GET1', description: 'Buy 1 Get 1 Free', details: 'Use this voucher to buy 1 ticket and get another free.' },
-      { code: 'DISCOUNT5', description: '$5 Discount', details: 'Use this voucher to get a $5 discount on your ticket.' }
-    ]
-  };
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await request(`/api/event_command/event_detail/66d7055a30ff4fe2a559f5b5`, 'get', "a");
-        // console.log(response.event.name);
+        let response = await request(`/api/event_command/event_detail/${id}`, 'get', "a");
+        // console.log(response);
+        let image = response.event.imageUrl;
+        image = localhost + image;
+        response.event.imageUrl = image;
+        // console.log(response);
         setData(response);
         const favoriteResponse = await request(`/api/event_query/get_events_user_favorite/${user.id}`, 'get', "a");
 
@@ -104,7 +92,7 @@ const DetailScreen = () => {
 
     fetchData();
   }, []);
-  
+
   const handleTabChange = (tab) => {
     setActiveTab(tab);
   };
@@ -126,7 +114,7 @@ const toggleFavorite = async () => {
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
-        <ImageBackground source={localhost + data?.event.imageUrl} style={styles.imageBackground}>
+        <ImageBackground source={{ uri: `${data?.event.imageUrl}` }}>
         
         {/* <ImageBackground source={localhost + data.event.imageUrl} style={styles.imageBackground}> */}
           <View style={styles.header}>
