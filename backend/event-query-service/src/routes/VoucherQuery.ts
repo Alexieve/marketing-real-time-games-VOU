@@ -16,12 +16,12 @@ router.get('/api/event_query/get_vouchers_by_brand/:brand', async (req: Request,
 
 router.get('/api/event_query/get_vouchers_by_eventID/:eventID', async (req: Request, res: Response) => {
     const { eventID } = req.params;
-    // Find all vouchers for the specified event
-    const vouchers = await Voucher.find({ eventID: eventID });
+    // Find all vouchers for the specified event, order by status, expiry date
+    const vouchers = await Voucher.find({ eventID: eventID }).sort({ status: 1, expiryDate: 1 });
     res.status(200).send(vouchers);
 });
 
-router.get('/api/events_query/get_vouchers/:id', async (req: Request, res: Response) => {
+router.get('/api/event_query/get_vouchers/:id', async (req: Request, res: Response) => {
     const { id } = req.params;
     const voucher = await Voucher.findOne({ _id: id });
 
@@ -32,7 +32,7 @@ router.get('/api/events_query/get_vouchers/:id', async (req: Request, res: Respo
     res.status(200).send(voucher);
 });
 
-router.get('/api/events_query/get_user_vouchers/:userID', async (req: Request, res: Response) => {
+router.get('/api/event_query/get_user_vouchers/:userID', async (req: Request, res: Response) => {
     const { userID } = req.params;
     const userVouchers = await UserVoucher.find({ userID: userID });
     if (!userVouchers) {

@@ -51,6 +51,13 @@ router.post('/api/event_command/voucher/create', upload.single('imageUrl'), vouc
     if (!imageFile) {
         throw new BadRequestError('No image uploaded');
     }
+
+    // Checking whether already exists a voucher with the same code
+    const existingVoucher = await Voucher.findOne({ code: code });
+    if (existingVoucher) {
+        throw new BadRequestError('Voucher with the same code already exists');
+    }
+
     const newImageHash = generateImageHashFromBuffer(imageFile.buffer) + '.' + imageFile.mimetype.split('/')[1];
 
     const newVoucher = Voucher.build({
