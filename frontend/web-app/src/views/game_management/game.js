@@ -24,7 +24,7 @@ const GameManagement = () => {
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        const data = await request("api/events_query/get_games", "GET");
+        const data = await request(`api/game/game-config/:gameID`, "GET");
         setGames(data);
         setSelectedGame(data[0]);
       } catch (error) {
@@ -52,18 +52,15 @@ const GameManagement = () => {
 
   const handleGameChange = (e) => {
     const gameId = e.target.value;
-    const game = games.find((g) => g._id === gameId);
+    const game = games.find((g) => g.gameID == gameId);
     setSelectedGame(game);
   };
 
   const handleUpdateGame = async () => {
     try {
-      // await request("api/game/update", "POST", selectedGame);
-      const updatedGames = games.map((game) =>
-        game._id === selectedGame._id ? selectedGame : game,
-      );
-      console.log("Updated Games", updatedGames);
-      setGames(updatedGames);
+      await request("api/game/game-config", "PUT", selectedGame);
+      const data = await request(`api/game/game-config/:gameID`, "GET");
+      setGames(data);
     } catch (error) {
       console.error(error);
     }
@@ -105,11 +102,11 @@ const GameManagement = () => {
                     <CFormLabel htmlFor="gameSelect">Select Game</CFormLabel>
                     <CFormSelect
                       id="gameSelect"
-                      value={selectedGame._id}
+                      value={selectedGame.gameID}
                       onChange={handleGameChange}
                     >
-                      {games.map((game) => (
-                        <option key={game._id} value={game._id}>
+                      {games.map((game, index) => (
+                        <option key={game.gameID || index} value={game.gameID}>
                           {game.name}
                         </option>
                       ))}

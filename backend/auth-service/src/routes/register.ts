@@ -110,15 +110,15 @@ route.post('/api/auth/send-otp', async (req: Request, res: Response) => {
         specialChars: false, 
     });
 
-    // try {
-    //     await twilioClient.messages.create({
-    //         body: `Your OTP is: ${otp}`,
-    //         messagingServiceSid: process.env.TWILIO_MESSAGING_SERVICE_SID,            
-    //         to: phonenum
-    //     });
-    // } catch (error: any) {
-    //     throw new BadRequestError(error);
-    // }
+    try {
+        await twilioClient.messages.create({
+            body: `Your OTP is: ${otp}`,
+            messagingServiceSid: process.env.TWILIO_MESSAGING_SERVICE_SID,            
+            to: phonenum
+        });
+    } catch (error: any) {
+        throw new BadRequestError(error);
+    }
 
     const cacheKey = `otp:${tmp}`;
     await RedisClient.set(cacheKey, otp, 300);

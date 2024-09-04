@@ -53,7 +53,7 @@ const LoginScreen = () => {
                 placeholder="Email"
                 onBlur={onBlur}
                 onChangeText={onChange}
-                value={'vuminhquynh75@gmail.com'}
+                value={value}
                 autoCapitalize="none"
                 leftIcon={{ type: 'font-awesome', name: 'envelope' }}
                 inputContainerStyle={styles.inputContainer}
@@ -77,7 +77,7 @@ const LoginScreen = () => {
                 placeholder="Password"
                 onBlur={onBlur}
                 onChangeText={onChange}
-                value={'123456'}
+                value={value}
                 secureTextEntry
                 leftIcon={{ type: 'font-awesome', name: 'lock' }}
                 inputContainerStyle={styles.inputContainer}

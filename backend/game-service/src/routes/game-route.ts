@@ -25,14 +25,11 @@ route.put('/api/game/game-config', gameInforValidator,
         const updatedGame = req.body;
         try {
             await Game.update(updatedGame);
-            const games = await Game.getGameByID(updatedGame.gameID);
-            res.send(games);
+            res.send("Updated game successfully!");
         }
         catch (error) {
             throw new BadRequestError("Cannot updating game!");
         }
-
-        console.log("Update game: ", updatedGame);
     });
 
 export { route as GameRoute };

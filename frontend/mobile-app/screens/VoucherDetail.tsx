@@ -74,10 +74,10 @@ const VoucherDetail = () => {
 
   const voucher = {
     discount: 'VietQR hoàn 5K',
-    image: require('../assets/test.png'),
+    image: require('../assets/splash.png'),
     description: 'cho mọi giao dịch quét VietQR/QR Ngân hàng',
     expiry: '12/09/2024',
-    imageBrand2: require('../assets/test.png'),
+    imageBrand2: require('../assets/splash.png'),
     brand: 'VietQR/QR Ngân Hàng',
     code: 'ABC123', // Mã code của voucher
   };
