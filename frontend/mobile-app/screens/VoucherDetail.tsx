@@ -72,15 +72,15 @@ const VoucherDetail = () => {
     fetchData();
   }, [eventId]);
 
-  const voucher = {
-    discount: 'VietQR hoàn 5K',
-    image: require('../assets/splash.png'),
-    description: 'cho mọi giao dịch quét VietQR/QR Ngân hàng',
-    expiry: '12/09/2024',
-    imageBrand2: require('../assets/splash.png'),
-    brand: 'VietQR/QR Ngân Hàng',
-    code: 'ABC123', // Mã code của voucher
-  };
+  // const voucher = {
+  //   discount: 'VietQR hoàn 5K',
+  //   image: require('../assets/splash.png'),
+  //   description: 'cho mọi giao dịch quét VietQR/QR Ngân hàng',
+  //   expiry: '12/09/2024',
+  //   imageBrand2: require('../assets/splash.png'),
+  //   brand: 'VietQR/QR Ngân Hàng',
+  //   code: 'ABC123', // Mã code của voucher
+  // };
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
