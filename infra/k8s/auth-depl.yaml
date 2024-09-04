@@ -21,6 +21,14 @@ spec:
                 secretKeyRef:
                   name: jwt-secret
                   key: JWT_KEY
+            - name: TWILIO_ACCOUNT_SID
+              value: "AC1229af94be58e8f1292f265d9f1aab08"
+            - name: TWILIO_AUTH_TOKEN
+              value: "cf46bb62cdb8ea00d805829d3ac34c8c"
+            - name: TWILIO_PHONE_NUMBER
+              value: "+84284401157"
+            - name: TWILIO_MESSAGING_SERVICE_SID
+              value: "MG1182c151219c2a50fd9af49aab5e6ba7"
 ---
 apiVersion: v1
 kind: Service

@@ -15,9 +15,7 @@ const start = async () => {
         console.error(error);
     }
 
-    // await RedisClient.getInstance();
-    // await RedisClient.set('test', 'test', 30);
-    // console.log(await RedisClient.get('test'));
+    await RedisClient.getInstance();
 
     app.listen(3000, () => {
         console.log('Auth service listening on port 3000');

@@ -2,8 +2,10 @@ import React from "react";
 import { View, StyleSheet, Text, Modal, TouchableOpacity, Image } from "react-native";
 import Icon from "react-native-vector-icons/Ionicons";
 import { COLORS } from "../../constants";
+import localhost from "../../url.config";
 
-const ResultModal = ({ visible, item, onClose }: { visible: boolean, item: string, onClose: () => void }) => {
+
+const ResultModal = ({ visible, item, onClose }: { visible: boolean, item: any, onClose: () => void }) => {
   return (
     <Modal
       animationType="slide"
@@ -14,11 +16,11 @@ const ResultModal = ({ visible, item, onClose }: { visible: boolean, item: strin
       <View style={styles.modalContainer}>
         <View style={styles.modalContent}>
           <Image
-            source={require("../../assets/images/item.png")}
+            source={{ uri: `${localhost}${item.imageURL}` }}
             style={styles.animation}
             resizeMode={"contain"}
           />
-          <Text style={styles.itemText}>{item}</Text>
+          <Text style={styles.itemText}>{item.name}</Text>
           <TouchableOpacity onPress={onClose} style={styles.closeButton}>
             <Icon name="close" size={24} color={COLORS.white} />
           </TouchableOpacity>

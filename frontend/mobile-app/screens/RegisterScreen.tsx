@@ -19,9 +19,8 @@ const RegisterScreen = () => {
 
   const onSubmit = async (data: any) => {
     try {
-      const { user, token } = await request(`/api/auth/register/customer`, 'post', data);
-      dispatch(authActions.login({ user, token }));
-      navigation.navigate('Home' as never);
+      await request(`/api/auth/send-otp`, 'post', {email: data.email, phonenum: data.phonenum});
+      navigation.navigate('OtpVerification', { data });
     } catch (err: any) {
       showMessage({
         message: "Registration Failed",

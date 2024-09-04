@@ -12,6 +12,7 @@ import { COLORS } from "../../constants";
 import { useAppDispatch, useAppSelector } from "../../store";
 import { fetchOwnItems } from "../../thunks/shakeThunk";
 import GiftItemModal from "./GiftItemModal"; // Import the new GiftModal component
+import localhost from "../../url.config";
 
 const MyItems = ({
   customerID,
@@ -26,9 +27,9 @@ const MyItems = ({
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState<any>(null);
 
-  useEffect(() => {
-    dispatch(fetchOwnItems({ customerID, eventID }));
-  }, []);
+  // useEffect(() => {
+  //   dispatch(fetchOwnItems({ customerID, eventID }));
+  // }, []);
 
   const handleGiftPress = (item: any) => {
     setSelectedItem(item);
@@ -49,7 +50,7 @@ const MyItems = ({
             return (
               <View key={index} style={styles.itemWrapper}>
                 <Image
-                  source={require("../../assets/images/item.png")}
+                  source={{ uri: `${localhost}${item.imageURL}` }}
                   style={styles.itemImagePlaceholder}
                   resizeMode={"contain"}
                 />
