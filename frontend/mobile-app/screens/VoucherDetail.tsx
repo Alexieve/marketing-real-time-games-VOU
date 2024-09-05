@@ -54,6 +54,8 @@ const VoucherDetail = () => {
   const user = useSelector((state) => state.auth.user);
   const route = useRoute();
   const navigation = useNavigation();
+  const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
+
   const { eventId } = route.params;
   console.log(eventId);
   useEffect(() => {
@@ -61,9 +63,12 @@ const VoucherDetail = () => {
       try {
         const response = await request(`/api/event_command/voucher_detail/${eventId}`, 'get', "a");
         setData(response);
-        const response2 = await request(`/api/event_command/event_detail/${response.eventId}`, 'get', "a");
+        const response2 = await request(`/api/event_command/event_detail/${response.eventID}`, 'get', "a");
         setData2(response2);
-
+        console.log(response2);
+        Image.getSize(localhost + response2.event.imageUrl, (width, height) => {
+          setImageSize({ width, height });
+        });
       } catch (error) {
         console.error('Error fetching data:', error);
       }
@@ -74,10 +79,10 @@ const VoucherDetail = () => {
 
   const voucher = {
     discount: 'VietQR hoàn 5K',
-    image: require('../assets/splash.png'),
+    image: require('../assets/test.png'),
     description: 'cho mọi giao dịch quét VietQR/QR Ngân hàng',
     expiry: '12/09/2024',
-    imageBrand2: require('../assets/splash.png'),
+    imageBrand2: require('../assets/test.png'),
     brand: 'VietQR/QR Ngân Hàng',
     code: 'ABC123', // Mã code của voucher
   };
@@ -85,31 +90,32 @@ const VoucherDetail = () => {
     const date = new Date(dateString);
     return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
   };
-  console.log(data);
-  console.log(data2);
+  // console.log(data);
+  // console.log(data2);
+  console.log(imageSize);
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
-        <View style={styles.imageBackgroundContainer}>
-          <ImageBackground source={localhost + data2?.event.imageUrl} style={styles.imageBackground}>
+        <View style={[styles.imageBackgroundContainer, { aspectRatio: imageSize.width / imageSize.height }]}>
+          <ImageBackground source={{uri: localhost + data2?.event.imageUrl}} style={styles.imageBackground}>
             <View style={styles.header}>
               <TouchableOpacity  onPress={() => navigation.navigate('VoucherScreen')}>
-                <Ionicons name="chevron-back" size={28} color="white" style={styles.iconWithBorder} />
+                <Ionicons name="chevron-back" size={28} color="black" style={styles.iconWithBorder} />
               </TouchableOpacity>
             </View>
             <View style={styles.overlay} />
           </ImageBackground>
           <View style={styles.card}>
-            <Text style={styles.cardTitle}>Discount: {data.price}%</Text>
+            <Text style={styles.cardTitle}>Discount: {data.price}</Text>
             <Text style={styles.cardDescription}>{data.description}</Text>
             <Text style={styles.cardExpiry}>HSD: {formatDate(data.expTime)}</Text>
-            <Text style={styles.cardBrand}>Event: {data2?.event.name}</Text>
+            {/* <Text style={styles.cardBrand}>Event: {data2?.event.name}</Text> */}
           </View>
         </View>
         <View style={styles.detailsContainer}>
         <View style={styles.codeCard}>
             <Text style={styles.qrTitle}>QR code</Text> {/* Thêm title */}
-            <Image source={localhost + data.imageUrl} style={styles.codeImage} />
+            <Image source={{uri: localhost + data.imageUrl}} style={styles.codeImage} />
             <Text style={styles.codeTitle}>Code: {data.code}</Text>
           </View>
         </View>
@@ -128,8 +134,8 @@ const styles = StyleSheet.create({
   },
   imageBackgroundContainer: {
     width: '100%',
-    height: 400,
-    position: 'relative',
+    height: undefined,
+    // position: 'relative',
   },
   imageBackground: {
     width: '100%',
@@ -151,7 +157,7 @@ const styles = StyleSheet.create({
   },
   iconWithBorder: {
     borderWidth: 2,
-    borderColor: 'white',
+    borderColor: 'black',
     borderRadius: 14,
     padding: 5,
   },

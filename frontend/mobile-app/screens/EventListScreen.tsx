@@ -26,14 +26,18 @@ const EventScreen = () => {
       try {
         const response = await fetch(`${localhost}/api/event_query/get_events_upcoming/`);
         const data = await response.json();
-        
+        let UpcomingEvents = [];
+        if(Object.keys(data).length){
+            UpcomingEvents = data.map((event: any) => ({
+            id: event._id,
+            name: event.name,
+            description: event.description,
+            imageUrl: `${localhost}${event.imageUrl}`, // Complete the URL
+          }));
+        }
+
+
         // Assuming all fetched events are upcoming events
-        const UpcomingEvents = data.map((event: any) => ({
-          id: event._id,
-          name: event.name,
-          description: event.description,
-          imageUrl: `${localhost}${event.imageUrl}`, // Complete the URL
-        }));
 
         const response1 = await fetch(`${localhost}/api/event_query/get_events_ongoing/`);
         const data1 = await response1.json();

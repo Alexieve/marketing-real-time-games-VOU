@@ -8,23 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import localhost from '../url.config';
 import { useSelector } from 'react-redux';
 
-// const vouchers = [
-//   {
-//     discount: 'VietQR hoàn 5K',
-//     description: 'cho mọi giao dịch quét VietQR/QR Ngân hàng',
-//     expiry: '12/09/2024',
-//     image: require('../assets/test.png'),
-//     brand: 'VietQR/QR Ngân Hàng',
-//   },
-//   {
-//     discount: 'VietQR hoàn 5K',
-//     description: 'cho mọi giao dịch quét VietQR/QR Ngân hàng',
-//     expiry: '12/09/2024',
-//     image: require('../assets/test.png'),
-//     brand: 'VietQR/QR Ngân Hàng',
-//   },
 
-// ];
 
 const VoucherScreen = () => {
   const [data, setData] = useState(null);
@@ -73,7 +57,7 @@ const VoucherScreen = () => {
           </View>
 
           <View style={styles.rightContainer}>
-            <Text style={styles.discountText}>Discount: {voucher.price}%</Text>
+            <Text style={styles.discountText}>Discount: {voucher.price}</Text>
             <Text style={styles.descriptionText}>{voucher.description}</Text>
             <Text style={styles.expiryText}>HSD: {formatDate(voucher.expTime)}</Text>
             <View style={styles.detailButtonWrapper}>
