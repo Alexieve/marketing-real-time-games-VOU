@@ -96,7 +96,7 @@ router.post('/api/event_command/event/create', upload.single('imageUrl'), eventV
     };
 
     // Call API to create gameEvent in game-service
-    await axios.post('http://game-srv:3000/api/game_event/create', {
+    await axios.post('http://game-srv:3000/api/game/event-game-config', {
         gameID,
         eventID: event._id,
         playTurn

@@ -71,7 +71,9 @@ const SearchScreen = () => {
               source={{ uri: event.imageUrl }}
               style={styles.cardImage}
             />
-            <Text style={styles.cardText}>{event.description}</Text>
+            <Text style={styles.cardText} numberOfLines={2} ellipsizeMode="tail">
+            {event.description}
+          </Text>
           </Card>
         </View>
       </TouchableOpacity>

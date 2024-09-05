@@ -58,7 +58,7 @@ const Header = ({customerID, eventID}: {customerID: any, eventID: string}) => {
     return (
         <View style={styles.header}>
             <TouchableOpacity style={styles.backButton} onPress={goBack}>
-            <Icon name="arrow-back" size={24} color={COLORS.white} />
+                <Icon name="arrow-back" size={24} color={COLORS.white} />
             </TouchableOpacity>
             <View style={styles.playturnLabel}>
                 <Text style={styles.playturnText}>Play turn: {playturn}</Text>

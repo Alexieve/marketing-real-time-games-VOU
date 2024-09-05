@@ -4,14 +4,18 @@ import { Card } from '@rneui/themed';
 import { useSelector } from 'react-redux';
 import localhost from '../url.config';
 import { useRoute, useNavigation } from '@react-navigation/native';
+import { useAppSelector, useAppDispatch } from '../store';
+import { fetchFavorites } from '../thunks/favoriteThunk';
 
 
 type EventItem = { id: string; name: string; description: string; imageUrl: string };
 
 const EventScreen = () => {
+  const dispatch = useAppDispatch();
+  const favoriteEvents = useAppSelector((state) => state.favorite.favorite);
   const [ongoingEvents, setOngoingEvents] = useState<EventItem[]>([]);
   const [upcomingEvents, setUpcomingEvents] = useState<EventItem[]>([]);
-  const [favoriteEvents, setFavoriteEvents] = useState<EventItem[]>([]); // Replace with your logic for favorite events
+  // const [favoriteEvents, setFavoriteEvents] = useState<EventItem[]>([]); // Replace with your logic for favorite events
 
   const { user } = useSelector((state: any) => state.auth);
 
@@ -55,28 +59,29 @@ const EventScreen = () => {
           // console.log("No ongoing events!");
         }
 
-        const favResponse = await fetch(`${localhost}/api/event_query/get_events_user_favorite/${user.id}`);
-        const data2 = await favResponse.json();
-        let favEvents = [];
+        // const favResponse = await fetch(`${localhost}/api/event_query/get_events_user_favorite/${user.id}`);
+        // const data2 = await favResponse.json();
+        // let favEvents = [];
 
-        if(Object.keys(data2).length){
-          favEvents = data2.map((event: any) => ({
-            id: event._id,
-            name: event.name,
-            description: event.description,
-            imageUrl: `${localhost}${event.imageUrl}`, // Complete the URL
-          }));
-        }
-        else{
-          // console.log("No fav events!");
-        }
+        // if(Object.keys(data2).length){
+        //   favEvents = data2.map((event: any) => ({
+        //     id: event._id,
+        //     name: event.name,
+        //     description: event.description,
+        //     imageUrl: `${localhost}${event.imageUrl}`, // Complete the URL
+        //   }));
+        // }
+        // else{
+        //   // console.log("No fav events!");
+        // }
 
         setUpcomingEvents(UpcomingEvents);
 
         // Set ongoingEvents or favoriteEvents based on your logic
         // For demonstration purposes, let's assume they are the same
         setOngoingEvents(OngoingEvents); 
-        setFavoriteEvents(favEvents);
+        // setFavoriteEvents(favEvents);
+        dispatch(fetchFavorites({ id: user.id }));
 
       } catch (error) {
         console.error('Failed to fetch events:', error);
@@ -97,14 +102,16 @@ const EventScreen = () => {
   const favoriteRef = useRef<FlatList<EventItem>>(null);
 
   const renderItem: ListRenderItem<EventItem> = ({ item }) => (
-    <TouchableOpacity onPress={() => navigation.navigate('EventDetail', { id: item.id })}>
+    <TouchableOpacity onPress={() => navigation.navigate('EventDetail', { id: item.id || item._id })}>
 
       <View style={styles.cardWrapper}>
         <Card key={item.id} containerStyle={styles.cardContainer}>
           <Card.Title>{item.name}</Card.Title>
           <Card.Divider />
           <Image source={{ uri: item.imageUrl }} style={styles.cardImage} />
-          <Text style={styles.cardText}>{item.description}</Text>
+          <Text style={styles.cardText} numberOfLines={2} ellipsizeMode="tail">
+          {item.description}
+          </Text>
         </Card>
       </View>
     </TouchableOpacity>

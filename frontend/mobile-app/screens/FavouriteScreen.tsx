@@ -4,11 +4,16 @@ import { Card } from '@rneui/themed';
 import { useSelector } from 'react-redux';
 import { useNavigation } from '@react-navigation/native';
 import localhost from '../url.config';
+import { useAppDispatch, useAppSelector } from '../store';
+import { favoriteActions } from '../slices/favoriteSlice';
+import { fetchFavorites } from '../thunks/favoriteThunk';
 
 const FavouriteScreen = () => {
+  const dispatch = useAppDispatch();
   const [contentHeight, setContentHeight] = useState(0);
-  const [favoriteEvents, setFavoriteEvents] = useState([]);
+  // const [favoriteEvents, setFavoriteEvents] = useState([]);
   const screenHeight = Dimensions.get('window').height;
+  const favoriteEvents = useAppSelector((state) => state.favorite.favorite);
 
   const { user } = useSelector((state: any) => state.auth);
   const navigation = useNavigation();
@@ -16,17 +21,7 @@ const FavouriteScreen = () => {
   useEffect(() => {
     const fetchFavoriteEvents = async () => {
       try {
-        const favResponse = await fetch(`${localhost}/api/event_query/get_events_user_favorite/${user.id}`);
-        const data = await favResponse.json();
-
-        const favEvents = Array.isArray(data) ? data.map((event: any) => ({
-          id: event._id,
-          name: event.name,
-          description: event.description,
-          imageUrl: `${localhost}${event.imageUrl}`, // Complete the URL
-        })) : [];
-
-        setFavoriteEvents(favEvents);
+        dispatch(fetchFavorites({ id: user.id }));
       } catch (error) {
         console.error('Failed to fetch favorite events:', error);
       }
@@ -46,7 +41,7 @@ const FavouriteScreen = () => {
     }
 
     return favoriteEvents.map((event, index) => (
-      <TouchableOpacity key={event.id || index} onPress={() => navigation.navigate('EventDetail', { id: event.id })}>
+      <TouchableOpacity key={event.id || index} onPress={() => navigation.navigate('EventDetail', { id: event.id || event._id })}>
         <View style={styles.cardWrapper}>
           <Card containerStyle={styles.cardContainer}>
             <Card.Title>
@@ -57,7 +52,9 @@ const FavouriteScreen = () => {
               source={{ uri: event.imageUrl }}
               style={styles.cardImage}
             />
-            <Text style={styles.cardText}>{event.description}</Text>
+            <Text style={styles.cardText} numberOfLines={2} ellipsizeMode="tail">
+            {event.description}
+            </Text>
           </Card>
         </View>
       </TouchableOpacity>

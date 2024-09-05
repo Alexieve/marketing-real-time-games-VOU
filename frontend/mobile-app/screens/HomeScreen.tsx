@@ -21,19 +21,24 @@ import { useSelector } from 'react-redux';
 import { RootStackParamList } from './RootStackParamList'; // Import the type you just created
 
 const Tab = createBottomTabNavigator();
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const Stack_EventList = createNativeStackNavigator();
 const Stack_Voucher = createNativeStackNavigator();
 
 
 
 const EventListStack = () => {
   return (
-    <Stack_Voucher.Navigator initialRouteName="EventListScreen">
-      <Stack_Voucher.Screen name="EventListScreen" component={EventListScreen} options={{ headerShown: false }} />
-      <Stack_Voucher.Screen name="EventSearchScreen" component={SearchScreen} options={{ headerShown: false }} />
-      <Stack_Voucher.Screen name="FavouriteScreen" component={FavouriteScreen} options={{ headerShown: false }} />
-      <Stack_Voucher.Screen name="EventDetail" component={EventDetail} options={{ headerShown: false }} />
-    </Stack_Voucher.Navigator>
+    <Stack_EventList.Navigator initialRouteName="EventListScreen">
+      <Stack_EventList.Screen name="EventListScreen" component={EventListScreen} options={{ headerShown: false }} />
+      <Stack_EventList.Screen name="EventSearchScreen" component={SearchScreen} options={{ headerShown: false }} />
+      <Stack_EventList.Screen name="FavouriteScreen" component={FavouriteScreen} options={{ headerShown: false }} />
+      <Stack_EventList.Screen name="EventDetail" component={EventDetail} options={{ headerShown: false }} />
+      <Stack_EventList.Screen
+        name="ExchangeVoucherScreen"
+        component={ExchangeVoucherScreen}
+        options={{ headerShown: false }} // Ẩn header
+      />
+    </Stack_EventList.Navigator>
   );
 };
 

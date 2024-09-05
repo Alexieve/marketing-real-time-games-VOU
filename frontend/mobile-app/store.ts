@@ -2,6 +2,7 @@ import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./slices/authSlice";
 import quizReducer from "./slices/quizSlice";
 import shakeReducer from "./slices/shakeSlice";
+import favoriteReducer from "./slices/favoriteSlice";
 
 // Configure the store
 const store = configureStore({
@@ -9,6 +10,7 @@ const store = configureStore({
     auth: authReducer,
     quiz: quizReducer,
     shake: shakeReducer,
+    favorite: favoriteReducer,
   },
 });
 

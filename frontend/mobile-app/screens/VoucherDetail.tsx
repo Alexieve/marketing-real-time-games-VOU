@@ -61,12 +61,16 @@ const VoucherDetail = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await request(`/api/event_command/voucher_detail/${eventId}`, 'get', "a");
-        setData(response);
-        const response2 = await request(`/api/event_command/event_detail/${response.eventID}`, 'get', "a");
-        setData2(response2);
-        console.log(response2);
-        Image.getSize(localhost + response2.event.imageUrl, (width, height) => {
+        // const response = await request(`/api/event_command/voucher_detail/${eventId}`, 'get', "a");
+        let response = await fetch(`${localhost}/api/event_command/voucher_detail/${eventId}`);
+        let responseJson = await response.json();
+        setData(responseJson);
+        // const response = await request(`/api/event_command/event_detail/${response.eventID}`, 'get', "a");
+        response = await fetch(`${localhost}/api/event_command/event_detail/${responseJson.eventID}`);
+        responseJson = await response.json();
+        setData2(responseJson);
+        // console.log(response2);
+        Image.getSize(localhost + responseJson.event.imageUrl, (width, height) => {
           setImageSize({ width, height });
         });
       } catch (error) {
@@ -77,15 +81,6 @@ const VoucherDetail = () => {
     fetchData();
   }, [eventId]);
 
-  const voucher = {
-    discount: 'VietQR hoàn 5K',
-    image: require('../assets/test.png'),
-    description: 'cho mọi giao dịch quét VietQR/QR Ngân hàng',
-    expiry: '12/09/2024',
-    imageBrand2: require('../assets/test.png'),
-    brand: 'VietQR/QR Ngân Hàng',
-    code: 'ABC123', // Mã code của voucher
-  };
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
@@ -96,7 +91,7 @@ const VoucherDetail = () => {
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
-        <View style={[styles.imageBackgroundContainer, { aspectRatio: imageSize.width / imageSize.height }]}>
+        <View style={[styles.imageBackgroundContainer]}>
           <ImageBackground source={{uri: localhost + data2?.event.imageUrl}} style={styles.imageBackground}>
             <View style={styles.header}>
               <TouchableOpacity  onPress={() => navigation.navigate('VoucherScreen')}>
@@ -114,7 +109,7 @@ const VoucherDetail = () => {
         </View>
         <View style={styles.detailsContainer}>
         <View style={styles.codeCard}>
-            <Text style={styles.qrTitle}>QR code</Text> {/* Thêm title */}
+            <Text style={styles.qrTitle}>QR code</Text>
             <Image source={{uri: localhost + data.imageUrl}} style={styles.codeImage} />
             <Text style={styles.codeTitle}>Code: {data.code}</Text>
           </View>
@@ -134,7 +129,7 @@ const styles = StyleSheet.create({
   },
   imageBackgroundContainer: {
     width: '100%',
-    height: undefined,
+    height: 300,
     // position: 'relative',
   },
   imageBackground: {

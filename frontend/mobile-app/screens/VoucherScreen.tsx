@@ -18,8 +18,13 @@ const VoucherScreen = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await request(`/api/event_query/get_user_vouchers/${user.id}`, 'get', "a");
-        setData(response);
+        const response = await fetch(`${localhost}/api/event_query/get_user_vouchers/${user.id}`);
+        const data = await response.json();
+        // const favoriteResponse = await fetch(`${localhost}/api/event_query/get_events_user_favorite/${user.id}`);
+        // const favoriteData = await favoriteResponse.json();
+
+        // const response = await request(`/api/event_query/get_user_vouchers/${user.id}`, 'get', "a");
+        setData(data);
 
 
 
@@ -49,15 +54,15 @@ const VoucherScreen = () => {
   console.log(data);
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
-      {data.map((voucher, index) => (
+      {data.map((voucher: any, index: any) => (
         <View key={index} style={styles.cardContainer}>
           <View style={styles.leftContainer}>
-            <Image source={localhost + voucher.imageUrl} style={styles.brandImage} />
+            <Image source={{uri: localhost + voucher.imageUrl}} style={styles.brandImage} />
             {/* <Text style={styles.brandName}>{voucher.brand}</Text> */}
           </View>
 
           <View style={styles.rightContainer}>
-            <Text style={styles.discountText}>Discount: {voucher.price}</Text>
+            <Text style={styles.discountText}>Discount: {voucher.price}đ</Text>
             <Text style={styles.descriptionText}>{voucher.description}</Text>
             <Text style={styles.expiryText}>HSD: {formatDate(voucher.expTime)}</Text>
             <View style={styles.detailButtonWrapper}>

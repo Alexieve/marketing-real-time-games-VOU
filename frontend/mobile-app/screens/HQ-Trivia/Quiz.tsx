@@ -15,10 +15,10 @@ import { useSelector } from "react-redux";
 import { quizActions } from "../../slices/quizSlice";
 import Animation from "../../components/HQ-Trivia/Animation";
 import data from "../../data/QuizData";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import Icon from "react-native-vector-icons/Ionicons";
 import { fetchPlayLog, fetchPoints, fetchExchangeLog, fetchPlayTurn } from "../../thunks/quizThunk";
-import { useAppDispatch } from "../../store";
+import { useAppDispatch, useAppSelector } from "../../store";
 import { unwrapResult } from "@reduxjs/toolkit";
 import PlayLog from "../../components/HQ-Trivia/PlayLog"; // Import the new component
 import ExchangeLog from "../../components/HQ-Trivia/ExchangeLog"; // Import the new component
@@ -27,6 +27,10 @@ import GamePlay from "../../components/HQ-Trivia/GamePlay";
 const Quiz = () => {
   const dispatch = useAppDispatch();
   const navigation = useNavigation();
+  const route = useRoute();
+
+  const customerID = useAppSelector((state: any) => state.auth.user.id);
+  const eventID = (route.params as { eventID?: string })?.eventID ?? "";
 
   const { point, hasStarted, playlog, exchangeLog } = useSelector((state: any) => state.quiz);
 
@@ -39,7 +43,7 @@ const Quiz = () => {
   };
 
   const startQuiz = async () => {
-    const res = await dispatch(fetchPlayTurn({ customerID: 1, eventID: "66c6f1c4c33e15ad0805fc98" }));
+    const res = await dispatch(fetchPlayTurn({ customerID, eventID}));
     const playturn = unwrapResult(res);
     console.log(playturn);
     if (playturn > 0) {

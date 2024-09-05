@@ -5,7 +5,7 @@ interface ICustomerItem {
     customerID: number | null;
     eventID: string | null;
     itemID: number | null;
-    quantity: number | null;
+    quantity: number | 0;
 }
 
 
@@ -13,13 +13,13 @@ class CustomerItem {
     customerID: number | null;
     eventID: string | null;
     itemID: number | null;
-    quantity: number | null;
+    quantity: number | 0;
 
     constructor({customerID, eventID, itemID, quantity}: ICustomerItem) {
         this.customerID = customerID || null;
         this.eventID = eventID || null;
         this.itemID = itemID || null;
-        this.quantity = quantity || null;
+        this.quantity = quantity || 0;
     }
 
     static async getCustomerItems({customerID, eventID}: ICustomerItem): Promise<CustomerItem[] | null> {
@@ -29,12 +29,15 @@ class CustomerItem {
                 [customerID, eventID]
             );           
             if (res.rows.length === 0) return null;
+
+            console.log('res.rows:', res.rows);
             const customerItems = res.rows.map((row: any) => new CustomerItem({
                 customerID: row.customerid,
                 eventID: row.eventid,
                 itemID: row.itemid,
                 quantity: row.quantity,
             }));
+            console.log('customerItems:', customerItems);
             return customerItems;
         } catch (err) {
             console.error('Error getting all customer items:', err);

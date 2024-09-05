@@ -18,7 +18,7 @@ export async function request(
         });
         data = response.data;
     } catch (err: any) {
-        // console.error("Error from request Utils: ", err.request);
+        // console.error("Error from request Utils: ", err.request.message);
         throw err.response ? err.response.data.errors : err;
     }
     return data;

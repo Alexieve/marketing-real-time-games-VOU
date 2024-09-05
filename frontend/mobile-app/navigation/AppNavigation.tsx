@@ -7,6 +7,7 @@ import HomeScreen from '../screens/HomeScreen';
 import Quiz from '../screens/HQ-Trivia/Quiz';
 import Shake from '../screens/Lac-xi/Shake';
 import OtpVerificationScreen from '../screens/OtpVerificationScreen';
+import ExchangeVoucherScreen from '../screens/ExchangeVoucherScreen';
 import { Button } from 'react-native';
 
 const Stack = createNativeStackNavigator();

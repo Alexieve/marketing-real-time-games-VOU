@@ -50,13 +50,27 @@ route.get('/api/game/customer-item',
                     return;
                 }
 
-                const customerItem = await CustomerItem.getCustomerItem_By_ItemID({ customerID, eventID, itemID, quantity: null });
+                const customerItem = await CustomerItem.getCustomerItem_By_ItemID({ customerID, eventID, itemID, quantity: 0 });
 
                 await RedisClient.set(cacheKey, JSON.stringify(customerItem), 60);
 
                 res.status(200).send(customerItem);
             } else {
-                const customerItems = await CustomerItem.getCustomerItems({ customerID, eventID, itemID: null, quantity: null });
+                const customerItems = await CustomerItem.getCustomerItems({ customerID, eventID, itemID: null, quantity: 0 });
+
+                if (customerItems === null) {
+                    const gameItems = await GameItem.getGameItems(eventID);
+                    console.log("customerItems: ", gameItems);
+                    // init 0 quantity for all game items
+                    gameItems?.map(async (item: any) => {
+                        await CustomerItem.add({ customerID, eventID, itemID: item.itemID, quantity: 0 });
+                    });
+
+                    const newCustomerItems = await CustomerItem.getCustomerItems({ customerID, eventID, itemID: null, quantity: 0 });
+                    res.status(200).send(newCustomerItems);
+                    return;
+                }
+
                 res.status(200).send(customerItems);
             }
         } catch (error: any) {
@@ -77,7 +91,7 @@ route.post('/api/game/customer-item',
                     throw new BadRequestError("Cannot find item in game!");
                 }
 
-                const ExistItem = await CustomerItem.getCustomerItem_By_ItemID({ customerID, eventID, itemID: item.itemID, quantity: null });
+                const ExistItem = await CustomerItem.getCustomerItem_By_ItemID({ customerID, eventID, itemID: item.itemID, quantity: 0 });
                 console.log("ExistItem: ", ExistItem);
 
                 if (ExistItem) { // Add to exists
