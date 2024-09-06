@@ -53,8 +53,8 @@ const EventCreate = () => {
                     const { event, vouchers } = response.data;
                     const { game, name, imageUrl, description } = event;
                     let { startTime, endTime } = event;
-                    startTime = moment(startTime).format("YYYY-MM-DDTHH:mm");
-                    endTime = moment(endTime).format("YYYY-MM-DDTHH:mm");
+                    startTime = moment(new Date(new Date(startTime) - 7 * 3600 * 1000)).format("YYYY-MM-DDTHH:mm");
+                    endTime = moment(new Date(new Date(endTime) - 7 * 3600 * 1000)).format("YYYY-MM-DDTHH:mm");
                     setEventData({ name, imageUrl, description, startTime, endTime, brand: user ? user.id : "" });
                     setImagePreview(imageUrl);
                     setSelectedVouchers(vouchers);

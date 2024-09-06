@@ -53,7 +53,7 @@ interface customerItemsInterface {
 }
 
 const ExchangeVoucherScreen = () => {
-    const navigation = useNavigation();
+  const navigation = useNavigation();
   const { user } = useSelector((state: any) => state.auth);
   // const { eventID, gameID } = route.params;
   // const eventID = "66d655f3bb5b61c00ea8e177";
@@ -297,7 +297,7 @@ const ExchangeVoucherScreen = () => {
             <>
               <Card containerStyle={styles.card}>
                 <Card.Title style={styles.title}>
-                  HQ Exchange Section
+                  HQ Trivia Exchange
                 </Card.Title>
                 <Card.Divider style={{ backgroundColor: "black" }} />
                 <Card containerStyle={styles.itemCard}>
@@ -324,7 +324,7 @@ const ExchangeVoucherScreen = () => {
             <>
               <Card containerStyle={styles.card}>
                 <Card.Title style={styles.title}>
-                  Lac Xi Exchange Section
+                  Lac Xi Exchange
                 </Card.Title>
                 <Card.Divider style={{ backgroundColor: "black" }} />
                 <Text h4 style={{ textAlign: "center" }}>
