@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { View,Image, Text, StyleSheet, ImageBackground, TouchableOpacity, ScrollView } from 'react-native';
+import {  Icon } from "@rneui/themed";
+
 import { Ionicons } from '@expo/vector-icons';
 import { request } from '../utils/request';
 import localhost from '../url.config';
 import { useSelector } from 'react-redux';
 import { useRoute, useNavigation } from '@react-navigation/native';
+import { COLORS } from "../constants";
 
 type game = {
   gameID: string;
@@ -81,22 +84,59 @@ const VoucherDetail = () => {
     fetchData();
   }, [eventId]);
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+  const formatDate = (dateString: string | undefined) => {
+    if (!dateString) return 'N/A'; // Trả về 'N/A' nếu chuỗi không tồn tại
+    const [datePart, timePart] = dateString.split('T'); // Tách phần ngày và thời gian
+    const time = timePart.split('.')[0]; // Bỏ phần giây thập phân (phần sau dấu '.')
+    
+    // Tách phần năm-tháng-ngày
+    const [year, month, day] = datePart.split('-');
+    
+    // Tách phần giờ-phút-giây
+    const [hour, minute, second] = time.split(':');
+  
+    // Trả về chuỗi định dạng: "DD/MM/YYYY HH:MM:SS"
+    return `${day}/${month}/${year} ${hour}:${minute}:${second}`;
   };
   // console.log(data);
   // console.log(data2);
-  console.log(imageSize);
+  // console.log(imageSize);
+  const goBack = () => {
+    navigation.goBack();
+  }
   return (
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <View style={[styles.imageBackgroundContainer]}>
           <ImageBackground source={{uri: localhost + data2?.event.imageUrl}} style={styles.imageBackground}>
             <View style={styles.header}>
-              <TouchableOpacity  onPress={() => navigation.navigate('VoucherScreen')}>
-                <Ionicons name="chevron-back" size={28} color="black" style={styles.iconWithBorder} />
-              </TouchableOpacity>
+            <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          marginTop: 20,
+          width: "100%",
+          // backgroundColor: "#f5f5f5",
+          paddingLeft: 20,
+          paddingRight: 20,
+          // paddingBottom: 10,
+          borderRadius: 5,
+        }}
+      >
+        <TouchableOpacity
+          style={{
+            backgroundColor: COLORS.accent,
+            width: 40,
+            height: 40,
+            borderRadius: 20,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+          onPress={goBack}
+        >
+          <Icon name="arrow-back" size={24} color={COLORS.white} />
+        </TouchableOpacity>
+      </View>
             </View>
             <View style={styles.overlay} />
           </ImageBackground>
@@ -144,8 +184,8 @@ const styles = StyleSheet.create({
   },
   header: {
     position: 'absolute',
-    top: 20,
-    left: 20,
+    top: 2,
+    left: 2,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
