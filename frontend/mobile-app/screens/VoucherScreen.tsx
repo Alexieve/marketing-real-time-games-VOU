@@ -48,8 +48,17 @@ const VoucherScreen = () => {
     );
   }
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+    const [datePart, timePart] = dateString.split('T'); // Tách phần ngày và thời gian
+  const time = timePart.split('.')[0]; // Bỏ phần giây thập phân (phần sau dấu '.')
+  
+  // Tách phần năm-tháng-ngày
+  const [year, month, day] = datePart.split('-');
+  
+  // Tách phần giờ-phút-giây
+  const [hour, minute, second] = time.split(':');
+
+  // Trả về chuỗi định dạng: "DD/MM/YYYY HH:MM:SS"
+  return `${day}/${month}/${year} ${hour}:${minute}:${second}`;
   };
   console.log(data);
   return (
