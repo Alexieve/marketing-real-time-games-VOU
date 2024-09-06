@@ -13,6 +13,15 @@ export const user_voucher_updated = {
                 console.log("Received quantity:", user_voucher_msg.quantity);
                 console.log("Received event:", user_voucher_msg.eventID);
 
+                // Find the voucher
+                const voucher = await Voucher.findById(user_voucher_msg.voucherID);
+                if (!voucher) {
+                    throw new Error('Voucher not found');
+                }
+                // Update the voucher quantity
+                voucher.quantity -= user_voucher_msg.quantity;
+                await voucher.save();
+
                 // Find the user voucher
                 const userVoucher = await UserVoucher.findOne({ userID: user_voucher_msg.userID, voucherID: user_voucher_msg.voucherID });
                 if (!userVoucher) {
@@ -20,7 +29,15 @@ export const user_voucher_updated = {
                     const newUserVoucher = UserVoucher.build({
                         userID: user_voucher_msg.userID,
                         voucherID: user_voucher_msg.voucherID,
-                        quantity: user_voucher_msg.quantity
+                        quantity: user_voucher_msg.quantity,
+                        code: voucher.code,
+                        imageUrl: voucher.imageUrl,
+                        price: voucher.price,
+                        description: voucher.description,
+                        expTime: voucher.expTime,
+                        status: voucher.status,
+                        brand: voucher.brand,
+                        eventID: user_voucher_msg.eventID
                     });
                     await newUserVoucher.save();
                 }
@@ -30,14 +47,7 @@ export const user_voucher_updated = {
                     await userVoucher.save();
                 }
 
-                // Find the voucher
-                const voucher = await Voucher.findById(user_voucher_msg.voucherID);
-                if (!voucher) {
-                    throw new Error('Voucher not found');
-                }
-                // Update the voucher quantity
-                voucher.quantity -= user_voucher_msg.quantity;
-                await voucher.save();
+
 
                 // Find the event that stores voucher in the the vouchers list and update the quantity
                 const event = await Event.findById(user_voucher_msg.eventID);
