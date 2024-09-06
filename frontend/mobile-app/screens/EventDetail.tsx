@@ -17,7 +17,7 @@ import { set } from "react-hook-form";
 import { useAppDispatch, useAppSelector } from "../store";
 import { fetchFavorites } from "../thunks/favoriteThunk";
 import { COLORS } from "../constants";
-import { Icon } from "react-native-vector-icons/Icon";
+import {  Icon } from "@rneui/themed";
 
 type game = {
   gameID: string;
@@ -175,7 +175,9 @@ const DetailScreen = () => {
   const handleReedem = () => {
     navigation.navigate("ExchangeVoucherScreen", {eventID: data.event._id, gameID: gameData.gameID});
   }
-
+  const goBack = () => {
+    navigation.goBack();
+  }
   // console.log(user);
   return (
     <View style={styles.container}>
@@ -184,9 +186,33 @@ const DetailScreen = () => {
         <ImageBackground source={{uri: localhost + data?.event.imageUrl}} style={styles.imageBackground}>
         
           <View style={styles.header}>
-            <TouchableOpacity onPress={backToPrevious}>
-              <Ionicons name="chevron-back" size={28} color="black" style={styles.iconWithBorder} />
-            </TouchableOpacity>
+            <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          marginTop: 20,
+          width: "100%",
+          // backgroundColor: "#f5f5f5",
+          paddingLeft: 20,
+          paddingRight: 20,
+          // paddingBottom: 10,
+          borderRadius: 5,
+        }}
+      >
+        <TouchableOpacity
+          style={{
+            backgroundColor: COLORS.accent,
+            width: 40,
+            height: 40,
+            borderRadius: 20,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+          onPress={goBack}
+        >
+          <Icon name="arrow-back" size={24} color={COLORS.white} />
+        </TouchableOpacity>
+      </View>
             <View style={styles.headerIcons}>
               <TouchableOpacity onPress={toggleFavorite}>
                 <Ionicons name={isFavorite ? "heart" : "heart-outline"} size={28} color="black" style={styles.iconWithBorder} />
@@ -306,9 +332,9 @@ const styles = StyleSheet.create({
   },
   header: {
     position: "absolute",
-    top: 20,
-    left: 20,
-    right: 20,
+    top: 2,
+    left: 2,
+    right: 2,
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
