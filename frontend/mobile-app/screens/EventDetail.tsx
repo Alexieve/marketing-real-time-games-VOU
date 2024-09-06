@@ -184,7 +184,6 @@ const DetailScreen = () => {
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <View style={[styles.imageBackgroundContainer]}>
         <ImageBackground source={{uri: localhost + data?.event.imageUrl}} style={styles.imageBackground}>
-        
           <View style={styles.header}>
             <View
         style={{
@@ -213,11 +212,6 @@ const DetailScreen = () => {
           <Icon name="arrow-back" size={24} color={COLORS.white} />
         </TouchableOpacity>
       </View>
-            <View style={styles.headerIcons}>
-              <TouchableOpacity onPress={toggleFavorite}>
-                <Ionicons name={isFavorite ? "heart" : "heart-outline"} size={28} color="black" style={styles.iconWithBorder} />
-              </TouchableOpacity>
-            </View>
           </View>
           <View style={styles.overlay} />
           <View style={styles.dateBadge}>
@@ -226,8 +220,13 @@ const DetailScreen = () => {
         </ImageBackground>
       </View>
         <View style={styles.detailsContainer}>
+          <View style={styles.headerIcons}>
           <Text style={styles.eventTitle}>{data?.event.name}</Text>
-          <Text style={styles.eventTime}>
+              <TouchableOpacity onPress={toggleFavorite}>
+                <Ionicons name={isFavorite ? "heart" : "heart-outline"} size={28} color= {COLORS.accent} style={styles.iconWithBorder} />
+              </TouchableOpacity>
+            </View>
+          <Text style={styles.eventTime}> */}
             Starting {data?.event.startTime.split("T")[1].split(".")[0]}
           </Text>
           <Text style={styles.eventTime}>
@@ -345,7 +344,7 @@ const styles = StyleSheet.create({
   },
   iconWithBorder: {
     borderWidth: 2,
-    borderColor: "black",
+    borderColor: COLORS.accent,
     borderRadius: 14, // Cung cấp viền tròn cho các icon
     padding: 5, // Khoảng cách giữa viền và icon
   },
