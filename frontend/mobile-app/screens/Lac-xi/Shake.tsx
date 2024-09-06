@@ -12,7 +12,7 @@ import FlashMessage, { showMessage } from 'react-native-flash-message';
 import { COLORS, SIZES } from "../../constants";
 import Icon from "react-native-vector-icons/Ionicons";
 import { useAppDispatch, useAppSelector } from "../../store";
-import { fetchPlayTurn } from "../../thunks/shakeThunk";
+import { fetchGameConfig, fetchPlayTurn } from "../../thunks/shakeThunk";
 import { shakeActions } from "../../slices/shakeSlice";
 import { unwrapResult } from "@reduxjs/toolkit";
 import PlayLog from "../../components/Lac-xi/PlayLog";
@@ -22,10 +22,14 @@ import Header from "../../components/Lac-xi/Header";
 import MyItems from "../../components/Lac-xi/MyItems";
 import ShakeToOpenGift from "../../components/Lac-xi/ShakeToOpen";
 import GiftTurnModal from "../../components/Lac-xi/GiftTurnModal";
+import { useRoute } from "@react-navigation/native";
 
 const Shake = () => {
-  const customerID = 1;
-  const eventID = "66c5b48b5fa4db898b0974d2";
+  // const customerID = 1;
+  // const eventID = "66c5b48b5fa4db898b0974d2";
+  const route = useRoute();
+  const customerID = useAppSelector((state: any) => state.auth.user.id);
+  const eventID = (route.params as { eventID?: string })?.eventID ?? "";
   
   const dispatch = useAppDispatch();
   const { screen, myItemsScreen } = useAppSelector((state: any) => state.shake);
@@ -38,16 +42,15 @@ const Shake = () => {
     const playturn = unwrapResult(res);
     console.log(playturn);
     if (playturn > 0) { // Fix after checking the API
-      dispatch(shakeActions.initializeQuiz());
+      dispatch(shakeActions.initialize());
     } else {
-      showMessage({
-        message: "Oh no!",
-        description: "You don't have enough play turn.",
-        type: "danger",
-      });
+      alert("You don't have enough play turn.");
     }
-    
   };
+
+  useEffect(() => {
+    dispatch(fetchGameConfig({ eventID }));
+  }, [eventID]);
 
   const renderGameHomePage = () => {
     return (
@@ -70,7 +73,7 @@ const Shake = () => {
           />
           <Text style={styles.buttonText}>Gift Play Turn</Text>
         </TouchableOpacity>
-        <GiftTurnModal customerID={customerID} eventID={eventID} visible={giftModalVisible} onClose={closeModal} onSubmit={() => {}} />
+        <GiftTurnModal customerID={customerID} eventID={eventID} visible={giftModalVisible} onClose={closeModal} />
         <PlayLog customerID={customerID} eventID={eventID}/>
         <ExchangeLog customerID={customerID} eventID={eventID}/>
       </>

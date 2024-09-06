@@ -7,7 +7,7 @@ import { useAppSelector } from "../../store";
 import ResultModal from "./ResultModal"; // Import the new ResultModal component
 import { useAppDispatch } from "../../store";
 import { shakeActions } from "../../slices/shakeSlice";
-import { addPlayLog } from "../../thunks/quizThunk";
+import { addPlayLog } from "../../thunks/shakeThunk";
 import { AddItems, fetchOwnItems } from "../../thunks/shakeThunk";
 
 const ShakeToOpenGift = ({customerID, eventID}: {customerID: any, eventID: string}) => {

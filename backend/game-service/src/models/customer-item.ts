@@ -30,14 +30,12 @@ class CustomerItem {
             );           
             if (res.rows.length === 0) return null;
 
-            console.log('res.rows:', res.rows);
             const customerItems = res.rows.map((row: any) => new CustomerItem({
                 customerID: row.customerid,
                 eventID: row.eventid,
                 itemID: row.itemid,
                 quantity: row.quantity,
             }));
-            console.log('customerItems:', customerItems);
             return customerItems;
         } catch (err) {
             console.error('Error getting all customer items:', err);

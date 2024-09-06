@@ -22,7 +22,7 @@ const MyItems = ({
   eventID: string;
 }) => {
   const dispatch = useAppDispatch();
-  const { ownItems, items } = useAppSelector((state: any) => state.shake);
+  const { ownItems, items, gameConfig } = useAppSelector((state: any) => state.shake);
 
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState<any>(null);
@@ -57,9 +57,11 @@ const MyItems = ({
                 <Text style={styles.itemText}>
                   {item.name} x {quantity}
                 </Text>
-                <TouchableOpacity style={styles.myItemsButton} onPress={() => handleGiftPress(item)}>
-                  <Text style={styles.myItemsText}>Gift</Text>
-                </TouchableOpacity>
+                {gameConfig.isExchange && (
+                  <TouchableOpacity style={styles.myItemsButton} onPress={() => handleGiftPress(item)}>
+                    <Text style={styles.myItemsText}>Gift</Text>
+                  </TouchableOpacity>
+                )}
               </View>
             );
           })}

@@ -23,6 +23,7 @@ async (req: Request, res: Response) => {
 route.put('/api/game/game-config', gameInforValidator,
     async (req: Request, res: Response) => {
         const updatedGame = req.body;
+        console.log(updatedGame);
         try {
             await Game.update(updatedGame);
             res.send("Updated game successfully!");

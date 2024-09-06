@@ -71,7 +71,7 @@ const VoucherScreen = () => {
           </View>
 
           <View style={styles.rightContainer}>
-            <Text style={styles.discountText}>Discount: {voucher.price}đ</Text>
+            <Text style={styles.discountText}>Discount: {voucher.price}đ  x{voucher.quantity}</Text>
             <Text style={styles.descriptionText}>{voucher.description}</Text>
             <Text style={styles.expiryText}>HSD: {formatDate(voucher.expTime)}</Text>
             <View style={styles.detailButtonWrapper}>

@@ -37,16 +37,11 @@ const GiftModal: React.FC<GiftModalProps> = ({
   const { ownItems } = useAppSelector((state: any) => state.shake);
 
   const [phonenum, setPhonenum] = useState("");
-  // const customerPhonenum = useAppSelector((state: any) => state.quiz.phonenum);
-  const customerPhonenum = "0123456789";
+  const customerPhonenum = useAppSelector((state: any) => state.quiz.phonenum);
 
   const handleConfirm = async () => {
     if (giftQuantity <= 0) {
-      showMessage({
-        message: "Oh no!",
-        description: "You cannot give nothing.",
-        type: "danger",
-      });
+      alert("You cannot give nothing.");
       return;
     }
 
@@ -55,29 +50,17 @@ const GiftModal: React.FC<GiftModalProps> = ({
     ) || { itemID: selectedItem.itemID, quantity: 1 };
 
     if (ownItem.quantity < giftQuantity) {
-      showMessage({
-        message: "Oh no!",
-        description: "You do not have enough items.",
-        type: "danger",
-      });
+      alert("You do not have enough items.");
       return;
     }
 
     if (!phonenum || phonenum.length != 10) {
-      showMessage({
-        message: "Oh no!",
-        description: "Please enter a valid phone number.",
-        type: "danger",
-      });
+      alert("Please enter a valid phone number.");
       return;
     }
 
     if (phonenum === customerPhonenum) {
-      showMessage({
-        message: "Oops!",
-        description: "You cannot gift yourself.",
-        type: "danger",
-      });
+      alert("You cannot gift yourself.");
       return;
     }
 
@@ -88,11 +71,7 @@ const GiftModal: React.FC<GiftModalProps> = ({
       const data = unwrapResult(res);
       friendID = data.id;
     } catch (error: any) {
-      showMessage({
-        message: "Oops!",
-        description: "User not found.",
-        type: "danger",
-      });
+      alert("User not found.");
       return;
     }
     
@@ -152,7 +131,7 @@ const GiftModal: React.FC<GiftModalProps> = ({
               onPress={handleConfirm}
               style={styles.submitButton}
             >
-              <Text style={styles.submitButtonText}>Gift</Text>
+            <Text style={styles.submitButtonText}>Gift</Text>
             </TouchableOpacity>
             <Button title="Cancel" onPress={onClose} color={COLORS.secondary} />
           </View>

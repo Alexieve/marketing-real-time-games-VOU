@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { set } from "react-hook-form";
 
 interface ShakeState {
   hasStarted: boolean;
@@ -11,6 +12,7 @@ interface ShakeState {
   selectedGift: number | null;
   myItemsScreen: boolean;
   playturn: number;
+  gameConfig: any;
 }
 
 const initialState: ShakeState = {
@@ -24,16 +26,20 @@ const initialState: ShakeState = {
   selectedGift: null,
   myItemsScreen: false,
   playturn: 0,
+  gameConfig: {},
 };
 
 const shakeSlice = createSlice({
   name: "shake",
   initialState,
   reducers: {
-    initializeQuiz: (state) => {
+    initialize: (state) => {
       state.hasStarted = true;
       state.showScoreModal = false;
       state.screen = 1;
+    },
+    setGameConfig: (state, action: PayloadAction<any>) => {
+      state.gameConfig = action.payload;
     },
     setPlayturn: (state, action: PayloadAction<number>) => {
       state.playturn = action.payload;

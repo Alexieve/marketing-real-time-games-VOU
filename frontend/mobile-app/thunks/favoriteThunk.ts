@@ -16,8 +16,10 @@ export const fetchFavorites = createAsyncThunk(
         dispatch(favoriteActions.setFavorite([]))
         return;
       }
-      res[0].imageUrl =  `${localhost}${res[0].imageUrl}`,
-    //   console.log("Thunk: ", res);
+      res = res.map((event: any) => {
+        event.imageUrl = `${localhost}${event.imageUrl}`;
+        return event;
+      });
       dispatch(favoriteActions.setFavorite(res)); // Dispatch an action to set the point
     } catch (error: any) {
       console.error("Error fetching Favorites: ", error);
