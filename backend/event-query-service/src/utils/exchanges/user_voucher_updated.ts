@@ -1,5 +1,5 @@
 import { Voucher } from '../../models/VoucherQueryModel';
-import { Event } from '../../models/EventQueryModel';
+import { EventVoucher } from '../../models/EventVoucherQueryModel';
 import { UserVoucher } from '../../models/UserVoucherQueryModel';
 
 export const user_voucher_updated = {
@@ -47,12 +47,10 @@ export const user_voucher_updated = {
                     await userVoucher.save();
                 }
 
-
-
                 // Find the event that stores voucher in the the vouchers list and update the quantity
-                const event = await Event.findById(user_voucher_msg.eventID);
+                const event = await EventVoucher.findById(user_voucher_msg.eventID);
                 if (!event) {
-                    throw new Error('Event not found');
+                    throw new Error('EventVoucher not found');
                 }
                 // Find the voucher in the event
                 const event_voucher = event.vouchers.find(voucher => voucher._id.toString() === user_voucher_msg.voucherID);

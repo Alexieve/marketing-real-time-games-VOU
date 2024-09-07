@@ -354,7 +354,7 @@ const ExchangeVoucherScreen = () => {
                                             Quantity: {voucher.quantity}
                                         </Text>
                                         <Text style={styles.voucherDetail}>
-                                            Expired: {new Date(Number(voucher.expTime) - 7 * 3600 * 1000).toLocaleString()}
+                                            Expired: {new Date(new Date(voucher.expTime).getTime() - 7 * 60 * 60 * 1000).toLocaleString()}
                                         </Text>
                                         {gameID == "1" && (
                                             <Button
@@ -412,7 +412,7 @@ const ExchangeVoucherScreen = () => {
                                     <Text style={styles.voucherDetail}>
                                         Expired:{" "}
                                         {redeemedVouchers?.expTime
-                                            ? new Date(redeemedVouchers.expTime).toLocaleString()
+                                            ? new Date(new Date(redeemedVouchers.expTime).getTime() - 7 * 60 * 60 * 1000).toLocaleString()
                                             : "N/A"}
                                     </Text>
                                 </Card>

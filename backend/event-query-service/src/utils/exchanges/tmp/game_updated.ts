@@ -1,4 +1,4 @@
-import { Event } from '../../../models/EventQueryModel';
+import { Event } from '../../../models/EventVoucherQueryModel';
 import { Voucher } from '../../../models/VoucherQueryModel';
 import { Game } from '../../../models/GameQueryModel';
 

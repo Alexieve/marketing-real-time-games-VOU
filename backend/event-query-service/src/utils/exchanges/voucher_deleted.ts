@@ -1,4 +1,4 @@
-import { Event } from '../../models/EventQueryModel';
+import { EventVoucher } from '../../models/EventVoucherQueryModel';
 import { Voucher } from '../../models/VoucherQueryModel';
 
 export const voucher_deleted = {
@@ -13,7 +13,7 @@ export const voucher_deleted = {
                     throw new Error("Voucher not found");
                 // Remove the voucher from the event
                 if (voucher.eventID !== null) {
-                    const event = await Event.findByIdAndUpdate(voucher.eventID, { $pull: { vouchers: { _id: voucherId } } });
+                    const event = await EventVoucher.findByIdAndUpdate(voucher.eventID, { $pull: { vouchers: { _id: voucherId } } });
                     if (!event) {
                         throw new Error("Event not found");
                     }

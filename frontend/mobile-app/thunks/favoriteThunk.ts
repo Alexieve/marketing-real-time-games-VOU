@@ -8,11 +8,11 @@ export const fetchFavorites = createAsyncThunk(
   async ({ id }: { id: any }, { dispatch }) => {
     try {
       let res = await request(
-        `/api/event_query/get_events_user_favorite/${id}`, 
+        `/api/event_query/get_events_user_favorite/${id}`,
         'get'
       );
       // console.log("Thunk: ", res);
-      if (res.length === 0) {
+      if (res.length === undefined) {
         dispatch(favoriteActions.setFavorite([]))
         return;
       }

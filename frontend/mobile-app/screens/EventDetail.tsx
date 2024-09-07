@@ -17,31 +17,11 @@ import { set } from "react-hook-form";
 import { useAppDispatch, useAppSelector } from "../store";
 import { fetchFavorites } from "../thunks/favoriteThunk";
 import { COLORS } from "../constants";
-import {  Icon } from "@rneui/themed";
-
-type game = {
-  gameID: string;
-  playTurn: number;
-};
-
-type event = {
-  _id: string;
-  name: string;
-  imageUrl: string;
-  description: string;
-  startTime: string;
-  endTime: string;
-  brand: string;
-  createdAt: string;
-  updatedAt: string;
-  __v: number;
-  game: game;
-};
+import { Icon } from "@rneui/themed";
 
 type voucher = {
   _id: string;
   code: string;
-  qrCodeUrl: string;
   imageUrl: string;
   price: number;
   description: string;
@@ -49,16 +29,20 @@ type voucher = {
   expTime: string;
   status: string;
   brand: string;
-  eventId: string;
-  createdAt: string;
-  updatedAt: string;
   __v: number;
   eventID: string; // Bạn có thể giữ hoặc loại bỏ cái này nếu đã có eventId
 };
 
 // Type tổng hợp cho dữ liệu API
 type ApiResponse = {
-  event: event;
+  _id: string;
+  name: string;
+  imageUrl: string;
+  description: string;
+  startTime: string;
+  endTime: string;
+  brand: string;
+  gameID: string;
   vouchers: voucher[];
 };
 
@@ -86,7 +70,7 @@ const DetailScreen = () => {
     const fetchData = async () => {
       try {
         // fetch event detail + voucher
-        const response = await fetch(`${localhost}/api/event_command/event_detail/${id}`);
+        const response = await fetch(`${localhost}/api/event_query/get_event_detail_vouchers/${id}`);
         const data = await response.json();
         setData(data);
         // const favoriteResponse = await fetch(`${localhost}/api/event_query/get_events_user_favorite/${user.id}`);
@@ -107,10 +91,9 @@ const DetailScreen = () => {
         // }
 
 
-
         if (Array.isArray(favorite)) {
           const isEventFavorite = favorite.some(
-            (event) => event._id === data.event._id
+            (event) => event._id === data._id
           );
 
           setIsFavorite(isEventFavorite);
@@ -118,13 +101,12 @@ const DetailScreen = () => {
           console.error("Favorite response is not an array:", favorite);
           setIsFavorite(false);
         }
-        Image.getSize(localhost + data.event.imageUrl, (width, height) => {
+        Image.getSize(localhost + data.imageUrl, (width, height) => {
           setImageSize({ width, height });
         });
 
-
         // fetch event game
-        const gameResponse = await fetch(`${localhost}/api/game/event-game-config/${data.event._id}`);
+        const gameResponse = await fetch(`${localhost}/api/game/event-game-config/${data._id}`);
         const gameData = await gameResponse.json();
         setGameData(gameData);
 
@@ -144,7 +126,7 @@ const DetailScreen = () => {
       setIsFavorite(!isFavorite);
       const favoriteData = {
         userID: user.id,
-        eventID: data.event._id,
+        eventID: data._id,
       };
       const favoriteResponse = await request(
         `/api/event_query/add_events_user_favorite/`,
@@ -152,7 +134,7 @@ const DetailScreen = () => {
         favoriteData
       );
       dispatch(fetchFavorites({ id: user.id }));
-      
+
     } catch (error) {
       console.error("Error toggling favorite:", error);
       // Revert the favorite status locally if the request fails
@@ -166,14 +148,14 @@ const DetailScreen = () => {
 
   const handlePlayGame = () => {
     if (gameData.gameID === 1) {
-      navigation.navigate("Quiz", {eventID: data.event._id});
+      navigation.navigate("Quiz", { eventID: data._id });
     } else if (gameData.gameID === 2) {
-      navigation.navigate("Shake", {eventID: data.event._id});
+      navigation.navigate("Shake", { eventID: data._id });
     }
   }
 
   const handleReedem = () => {
-    navigation.navigate("ExchangeVoucherScreen", {eventID: data.event._id, gameID: gameData.gameID});
+    navigation.navigate("ExchangeVoucherScreen", { eventID: data._id, gameID: gameData.gameID });
   }
   const goBack = () => {
     navigation.goBack();
@@ -183,54 +165,54 @@ const DetailScreen = () => {
     <View style={styles.container}>
       <ScrollView contentContainerStyle={styles.scrollViewContent}>
         <View style={[styles.imageBackgroundContainer]}>
-        <ImageBackground source={{uri: localhost + data?.event.imageUrl}} style={styles.imageBackground}>
-          <View style={styles.header}>
-            <View
-        style={{
-          flexDirection: "row",
-          alignItems: "center",
-          marginTop: 20,
-          width: "100%",
-          // backgroundColor: "#f5f5f5",
-          paddingLeft: 20,
-          paddingRight: 20,
-          // paddingBottom: 10,
-          borderRadius: 5,
-        }}
-      >
-        <TouchableOpacity
-          style={{
-            backgroundColor: COLORS.accent,
-            width: 40,
-            height: 40,
-            borderRadius: 20,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-          onPress={goBack}
-        >
-          <Icon name="arrow-back" size={24} color={COLORS.white} />
-        </TouchableOpacity>
-      </View>
-          </View>
-          <View style={styles.overlay} />
-          <View style={styles.dateBadge}>
-            <Text style={styles.dateText}>{`${data?.event.startTime.split('T')[0]} - ${data?.event.endTime.split('T')[0]}`}</Text>
-          </View>
-        </ImageBackground>
-      </View>
+          <ImageBackground source={{ uri: localhost + data?.imageUrl }} style={styles.imageBackground}>
+            <View style={styles.header}>
+              <View
+                style={{
+                  flexDirection: "row",
+                  alignItems: "center",
+                  marginTop: 20,
+                  width: "100%",
+                  // backgroundColor: "#f5f5f5",
+                  paddingLeft: 20,
+                  paddingRight: 20,
+                  // paddingBottom: 10,
+                  borderRadius: 5,
+                }}
+              >
+                <TouchableOpacity
+                  style={{
+                    backgroundColor: COLORS.accent,
+                    width: 40,
+                    height: 40,
+                    borderRadius: 20,
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                  onPress={goBack}
+                >
+                  <Icon name="arrow-back" size={24} color={COLORS.white} />
+                </TouchableOpacity>
+              </View>
+            </View>
+            <View style={styles.overlay} />
+            <View style={styles.dateBadge}>
+              <Text style={styles.dateText}>{`${data?.startTime.split('T')[0]} - ${data?.endTime.split('T')[0]}`}</Text>
+            </View>
+          </ImageBackground>
+        </View>
         <View style={styles.detailsContainer}>
           <View style={styles.headerIcons}>
-          <Text style={styles.eventTitle}>{data?.event.name}</Text>
-              <TouchableOpacity onPress={toggleFavorite}>
-                <Ionicons name={isFavorite ? "heart" : "heart-outline"} size={28} color= {COLORS.accent} style={styles.iconWithBorder} />
-              </TouchableOpacity>
-            </View>
+            <Text style={styles.eventTitle}>{data?.name}</Text>
+            <TouchableOpacity onPress={toggleFavorite}>
+              <Ionicons name={isFavorite ? "heart" : "heart-outline"} size={28} color={COLORS.accent} style={styles.iconWithBorder} />
+            </TouchableOpacity>
+          </View>
           <Text style={styles.eventTime}>
-            Starting {data?.event.startTime.split("T")[1].split(".")[0]}
+            Starting {data?.startTime.split("T")[1].split(".")[0]}
           </Text>
           <Text style={styles.eventTime}>
-            Endding {data?.event.endTime.split("T")[1].split(".")[0]}
+            Endding {data?.endTime.split("T")[1].split(".")[0]}
           </Text>
           <View style={styles.tabContainer}>
             <TouchableOpacity onPress={() => handleTabChange("ABOUT")}>
@@ -257,7 +239,7 @@ const DetailScreen = () => {
           {activeTab === "ABOUT" && (
             <>
               <Text style={styles.eventDescription}>
-                {data?.event.description}
+                {data?.description}
               </Text>
               <Text style={styles.eventDescription}>
                 Game guide: {gameData.guide}

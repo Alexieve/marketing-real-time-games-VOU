@@ -1,4 +1,4 @@
-import { Event } from '../../models/EventQueryModel';
+import { EventVoucher } from '../../models/EventVoucherQueryModel';
 import { Voucher } from '../../models/VoucherQueryModel';
 
 export const voucher_updated = {
@@ -25,7 +25,7 @@ export const voucher_updated = {
                 await voucher.save();
                 // Update the voucher data in the event
                 if (voucher.eventID !== null) {
-                    const result = await Event.updateOne(
+                    const result = await EventVoucher.updateOne(
                         {
                             '_id': voucher.eventID,
                             'vouchers._id': voucher._id

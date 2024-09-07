@@ -1,4 +1,5 @@
 import { Event } from '../../models/EventQueryModel';
+import { EventVoucher } from '../../models/EventVoucherQueryModel';
 import { Voucher } from '../../models/VoucherQueryModel';
 
 export const event_deleted = {
@@ -12,6 +13,11 @@ export const event_deleted = {
                 const event = await Event.findByIdAndDelete(eventID);
                 if (!event) {
                     throw new Error("Event not found");
+                }
+                // Delete the event_voucher
+                const event_voucher = await EventVoucher.findByIdAndDelete(eventID);
+                if (!event_voucher) {
+                    throw new Error("Event voucher not found");
                 }
                 //Delete the eventID in vouchers
                 const result = await Voucher.updateMany(

@@ -53,7 +53,7 @@ const FavouriteScreen = () => {
               style={styles.cardImage}
             />
             <Text style={styles.cardText} numberOfLines={2} ellipsizeMode="tail">
-            {event.description}
+              {event.description}
             </Text>
           </Card>
         </View>

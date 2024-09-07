@@ -1,5 +1,6 @@
 import express, { Request, Response } from 'express';
 import { Event } from '../models/EventQueryModel';
+import { EventVoucher } from '../models/EventVoucherQueryModel';
 import { UserEventFavorite } from '../models/UserEventFavoriteQueryModel';
 
 const router = express.Router();
@@ -78,7 +79,7 @@ router.get('/api/event_query/get_events_ongoing/', async (req: Request, res: Res
 router.get('/api/event_query/search', async (req: Request, res: Response) => {
     const query = req.query.query as string;
     const events = await Event.find({ name: new RegExp(query, 'i') });
-    
+
     if (events.length === 0) {
         res.status(200).send({});
         return;
@@ -86,6 +87,15 @@ router.get('/api/event_query/search', async (req: Request, res: Response) => {
     res.status(200).send(events);
 });
 
-
+router.get('/api/event_query/get_event_detail_vouchers/:id', async (req: Request, res: Response) => {
+    const { id } = req.params;
+    // Find the event_vouchers for the specified event
+    const eventVouchers = await EventVoucher.findById(id);
+    if (!eventVouchers) {
+        res.status(200).send({});
+        return;
+    }
+    res.status(200).send(eventVouchers);
+});
 
 export = router;

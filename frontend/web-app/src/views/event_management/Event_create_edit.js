@@ -138,7 +138,7 @@ const EventCreate = () => {
   };
 
   const handleVoucherSelectClicked = async () => {
-    await axios.get(`/api/event_command/get_vouchers_for_create_event/${user.id}`)
+    await axios.get(`/api/event_command/get_vouchers_for_create_event/${user.id}/${eventID !== undefined ? eventID : "trash"}`)
       .then(response => { setVouchers(response.data); })
       .catch(error => console.error('Error fetching vouchers data:', error));
     setSelectedVouchersModal(selectedVouchers);
