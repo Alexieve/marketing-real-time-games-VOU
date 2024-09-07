@@ -82,6 +82,7 @@ const ExchangeVoucherScreen = () => {
           `${localhost}/api/event_query/get_vouchers_by_eventID/${eventID}`
         );
         const event_vouchers = await response.json();
+        console.log(event_vouchers);
         setEventVouchers(event_vouchers);
 
         // Fetch customer items
@@ -244,7 +245,7 @@ const ExchangeVoucherScreen = () => {
         <Text
           style={[
             styles.itemQuantity,
-            { color: item.userOwnedQuantity != 0 ? "green" : "gray" },
+            { color: item.userOwnedQuantity < 6 ? "gray" : "green" },
           ]}
         >
           Owned: {item.userOwnedQuantity}
@@ -253,9 +254,9 @@ const ExchangeVoucherScreen = () => {
           title="Exchange"
           buttonStyle={[
             styles.exchangeButton,
-            { backgroundColor: item.userOwnedQuantity != 0 ? "green" : "gray" },
+            { backgroundColor: item.userOwnedQuantity < 6 ? "gray" : "green" },
           ]}
-          disabled={item.userOwnedQuantity == 0}
+          disabled={item.userOwnedQuantity < 6}
           onPress={() => handleLacXiExchange(item.itemID)}
         />
       </View>

@@ -6,14 +6,19 @@ import Options from './Options';
 import NextButton from './NextButton';
 import ScoreModal from './ScoreModal';
 
-const GamePlay: React.FC = () => {
+type GamePlayProps = {
+  eventID: string;
+  customerID: number;
+};
+
+const GamePlay: React.FC<GamePlayProps> = ({eventID, customerID}) => {
   return (
     <View>
       <ProgressBar />
       <Question />
       <Options />
       <NextButton />
-      <ScoreModal />
+      <ScoreModal eventID={eventID} customerID={customerID} />
     </View>
   );
 };

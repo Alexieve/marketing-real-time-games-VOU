@@ -81,9 +81,6 @@ route.get('/api/game/customer-item',
 route.post('/api/game/customer-item',
     async (req: Request, res: Response) => {
         const { customerID, eventID, items } = req.body;
-        console.log("customerID: ", customerID);
-        console.log("eventID: ", eventID);
-        console.log("items: ", items);
         try {
             items.map(async (item: any) => {
                 const dbItem = await GameItem.getGameItem_By_ItemID(item.itemID);
@@ -92,7 +89,6 @@ route.post('/api/game/customer-item',
                 }
 
                 const ExistItem = await CustomerItem.getCustomerItem_By_ItemID({ customerID, eventID, itemID: item.itemID, quantity: 0 });
-                console.log("ExistItem: ", ExistItem);
 
                 if (ExistItem) { // Add to exists
                     await CustomerItem.update({ customerID, eventID, itemID: item.itemID, quantity: ExistItem.quantity + item.quantity });

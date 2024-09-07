@@ -49,18 +49,14 @@ const Quiz = () => {
     if (playturn > 0) {
       dispatch(quizActions.initializeQuiz(data));
     } else {
-      showMessage({
-        message: "Oh no!",
-        description: "You don't have enough play turn.",
-        type: "danger",
-      });
+      alert("You have no play turn left.");
     }
     
   };
 
   const viewPlayLog = async () => {
     const res = await dispatch(
-      fetchPlayLog({ customerID: 1, eventID: "66c6f1c4c33e15ad0805fc98" })
+      fetchPlayLog({ customerID, eventID })
     );
     const play = unwrapResult(res);
     dispatch(quizActions.toggleShowPlayLog(play));
@@ -68,15 +64,14 @@ const Quiz = () => {
 
   const viewExchangeLog = async () => {
     const res = await dispatch(
-      fetchExchangeLog({ customerID: 1, eventID: "66c6f1c4c33e15ad0805fc98" })
+      fetchExchangeLog({ customerID, eventID })
     );
     const exchanges = unwrapResult(res);
     dispatch(quizActions.toggleShowExchangeLog(exchanges));
   }
 
   useEffect(() => {
-    const customerID = 1;
-    const eventID = "66c6f1c4c33e15ad0805fc98";
+    console.log(customerID, eventID);
     dispatch(fetchPoints({ customerID, eventID }));
   }, [dispatch, point]);
 
@@ -141,7 +136,7 @@ const Quiz = () => {
       <ScrollView contentContainerStyle={styles.scrollViewContentContainer}>
         <View style={styles.container}>
           <Animation />
-          {!hasStarted ? renderGameHomePage() : <GamePlay />}
+          {!hasStarted ? renderGameHomePage() : <GamePlay customerID={customerID} eventID={eventID} />}
           <Image
             source={require("../../assets/images/DottedBG.png")}
             style={styles.backgroundImage}

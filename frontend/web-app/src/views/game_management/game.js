@@ -16,6 +16,8 @@ import {
 } from "@coreui/react";
 import { AppSidebar, AppFooter, AppHeader } from "../../components/index";
 import { request } from "../../hooks/useRequest";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const GameManagement = () => {
   const [games, setGames] = useState([]);
@@ -35,19 +37,11 @@ const GameManagement = () => {
   }, []);
 
   const handleInputChange = (e) => {
-    const { name, value, type, checked, files } = e.target;
-
-    if (type === "file") {
-      setSelectedGame({
-        ...selectedGame,
-        imageUrl: URL.createObjectURL(files[0]),
-      });
-    } else {
-      setSelectedGame({
-        ...selectedGame,
-        [name]: type === "checkbox" ? checked : value,
-      });
-    }
+    const { name, value, type, checked } = e.target;
+    setSelectedGame({
+      ...selectedGame,
+      [name]: type === "checkbox" ? checked : value,
+    });
   };
 
   const handleGameChange = (e) => {
@@ -58,11 +52,14 @@ const GameManagement = () => {
 
   const handleUpdateGame = async () => {
     try {
+      console.log(selectedGame);
       await request("api/game/game-config", "PUT", selectedGame);
       const data = await request(`api/game/game-config/:gameID`, "GET");
       setGames(data);
+      toast.success("Registration successful!");
     } catch (error) {
       console.error(error);
+      toast.error(errors[0].message);
     }
   };
 
@@ -122,7 +119,7 @@ const GameManagement = () => {
                           onChange={handleInputChange}
                         />
                       </CCol>
-                      <CCol md={6}>
+                      <CCol md={4}>
                         <CFormLabel htmlFor="gameType">Game Type</CFormLabel>
                         <CFormInput
                           id="gameType"
@@ -131,31 +128,20 @@ const GameManagement = () => {
                           onChange={handleInputChange}
                         />
                       </CCol>
+                      <CCol md={2}>
+                        <CFormLabel>&nbsp;</CFormLabel>
+                        <CFormCheck
+                          id="isExchange"
+                          name="isExchange"
+                          label="Allow Item Trading"
+                          checked={selectedGame.isExchange}
+                          onChange={handleInputChange}
+                          className="mt-2"
+                        />
+                      </CCol>
                     </CRow>
 
-                    <CRow className="mt-4">
-                      <CCol md={6}>
-                        <CFormLabel htmlFor="gameImageUrl">
-                          Game Image
-                        </CFormLabel>
-                        <CFormInput
-                          type="file"
-                          id="gameImageUrl"
-                          name="imageUrl"
-                          onChange={handleInputChange}
-                        />
-                        {selectedGame.imageUrl && (
-                          <img
-                            src={selectedGame.imageUrl}
-                            alt="Selected Game"
-                            style={{
-                              marginTop: "10px",
-                              width: "100%",
-                              height: "auto",
-                            }}
-                          />
-                        )}
-                      </CCol>
+                    {/* <CRow className="mt-4">
                       <CCol md={6}>
                         <CFormLabel>&nbsp;</CFormLabel>
                         <CFormCheck
@@ -167,7 +153,7 @@ const GameManagement = () => {
                           className="mt-2"
                         />
                       </CCol>
-                    </CRow>
+                    </CRow> */}
 
                     <CRow className="mt-4">
                       <CCol md={12}>
@@ -194,6 +180,19 @@ const GameManagement = () => {
               </CCard>
             </CCol>
           </CRow>
+          <ToastContainer
+            position="top-right"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="colored"
+            transition:Bounce
+          />
         </div>
         <AppFooter />
       </div>

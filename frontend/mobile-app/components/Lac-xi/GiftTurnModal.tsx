@@ -19,40 +19,30 @@ const GiftTurnModal = ({
   eventID,
   visible,
   onClose,
-  onSubmit,
 }: {
   customerID: any;
   eventID: string;
   visible: boolean;
   onClose: () => void;
-  onSubmit: (phoneNumber: string) => void;
 }) => {
   const dispatch = useAppDispatch();
   const [phoneNumber, setPhoneNumber] = useState("");
-  // const { phonenum } = useAppSelector((state: any) => state.quiz);
+  const phonenum = useAppSelector((state: any) => state.auth.user.phonenum);
 
   const handleSubmit = async () => {
     if (!phoneNumber || phoneNumber.length != 10) {
       return;
     }
 
-    if (phoneNumber === "0123456789") {
-      showMessage({
-        message: "Oops!",
-        description: "You cannot gift yourself.",
-        type: "danger",
-      });
+    if (phoneNumber === phonenum) {
+      alert("You cannot gift yourself.");
       return;
     }
 
     const res = await dispatch(giftPlayTurn({ customerID, eventID, phonenum: phoneNumber }));
     const error = unwrapResult(res);
     if (error) {
-      showMessage({
-        message: "Oops!",
-        description: error[0].message,
-        type: "danger",
-      });
+      alert(error[0].message);
       return;
     }
     onClose();

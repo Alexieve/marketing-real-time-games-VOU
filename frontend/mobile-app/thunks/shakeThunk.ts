@@ -2,6 +2,18 @@ import { createAsyncThunk } from "@reduxjs/toolkit";
 import { shakeActions } from "../slices/shakeSlice"; // Import the actions from your slice
 import { request } from "../utils/request";
 
+export const fetchGameConfig = createAsyncThunk(
+  "shake/fetchGameConfig",
+  async ({ eventID }: { eventID: string }, { dispatch }) => {
+    try {
+      const res = await request(`/api/game/event-game-config/${eventID}`, "get");
+      dispatch(shakeActions.setGameConfig(res)); // Dispatch an action to set the game config
+    } catch (error: any) {
+      console.error("Error fetching Game Config: ", error);
+    }
+  }
+); 
+
 export const fetchUserByPhone = createAsyncThunk(
   "shake/fetchUserByPhone",
   async ({ phonenum }: { phonenum: string }, { dispatch }) => {

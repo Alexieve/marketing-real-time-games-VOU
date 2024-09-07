@@ -166,9 +166,9 @@ const DetailScreen = () => {
 
   const handlePlayGame = () => {
     if (gameData.gameID === 1) {
-      navigation.navigate("Quiz");
+      navigation.navigate("Quiz", {eventID: data.event._id});
     } else if (gameData.gameID === 2) {
-      navigation.navigate("Shake");
+      navigation.navigate("Shake", {eventID: data.event._id});
     }
   }
 
@@ -226,7 +226,7 @@ const DetailScreen = () => {
                 <Ionicons name={isFavorite ? "heart" : "heart-outline"} size={28} color= {COLORS.accent} style={styles.iconWithBorder} />
               </TouchableOpacity>
             </View>
-          <Text style={styles.eventTime}> */}
+          <Text style={styles.eventTime}>
             Starting {data?.event.startTime.split("T")[1].split(".")[0]}
           </Text>
           <Text style={styles.eventTime}>

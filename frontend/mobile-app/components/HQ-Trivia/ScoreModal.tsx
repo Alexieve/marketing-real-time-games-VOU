@@ -5,7 +5,7 @@ import { quizActions } from '../../slices/quizSlice';
 import { useAppDispatch, useAppSelector } from '../../store';
 import { addPlayLog, AddPointsDB } from '../../thunks/quizThunk';
 
-const ScoreModal = () => {
+const ScoreModal = ({eventID, customerID}: {eventID: string, customerID: number}) => {
   const dispatch = useAppDispatch();
   const { score, questions, point } = useAppSelector((state: any) => state.quiz);
   const showScoreModal = useAppSelector((state: any) => state.quiz.showScoreModal);
@@ -15,8 +15,7 @@ const ScoreModal = () => {
   };
 
   useEffect(() => {
-    const customerID = 1;
-    const eventID = '66c6f1c4c33e15ad0805fc98';
+    if (!showScoreModal) return;
     const quantity = 10000 * score;
     const items = [{ itemID: 1, quantity}];
     dispatch(AddPointsDB({ customerID, eventID, items}));

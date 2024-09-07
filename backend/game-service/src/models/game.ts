@@ -20,11 +20,11 @@ class Game implements IGame {
 
     constructor({
         gameID=null, 
-        name=null, 
-        type=null, 
-        imageURL=null, 
-        isExchange=null, 
-        guide=null
+        name, 
+        type, 
+        imageURL, 
+        isExchange, 
+        guide
     }: IGame) {
         this.gameID = gameID;
         this.name = name;
@@ -71,6 +71,7 @@ class Game implements IGame {
                 isExchange: res.rows[0].isexchange,
                 guide: res.rows[0].guide
             });
+            console.log('game:', game);
             return game;
         } catch (error) {
             console.error('Error getting game by id:', error);
@@ -82,7 +83,6 @@ class Game implements IGame {
         gameID,
         name,
         type, 
-        imageURL, 
         isExchange, 
         guide
     }: IGame): Promise<void> {
@@ -90,8 +90,8 @@ class Game implements IGame {
 
         try {
             await db.query(
-                'CALL SP_UPDATE_GAMECONFIG($1, $2, $3, $4, $5, $6)', 
-                [gameID, name, type, imageURL, isExchange, guide]
+                'CALL SP_UPDATE_GAMECONFIG($1, $2, $3, $4, $5)', 
+                [gameID, name, type, isExchange, guide]
             );
         } catch (error) {
             console.error('Error updating game:', error);
