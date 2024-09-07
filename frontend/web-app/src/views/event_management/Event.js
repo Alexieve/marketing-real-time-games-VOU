@@ -12,6 +12,7 @@ import CIcon from '@coreui/icons-react';
 import { cilSearch, cilInfo } from '@coreui/icons';
 import '../../scss/event/event.scss';
 import CustomDateRangePicker from './CustomDateRangePicker';
+import moment from "moment";
 
 const Event = () => {
     const [eventData, setEventData] = useState([]);
@@ -63,17 +64,6 @@ const Event = () => {
 
     const handleSearchChange = (e) => {
         setSearchQuery(e.target.value);
-    };
-
-    const formatDateTime = (dateTime) => {
-        return new Date(dateTime).toLocaleString("en-GB", {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: true,
-        });
     };
 
     const filteredItems = eventData.filter((event) => {
@@ -155,10 +145,18 @@ const Event = () => {
                                                     </CCardTitle>
                                                 </div>
                                                 <CCardText style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>
-                                                    <strong>Start time:</strong> {formatDateTime(event.startTime)}
+                                                    <strong>Start time: </strong>{
+                                                        moment(new Date(new Date(event.startTime) - 7 * 3600 * 1000)).format("L") +
+                                                        " " +
+                                                        moment(new Date(new Date(event.startTime) - 7 * 3600 * 1000)).format("LT")
+                                                    }
                                                 </CCardText>
                                                 <CCardText style={{ fontSize: '1rem', marginBottom: '0.25rem' }}>
-                                                    <strong>End time:</strong> {formatDateTime(event.endTime)}
+                                                    <strong>End time: </strong> {
+                                                        moment(new Date(new Date(event.endTime) - 7 * 3600 * 1000)).format("L") +
+                                                        " " +
+                                                        moment(new Date(new Date(event.endTime) - 7 * 3600 * 1000)).format("LT")
+                                                    }
                                                 </CCardText>
                                                 <div className="d-flex justify-content-end">
                                                     <CButton color="danger" className="btn-sm" onClick={(e) => {

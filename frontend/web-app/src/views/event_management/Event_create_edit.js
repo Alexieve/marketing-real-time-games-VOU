@@ -603,9 +603,9 @@ const EventCreate = () => {
                                     }}
                                   >
                                     Expired Time:{" "}
-                                    {moment(voucher.expTime).format("L") +
+                                    {moment(new Date(new Date(voucher.expTime) - 7 * 3600 * 1000)).format("L") +
                                       " " +
-                                      moment(voucher.expTime).format("LT")}
+                                      moment(new Date(new Date(voucher.expTime) - 7 * 3600 * 1000)).format("LT")}
                                   </CCardText>
                                   <div className="d-flex justify-content-end">
                                     <CButton
@@ -727,9 +727,9 @@ const EventCreate = () => {
                         style={{ fontSize: "1rem", marginBottom: "1rem" }}
                       >
                         Expired Time:{" "}
-                        {moment(voucher.expTime).format("L") +
+                        {moment(new Date(new Date(voucher.expTime) - 7 * 3600 * 1000)).format("L") +
                           " " +
-                          moment(voucher.expTime).format("LT")}
+                          moment(new Date(new Date(voucher.expTime) - 7 * 3600 * 1000)).format("LT")}
                       </CCardText>
                       <div className="d-flex justify-content-end">
                         <CFormCheck

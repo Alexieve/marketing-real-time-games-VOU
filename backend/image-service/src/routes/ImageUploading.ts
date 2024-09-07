@@ -35,11 +35,12 @@ router.post('/api/image/uploading', upload.single('imageUrl'), async (req: Reque
     if (!req.file) {
         throw new BadRequestError('No image uploaded');
     }
+
     // Take out the old image hash
     const { objectType, oldImageName } = req.body;
 
     if (oldImageName) {
-        // Delete the old image
+        // Delete the old image 
         const oldImagePath = path.resolve(imageDirectory + objectType + '/', oldImageName);
         fs.unlink(oldImagePath, (err) => {
             if (err) {

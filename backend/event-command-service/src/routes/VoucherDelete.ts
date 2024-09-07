@@ -28,7 +28,6 @@ router.delete('/api/event_command/voucher/delete/:id', async (req: Request, res:
     }
 
     // Delete the image from the image service
-    // imageUrl = images/voucher/imageName, only take /voucher/imageName
     const imageName = result.imageUrl.split('/').slice(1).join('/');
     await axios.delete(`http://image-srv:3000/api/image/deleting/${imageName}`);
 

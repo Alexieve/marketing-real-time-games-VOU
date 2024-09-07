@@ -38,6 +38,5 @@ export const uploadImageToService = async (imageFile: Express.Multer.File, objec
             'Content-Type': 'multipart/form-data'
         }
     });
-
     return response.data.imageUrl;
 };
