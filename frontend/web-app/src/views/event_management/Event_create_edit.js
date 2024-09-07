@@ -138,17 +138,15 @@ const EventCreate = () => {
   };
 
   const handleVoucherSelectClicked = async () => {
-    await axios
-      .get(`/api/event_command/get_vouchers/${user.id}`)
-      .then((response) => {
-        setVouchers(response.data);
-      })
-      .catch((error) => console.error("Error fetching vouchers data:", error));
+    await axios.get(`/api/event_command/get_vouchers_for_create_event/${user.id}`)
+      .then(response => { setVouchers(response.data); })
+      .catch(error => console.error('Error fetching vouchers data:', error));
     setSelectedVouchersModal(selectedVouchers);
     setShowVoucherModal(true);
-  };
+  }
 
-  const [searchVoucherTerm, setVoucherSearchTerm] = React.useState("");
+
+  const [searchVoucherTerm, setVoucherSearchTerm] = React.useState('');
 
   const filteredVouchers = vouchers.filter((voucher) =>
     voucher.code.toLowerCase().includes(searchVoucherTerm.toLowerCase()),
@@ -254,19 +252,19 @@ const EventCreate = () => {
       const response =
         eventID == undefined
           ? await axios.post("/api/event_command/event/create", formData, {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          })
+          : await axios.put(
+            `/api/event_command/event/edit/${eventID}`,
+            formData,
+            {
               headers: {
                 "Content-Type": "multipart/form-data",
               },
-            })
-          : await axios.put(
-              `/api/event_command/event/edit/${eventID}`,
-              formData,
-              {
-                headers: {
-                  "Content-Type": "multipart/form-data",
-                },
-              },
-            );
+            },
+          );
       navigate(`/events/edit/${response.data._id}`, {
         replace: true,
       });
@@ -479,7 +477,7 @@ const EventCreate = () => {
                                         eventID === undefined
                                           ? false
                                           : new Date() <
-                                              new Date(eventData.startTime)
+                                            new Date(eventData.startTime)
                                             ? false
                                             : true
                                       }
@@ -605,9 +603,9 @@ const EventCreate = () => {
                                     }}
                                   >
                                     Expired Time:{" "}
-                                    {moment(voucher.expTime).format("L") +
+                                    {moment(new Date(new Date(voucher.expTime) - 7 * 3600 * 1000)).format("L") +
                                       " " +
-                                      moment(voucher.expTime).format("LT")}
+                                      moment(new Date(new Date(voucher.expTime) - 7 * 3600 * 1000)).format("LT")}
                                   </CCardText>
                                   <div className="d-flex justify-content-end">
                                     <CButton
@@ -729,9 +727,9 @@ const EventCreate = () => {
                         style={{ fontSize: "1rem", marginBottom: "1rem" }}
                       >
                         Expired Time:{" "}
-                        {moment(voucher.expTime).format("L") +
+                        {moment(new Date(new Date(voucher.expTime) - 7 * 3600 * 1000)).format("L") +
                           " " +
-                          moment(voucher.expTime).format("LT")}
+                          moment(new Date(new Date(voucher.expTime) - 7 * 3600 * 1000)).format("LT")}
                       </CCardText>
                       <div className="d-flex justify-content-end">
                         <CFormCheck

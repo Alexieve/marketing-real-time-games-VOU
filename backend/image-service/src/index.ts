@@ -6,7 +6,6 @@ import fs from 'fs';
 import path from 'path';
 
 // Routes
-import { ImageFetchingRoutes } from './routes/ImageFetching';
 import { ImageUploadingRoutes } from './routes/ImageUploading';
 import { ImageDeletingRoutes } from './routes/ImageDeleting';
 

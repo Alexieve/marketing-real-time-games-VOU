@@ -176,7 +176,7 @@ const VoucherCreate = () => {
                                                 onChange={handleChange}
                                                 required
                                             />
-                                            <CInputGroupText></CInputGroupText>
+                                            <CInputGroupText>VND</CInputGroupText>
                                         </CInputGroup>
 
                                         <CInputGroup className="mb-3">

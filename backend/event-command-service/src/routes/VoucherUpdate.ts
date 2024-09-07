@@ -4,46 +4,9 @@ import { voucherValidator } from '../utils/voucherValidators';
 import { validateRequest } from '../middlewares/validate-request';
 import { BadRequestError } from '../errors/bad-request-error';
 import { publishToExchanges } from '../utils/publisher';
-import axios from 'axios';
-import multer, { FileFilterCallback } from 'multer';
-import crypto from 'crypto';
-import FormData from 'form-data';
+import { generateImageHashFromBuffer, uploadImageToService, upload } from '../utils/imageUtil';
 
 const router = express.Router();
-
-const storage = multer.memoryStorage();
-const upload = multer({
-    storage: storage,
-    fileFilter: (req: Request, file: Express.Multer.File, cb: FileFilterCallback) => {
-        if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
-            cb(null, true);
-        } else {
-            cb(null, false);
-        }
-    }
-});
-
-const generateImageHashFromBuffer = (buffer: Buffer): string => {
-    return crypto.createHash('sha256').update(buffer).digest('hex');
-};
-
-const uploadImageToService = async (imageFile: Express.Multer.File, newImageName: string, oldImageName: string) => {
-    const formData = new FormData();
-    formData.append('objectType', 'voucher');
-    formData.append('oldImageName', oldImageName);
-    formData.append('imageUrl', imageFile.buffer, {
-        filename: newImageName,
-        contentType: imageFile.mimetype,
-    });
-
-    const response = await axios.post('http://image-srv:3000/api/image/uploading', formData, {
-        headers: {
-            'Content-Type': 'multipart/form-data'
-        }
-    });
-
-    return response.data.imageUrl;
-};
 
 router.put('/api/event_command/voucher/update/:id', upload.single('imageUrl'), voucherValidator, validateRequest, async (req: Request, res: Response) => {
     const { id } = req.params;
@@ -65,7 +28,7 @@ router.put('/api/event_command/voucher/update/:id', upload.single('imageUrl'), v
 
     let newImageUrl = '';
     if (newImageName !== oldImageName) {
-        newImageUrl = await uploadImageToService(imageFile, newImageName, oldImageName);
+        newImageUrl = await uploadImageToService(imageFile, 'voucher', newImageName, oldImageName);
     }
     else {
         newImageUrl = voucher.imageUrl;
