@@ -15,6 +15,13 @@ import { request } from "../utils/request";
 import localhost from "../url.config";
 import { useRoute } from "@react-navigation/native";
 import { COLORS } from "../constants";
+import { useAppDispatch } from "../store";
+import { fetchOwnVouchers } from "../thunks/ownedVoucherThunk";
+
+type ExchangeVoucherScreenRouteProp = RouteProp<
+  RootStackParamList,
+  "ExchangeVoucher"
+>;
 
 interface eventGameItemsInterface {
     itemID: string;
@@ -42,8 +49,11 @@ interface customerItemsInterface {
 }
 
 const ExchangeVoucherScreen = () => {
-    const navigation = useNavigation();
-    const { user } = useSelector((state: any) => state.auth);
+  const dispatch = useAppDispatch();
+  const navigation = useNavigation();
+  const { user } = useSelector((state: any) => state.auth);
+  // const { eventID, gameID } = route.params;
+  // const eventID = "66d655f3bb5b61c00ea8e177";
 
     const route = useRoute();
     const { eventID, gameID } = route.params as { eventID: string; gameID: any };
@@ -148,15 +158,17 @@ const ExchangeVoucherScreen = () => {
 
             await request("/api/game/customer-item", "post", itemsPayload);
 
-            setRedeemedVouchers(eventVouchers[randInt]);
-            setShowVoucherRedeemModal(true);
-        } catch (error) {
-            Alert.alert(
-                "Error",
-                "An error occurred while exchanging voucher. Please try again."
-            );
-        }
-    };
+      setRedeemedVouchers(eventVouchers[randInt]);
+      setShowVoucherRedeemModal(true);
+      
+      await dispatch(fetchOwnVouchers({ id: user.id }));
+    } catch (error) {
+      Alert.alert(
+        "Error",
+        "An error occurred while exchanging voucher. Please try again."
+      );
+    }
+  };
 
     const handleHQExchange = async (
         voucherID: String,
@@ -188,20 +200,21 @@ const ExchangeVoucherScreen = () => {
             };
             await request("/api/game/customer-item", "post", itemsPayload);
 
-            // Notification for successful exchange
-            Alert.alert("Success", "Voucher exchanged successfully.", [
-                {
-                    text: "OK",
-                    onPress: () => setRefresh(!refresh), // Toggle the refresh state to trigger useEffect
-                },
-            ]);
-        } catch (error) {
-            Alert.alert(
-                "Error",
-                "An error occurred while exchanging voucher. Please try again."
-            );
-        }
-    };
+      // Notification for successful exchange
+      Alert.alert("Success", "Voucher exchanged successfully.", [
+        {
+          text: "OK",
+          onPress: () => setRefresh(!refresh), // Toggle the refresh state to trigger useEffect
+        },
+      ]);
+      await dispatch(fetchOwnVouchers({ id: user.id }));
+    } catch (error) {
+      Alert.alert(
+        "Error",
+        "An error occurred while exchanging voucher. Please try again."
+      );
+    }
+  };
 
     const goBack = () => {
         navigation.goBack();

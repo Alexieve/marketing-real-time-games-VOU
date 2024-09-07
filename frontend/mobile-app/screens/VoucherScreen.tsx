@@ -7,25 +7,25 @@ import { useNavigation } from '@react-navigation/native';
 
 import localhost from '../url.config';
 import { useSelector } from 'react-redux';
+import { useAppDispatch, useAppSelector } from '../store';
+import { fetchOwnVouchers } from '../thunks/ownedVoucherThunk';
 
 
 
 const VoucherScreen = () => {
-  const [data, setData] = useState(null);
-  const user = useSelector((state) => state.auth.user);
+  const dispatch = useAppDispatch();
+  // const [data, setData] = useState(null);
+  const data = useAppSelector((state: any) => state.ownedVouchers.ownedVouchers);
+  const user = useSelector((state: any) => state.auth.user);
   const navigation = useNavigation();
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await fetch(`${localhost}/api/event_query/get_user_vouchers/${user.id}`);
-        const data = await response.json();
-        // const favoriteResponse = await fetch(`${localhost}/api/event_query/get_events_user_favorite/${user.id}`);
-        // const favoriteData = await favoriteResponse.json();
+        await dispatch(fetchOwnVouchers({ id: user.id }));
 
-        // const response = await request(`/api/event_query/get_user_vouchers/${user.id}`, 'get', "a");
-        setData(data);
-
+        // const response = await fetch(`${localhost}/api/event_query/get_user_vouchers/${user.id}`);
+        // const data = await response.json();
 
 
       } catch (error) {
@@ -35,7 +35,6 @@ const VoucherScreen = () => {
 
     fetchData();
   }, []);
-  console.log(data)
   const handleDetailPress = (eventId: string) => {
     navigation.navigate('VoucherDetail', { eventId });
   };
@@ -60,7 +59,6 @@ const VoucherScreen = () => {
     // Trả về chuỗi định dạng: "DD/MM/YYYY HH:MM:SS"
     return `${day}/${month}/${year} ${hour}:${minute}:${second}`;
   };
-  console.log(data);
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       {data.map((voucher: any, index: any) => (

@@ -53,6 +53,7 @@ const DetailScreen = () => {
   // const [vouchers, setVouchers] = useState({});
   const [data, setData] = useState<ApiResponse | null>(null);
   const user = useSelector((state) => state.auth.user);
+  const [checkOnGoing, setCheckOnGoing] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false); // Trạng thái cho icon trái tim
   const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
   const [gameData, setGameData] = useState("");
@@ -73,23 +74,14 @@ const DetailScreen = () => {
         const response = await fetch(`${localhost}/api/event_query/get_event_detail_vouchers/${id}`);
         const data = await response.json();
         setData(data);
-        // const favoriteResponse = await fetch(`${localhost}/api/event_query/get_events_user_favorite/${user.id}`);
-        // const favoriteData = await favoriteResponse.json();
-
-        // // fetch favorite events
-        // let favEvents = [];
-        // if(Object.keys(favoriteData).length){
-        //   favEvents = favoriteData.map((event: any) => ({
-        //     id: event._id,
-        //     name: event.name,
-        //     description: event.description,
-        //     imageUrl: `${localhost}${event.imageUrl}`, // Complete the URL
-        //   }));  
-        // }
-        // else{
-        //   // console.log("No fav events!");
-        // }
-
+        const startTime = new Date(data.event.startTime);
+        const endTime = new Date(data.event.endTime);
+        const now = new Date();
+        const nowUTC7 = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
+        if (nowUTC7 >= startTime && nowUTC7 <= endTime) {
+          setCheckOnGoing(true);
+        }
+        console.log("checkOnGoing: ", checkOnGoing);
 
         if (Array.isArray(favorite)) {
           const isEventFavorite = favorite.some(
@@ -274,15 +266,17 @@ const DetailScreen = () => {
             style={styles.buttonIcon}
           />
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={handlePlayGame}>
-          <Text style={styles.buttonText}>Play Game</Text>
-          <Ionicons
-            name="game-controller-outline"
-            size={20}
-            color="white"
-            style={styles.buttonIcon}
-          />
-        </TouchableOpacity>
+        {checkOnGoing ? (
+          <TouchableOpacity style={styles.button} onPress={handlePlayGame}>
+            <Text style={styles.buttonText}>Play Game</Text>
+            <Ionicons
+              name="game-controller-outline"
+              size={20}
+              color="white"
+              style={styles.buttonIcon}
+            />
+          </TouchableOpacity>)
+          : null}
       </View>
     </View>
   );

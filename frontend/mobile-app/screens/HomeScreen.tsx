@@ -30,7 +30,33 @@ const EventListStack = () => {
   return (
     <Stack_EventList.Navigator initialRouteName="EventListScreen">
       <Stack_EventList.Screen name="EventListScreen" component={EventListScreen} options={{ headerShown: false }} />
+      <Stack_EventList.Screen name="EventDetail" component={EventDetail} options={{ headerShown: false }} />
+      <Stack_EventList.Screen
+        name="ExchangeVoucherScreen"
+        component={ExchangeVoucherScreen}
+        options={{ headerShown: false }} // Ẩn header
+      />
+    </Stack_EventList.Navigator>
+  );
+};
+
+const SearchStack = () => {
+  return (
+    <Stack_EventList.Navigator initialRouteName="EventSearchScreen">
       <Stack_EventList.Screen name="EventSearchScreen" component={SearchScreen} options={{ headerShown: false }} />
+      <Stack_EventList.Screen name="EventDetail" component={EventDetail} options={{ headerShown: false }} />
+      <Stack_EventList.Screen
+        name="ExchangeVoucherScreen"
+        component={ExchangeVoucherScreen}
+        options={{ headerShown: false }} // Ẩn header
+      />
+    </Stack_EventList.Navigator>
+  );
+};
+
+const FavouriteStack = () => {
+  return (
+    <Stack_EventList.Navigator initialRouteName="FavouriteScreen">
       <Stack_EventList.Screen name="FavouriteScreen" component={FavouriteScreen} options={{ headerShown: false }} />
       <Stack_EventList.Screen name="EventDetail" component={EventDetail} options={{ headerShown: false }} />
       <Stack_EventList.Screen
@@ -104,8 +130,8 @@ const HomeScreen = () => {
         })}
       >
         <Tab.Screen name="Event" component={EventListStack} />
-        <Tab.Screen name="Search" component={SearchScreen} />
-        <Tab.Screen name="Favourite" component={FavouriteScreen} />
+        <Tab.Screen name="Search" component={SearchStack} />
+        <Tab.Screen name="Favourite" component={FavouriteStack} />
         <Tab.Screen name="Voucher" component={VoucherStack} />
       </Tab.Navigator>
     </View>
