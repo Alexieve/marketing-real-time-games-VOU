@@ -74,8 +74,8 @@ const DetailScreen = () => {
         const response = await fetch(`${localhost}/api/event_query/get_event_detail_vouchers/${id}`);
         const data = await response.json();
         setData(data);
-        const startTime = new Date(data.event.startTime);
-        const endTime = new Date(data.event.endTime);
+        const startTime = new Date(data.startTime);
+        const endTime = new Date(data.endTime);
         const now = new Date();
         const nowUTC7 = new Date(now.getTime() - now.getTimezoneOffset() * 60000);
         if (nowUTC7 >= startTime && nowUTC7 <= endTime) {
