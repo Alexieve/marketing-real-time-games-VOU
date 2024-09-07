@@ -21,6 +21,8 @@ import localhost from "../url.config";
 import { set } from "react-hook-form";
 import { useRoute } from "@react-navigation/native";
 import { COLORS } from "../constants";
+import { useAppDispatch } from "../store";
+import { fetchOwnVouchers } from "../thunks/ownedVoucherThunk";
 
 type ExchangeVoucherScreenRouteProp = RouteProp<
   RootStackParamList,
@@ -53,6 +55,7 @@ interface customerItemsInterface {
 }
 
 const ExchangeVoucherScreen = () => {
+  const dispatch = useAppDispatch();
   const navigation = useNavigation();
   const { user } = useSelector((state: any) => state.auth);
   // const { eventID, gameID } = route.params;
@@ -173,6 +176,8 @@ const ExchangeVoucherScreen = () => {
 
       setRedeemedVouchers(eventVouchers[randInt]);
       setShowVoucherRedeemModal(true);
+      
+      await dispatch(fetchOwnVouchers({ id: user.id }));
     } catch (error) {
       Alert.alert(
         "Error",
@@ -219,6 +224,7 @@ const ExchangeVoucherScreen = () => {
           onPress: () => setRefresh(!refresh), // Toggle the refresh state to trigger useEffect
         },
       ]);
+      await dispatch(fetchOwnVouchers({ id: user.id }));
     } catch (error) {
       Alert.alert(
         "Error",

@@ -19,9 +19,6 @@
 
 FROM node:alpine AS build
 
-ENV TZ=Asia/Bangkok
-RUN apk add --no-cache tzdata
-
 WORKDIR /app
 COPY package.json .
 RUN npm install

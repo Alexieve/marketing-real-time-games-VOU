@@ -3,7 +3,7 @@ import authReducer from "./slices/authSlice";
 import quizReducer from "./slices/quizSlice";
 import shakeReducer from "./slices/shakeSlice";
 import favoriteReducer from "./slices/favoriteSlice";
-
+import ownedVouchersReducer from "./slices/ownedVoucherSlice";
 // Configure the store
 const store = configureStore({
   reducer: {
@@ -11,6 +11,7 @@ const store = configureStore({
     quiz: quizReducer,
     shake: shakeReducer,
     favorite: favoriteReducer,
+    ownedVouchers: ownedVouchersReducer,
   },
 });
 
