@@ -22,7 +22,7 @@ router.delete('/api/event_command/event/delete/:eventID', async (req: Request, r
 
     // Delete the image from the image service
     const imageName = 'event/' + event.imageUrl.split('/').pop();
-    const response = await axios.delete(`http://image-srv:3000/api/image/deleting/${imageName}`);
+    await axios.delete(`http://image-srv:3000/api/image/deleting/${imageName}`);
 
     console.log('Event deleted successfully');
     await publishToExchanges('event_deleted', event._id);

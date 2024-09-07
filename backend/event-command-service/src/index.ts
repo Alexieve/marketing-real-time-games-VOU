@@ -1,6 +1,5 @@
 import express from 'express';
 import 'express-async-errors'
-import { connectToDatabase } from './connection';
 const cors = require('cors');
 
 // Routes
@@ -17,6 +16,7 @@ import voucherGetAllRouter from './routes/VoucherGetAll';
 import voucherGetByIdRouter from './routes/VoucherGetById';
 
 import { connectRabbitMQ } from './utils/publisher';
+import { connectToDatabase } from './connection';
 
 // Middlewares
 import { errorHandler } from './middlewares/error-handler';

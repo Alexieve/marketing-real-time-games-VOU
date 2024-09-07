@@ -16,8 +16,8 @@ router.get('/api/event_query/get_vouchers_by_brand/:brand', async (req: Request,
 
 router.get('/api/event_query/get_vouchers_by_eventID/:eventID', async (req: Request, res: Response) => {
     const { eventID } = req.params;
-    // Find all vouchers for the specified event, order by status, expiry date
-    const vouchers = await Voucher.find({ eventID: eventID }).sort({ status: 1, expiryDate: 1 });
+    // Find all avalable vouchers for the specified event, expiry date
+    const vouchers = await Voucher.find({ eventID: eventID, status: 'available' }).sort({ status: 1, expiryDate: 1 });
     res.status(200).send(vouchers);
 });
 

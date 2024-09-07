@@ -5,46 +5,10 @@ import { eventValidator } from '../utils/eventValidators';
 import { validateRequest } from '../middlewares/validate-request';
 import { BadRequestError } from '../errors/bad-request-error';
 import { publishToExchanges } from '../utils/publisher';
+import { generateImageHashFromBuffer, uploadImageToService, upload } from '../utils/imageUtil';
 import axios from 'axios';
-import multer, { FileFilterCallback } from 'multer';
-import crypto from 'crypto';
-import FormData from 'form-data';
 
 const router = express.Router();
-
-const storage = multer.memoryStorage();
-const upload = multer({
-    storage: storage,
-    fileFilter: (req: Request, file: Express.Multer.File, cb: FileFilterCallback) => {
-        if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
-            cb(null, true);
-        } else {
-            const error = new BadRequestError('Unsupported file type. Only JPEG and PNG are allowed.');
-            cb(error);
-        }
-    }
-});
-
-const generateImageHashFromBuffer = (buffer: Buffer): string => {
-    return crypto.createHash('sha256').update(buffer).digest('hex');
-};
-
-const uploadImageToService = async (imageFile: Express.Multer.File, imageName: string) => {
-    const formData = new FormData();
-    formData.append('objectType', 'event');
-    formData.append('imageUrl', imageFile.buffer, {
-        filename: imageName,
-        contentType: imageFile.mimetype,
-    });
-
-    const response = await axios.post('http://image-srv:3000/api/image/uploading', formData, {
-        headers: {
-            'Content-Type': 'multipart/form-data'
-        }
-    });
-
-    return response.data.imageUrl;
-};
 
 router.post('/api/event_command/event/create', upload.single('imageUrl'), eventValidator, validateRequest, async (req: Request, res: Response) => {
     const { name, description, startTime, endTime, brand, gameID, playTurn, vouchers: vouchersJson } = req.body;
@@ -71,14 +35,13 @@ router.post('/api/event_command/event/create', upload.single('imageUrl'), eventV
         }
     });
 
-
     await event.save();
 
     await Voucher.updateMany({ _id: { $in: vouchers } }, { eventID: event._id });
 
     const imageName = event._id + newImageHash;
 
-    const newImageUrl = await uploadImageToService(imageFile, imageName);
+    const newImageUrl = await uploadImageToService(imageFile, 'event', imageName);
 
     event.imageUrl = newImageUrl;
     await event.save();
@@ -106,7 +69,6 @@ router.post('/api/event_command/event/create', upload.single('imageUrl'), eventV
 
     console.log("Event created successfully");
     res.status(200).send(payLoad);
-
 });
 
 export = router;

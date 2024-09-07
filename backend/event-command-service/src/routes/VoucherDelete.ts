@@ -30,10 +30,7 @@ router.delete('/api/event_command/voucher/delete/:id', async (req: Request, res:
     // Delete the image from the image service
     // imageUrl = images/voucher/imageName, only take /voucher/imageName
     const imageName = result.imageUrl.split('/').slice(1).join('/');
-    console.log(imageName);
-    const response = await axios.delete(`http://image-srv:3000/api/image/deleting/${imageName}`, {
-        headers: { 'Content-Type': 'application/json' },
-    });
+    await axios.delete(`http://image-srv:3000/api/image/deleting/${imageName}`);
 
     // Publish the deleted voucher to the exchanges
     await publishToExchanges('voucher_deleted', result._id);
