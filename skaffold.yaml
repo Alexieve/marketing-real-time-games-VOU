@@ -7,6 +7,7 @@ deploy:
     - ./infra/database/*
     - ./infra/nginx/*
     - ./infra/k8s/*
+    - ./infra/hpa/*
 portForward:
   - resourceType: deployment
     resourceName: mongodb-event-depl
