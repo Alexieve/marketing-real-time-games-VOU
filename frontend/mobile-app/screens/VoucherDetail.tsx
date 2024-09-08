@@ -141,9 +141,9 @@ const VoucherDetail = () => {
             <View style={styles.overlay} />
           </ImageBackground>
           <View style={styles.card}>
-            <Text style={styles.cardTitle}>Discount: {data.price}</Text>
+            <Text style={styles.cardTitle}>Discount: {data.price}đ</Text>
             <Text style={styles.cardDescription}>{data.description}</Text>
-            <Text style={styles.cardExpiry}>HSD: {formatDate(data.expTime)}</Text>
+            <Text style={styles.cardExpiry}>EXP: {formatDate(data.expTime)}</Text>
             {/* <Text style={styles.cardBrand}>Event: {data2?.event.name}</Text> */}
           </View>
         </View>

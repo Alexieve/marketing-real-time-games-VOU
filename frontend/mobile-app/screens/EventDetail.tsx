@@ -52,7 +52,7 @@ const DetailScreen = () => {
   // const [eventData, setEventData] = useState("");
   // const [vouchers, setVouchers] = useState({});
   const [data, setData] = useState<ApiResponse | null>(null);
-  const user = useSelector((state) => state.auth.user);
+  const user = useSelector((state: any) => state.auth.user);
   const [checkOnGoing, setCheckOnGoing] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false); // Trạng thái cho icon trái tim
   const [imageSize, setImageSize] = useState({ width: 0, height: 0 });
@@ -61,7 +61,7 @@ const DetailScreen = () => {
 
   const route = useRoute();
   const navigation = useNavigation();
-  const { id } = route.params;
+  const { id } = route.params as { id: any };
   // console.log(id);
 
   // console.log(item);
@@ -110,7 +110,7 @@ const DetailScreen = () => {
     fetchData();
   }, []);
 
-  const handleTabChange = (tab) => {
+  const handleTabChange = (tab: any) => {
     setActiveTab(tab);
   };
   const toggleFavorite = async () => {

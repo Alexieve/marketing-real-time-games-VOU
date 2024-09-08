@@ -71,7 +71,7 @@ const VoucherScreen = () => {
           <View style={styles.rightContainer}>
             <Text style={styles.discountText}>Discount: {voucher.price}đ  x{voucher.quantity}</Text>
             <Text style={styles.descriptionText}>{voucher.description}</Text>
-            <Text style={styles.expiryText}>HSD: {formatDate(voucher.expTime)}</Text>
+            <Text style={styles.expiryText}>EXP: {formatDate(voucher.expTime)}</Text>
             <View style={styles.detailButtonWrapper}>
               <TouchableOpacity style={styles.detailButton} onPress={() => handleDetailPress(voucher.voucherID)}>
                 <Text style={styles.detailButtonText}>Detail</Text>

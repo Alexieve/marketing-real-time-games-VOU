@@ -136,7 +136,7 @@ const EventScreen = () => {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
-      <Text style={styles.sectionTitle}>Sự kiện đang diễn ra</Text>
+      <Text style={styles.sectionTitle}>Ongoing Events</Text>
       {ongoingEvents.length > 0 ? (
         <FlatList
           ref={ongoingRef}
@@ -153,10 +153,10 @@ const EventScreen = () => {
           decelerationRate="fast"
         />
       ) : (
-        <Text style={styles.noEventsText}>Không có sự kiện nào đang diễn ra</Text>
+        <Text style={styles.noEventsText}>No Events</Text>
       )}
 
-      <Text style={styles.sectionTitle}>Sự kiện sắp diễn ra</Text>
+      <Text style={styles.sectionTitle}>Upcoming Events</Text>
       {upcomingEvents.length > 0 ? (
         <FlatList
           ref={upcomingRef}
@@ -173,10 +173,10 @@ const EventScreen = () => {
           decelerationRate="fast"
         />
       ) : (
-        <Text style={styles.noEventsText}>Không có sự kiện nào sắp diễn ra</Text>
+        <Text style={styles.noEventsText}>No Events</Text>
       )}
 
-      <Text style={styles.sectionTitle}>Sự kiện yêu thích</Text>
+      <Text style={styles.sectionTitle}>Favourite Events</Text>
       {favoriteEvents.length > 0 ? (
         <FlatList
           ref={favoriteRef}
@@ -193,7 +193,7 @@ const EventScreen = () => {
           decelerationRate="fast"
         />
       ) : (
-        <Text style={styles.noEventsText}>Không có sự kiện yêu thích nào</Text>
+        <Text style={styles.noEventsText}>No Events</Text>
       )}
 
       <View style={styles.bottomSpacer} />

@@ -37,7 +37,7 @@ const FavouriteScreen = () => {
 
   const renderCards = () => {
     if (favoriteEvents.length === 0) {
-      return <Text style={styles.noEventsText}>Không có sự kiện yêu thích nào</Text>;
+      return <Text style={styles.noEventsText}>No Events</Text>;
     }
 
     return favoriteEvents.map((event, index) => (
@@ -63,7 +63,7 @@ const FavouriteScreen = () => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.sectionTitle}>Sự kiện yêu thích</Text>
+      <Text style={styles.sectionTitle}>Favourite Events</Text>
       {contentHeight > screenHeight ? (
         <ScrollView contentContainerStyle={styles.scrollContainer}>
           {renderCards()}

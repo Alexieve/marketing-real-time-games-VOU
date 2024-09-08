@@ -103,7 +103,7 @@ const HomeScreen = () => {
     <View style={styles.container}>
       <Header
         centerComponent={{ text: headerTitle, style: styles.headerTitle }}
-        rightComponent={{ icon: 'menu', color: '#fff', onPress: handleMenuToggle }}
+        rightComponent={{ icon: 'person', color: '#fff', onPress: handleMenuToggle }}
         containerStyle={styles.headerContainer}
       />
 
