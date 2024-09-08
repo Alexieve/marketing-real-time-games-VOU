@@ -127,6 +127,10 @@ const EventCreate = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    if (name == "startTime" && new Date(value) < new Date()) {
+      toast.warning("Start time must be in the future");
+      return;
+    }
     setEventData((prevData) => ({
       ...prevData,
       [name]: value,

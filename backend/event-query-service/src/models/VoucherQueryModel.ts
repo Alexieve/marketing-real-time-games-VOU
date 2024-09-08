@@ -40,12 +40,14 @@ const VoucherSchema = new Schema<VoucherDoc>({
     expTime: { type: Date, required: true },
     status: { type: String, required: true },
     brand: { type: String, required: true },
-    eventID: { type: mongoose.Schema.Types.ObjectId, ref: 'Events', required: false }
+    eventID: { type: mongoose.Schema.Types.ObjectId, ref: 'Events', required: false },
 });
 
 VoucherSchema.statics.build = (attrs: VoucherAttrs) => {
     return new Voucher(attrs);
 };
+
+VoucherSchema.index({ eventID: 1, status: 1 });
 
 const Voucher = mongoose.model<VoucherDoc, VoucherModel>('Vouchers', VoucherSchema, 'Vouchers');
 

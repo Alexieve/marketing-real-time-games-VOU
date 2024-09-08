@@ -39,7 +39,7 @@ const EventSchema = new mongoose.Schema<EventDoc>({
     description: { type: String, required: true },
     startTime: { type: Date, required: true },
     endTime: { type: Date, required: true },
-    brand: { type: String, required: true },
+    brand: { type: String, required: true, index: true },
     game: {
         gameID: { type: String, required: true },
         playTurn: { type: Number, required: true }

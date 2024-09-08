@@ -33,7 +33,7 @@ interface UserVoucherModel extends Model<UserVoucherDoc> {
 }
 
 const UserVoucherSchema = new Schema<UserVoucherDoc>({
-    userID: { type: String, required: true },
+    userID: { type: String, required: true, index: true },
     voucherID: { type: mongoose.Schema.Types.ObjectId, required: true },
     quantity: { type: Number, required: true },
     code: { type: String, required: true },

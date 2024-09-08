@@ -36,7 +36,7 @@ const voucherSchema = new Schema<VoucherDoc>({
   quantity: { type: Number, required: true },
   expTime: { type: Date, required: true },
   status: { type: String, required: true },
-  brand: { type: String, required: true },
+  brand: { type: String, required: true, index: true },
   eventID: { type: mongoose.Schema.Types.ObjectId, ref: 'Events', required: false, default: null }
 }, {
   timestamps: true

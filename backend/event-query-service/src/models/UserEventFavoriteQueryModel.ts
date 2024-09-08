@@ -15,7 +15,7 @@ interface UserEventFavoriteModel extends Model<UserEventFavoriteDoc> {
 }
 
 const UserEventFavoriteSchema = new Schema<UserEventFavoriteDoc>({
-    userID: { type: String, required: true },
+    userID: { type: String, required: true, index: true },
     eventID: { type: mongoose.Schema.Types.ObjectId, required: true },
 });
 

@@ -31,7 +31,7 @@ interface EventDoc extends mongoose.Document {
 
 const EventSchema = new mongoose.Schema({
     _id: { type: mongoose.Schema.Types.ObjectId, required: true },
-    name: { type: String, required: true },
+    name: { type: String, required: true, index: true },
     imageUrl: { type: String, required: true },
     description: { type: String, required: true },
     startTime: { type: Date, required: true },
@@ -39,6 +39,8 @@ const EventSchema = new mongoose.Schema({
     brand: { type: String, required: true },
     gameID: { type: String, required: false },
 });
+
+EventSchema.index({ startTime: 1, endTime: 1 });
 
 EventSchema.statics.build = (attrs: EventAttrs) => {
     return new Event(attrs);

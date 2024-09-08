@@ -52,6 +52,10 @@ const VoucherCreate = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
+        if (name == "expTime" && new Date(value) < new Date()) {
+            toast.warning("Expiration time must be in the future");
+            return;
+        }
         setVoucherData((prevData) => ({
             ...prevData,
             [name]: value
