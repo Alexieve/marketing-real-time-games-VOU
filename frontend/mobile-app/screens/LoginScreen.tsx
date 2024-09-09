@@ -8,6 +8,8 @@ import { authActions } from '../slices/authSlice';
 import { request } from '../utils/request';
 import localhost from '../url.config';
 import FlashMessage, { showMessage } from 'react-native-flash-message';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 
 const LoginScreen = () => {
   const navigation = useNavigation();
@@ -22,6 +24,14 @@ const LoginScreen = () => {
     try {
       const { user, token } = await request(`/api/auth/login`, 'post', mockData);
       dispatch(authActions.login({ user, token }));
+      let deviceToken = await AsyncStorage.getItem('token');
+      // console.log(deviceToken);
+      let id = user.id;
+      const payload = {
+        userID: id,
+        token: deviceToken,
+      };
+      const res = await request(`/api/notification/pushToken`, 'post', payload);
       navigation.navigate('Home' as never);
     } catch (err: any) {
       showMessage({

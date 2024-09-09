@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "667899663927",
+    "project_id": "marketing-real-time-games-vou",
+    "storage_bucket": "marketing-real-time-games-vou.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:667899663927:android:426b7d8d96917a1a4b91b2",
+        "android_client_info": {
+          "package_name": "com.truongvinhphuc.mobileapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDIu_hDd2aG-40PsfHOU4K2db7fc-CxxrM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

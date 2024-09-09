@@ -67,6 +67,13 @@ spec:
                 name: game-srv
                 port: 
                   number: 3000 
+          - path: /api/notification/
+            pathType: Prefix
+            backend:
+              service:
+                name: notification-srv
+                port: 
+                  number: 3000 
           - path: /
             pathType: Prefix
             backend:

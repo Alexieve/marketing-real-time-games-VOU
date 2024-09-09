@@ -92,6 +92,7 @@ const HomeScreen = () => {
   const handleLogout = async () => {
     setIsMenuVisible(false);
     await request(`/api/auth/logout`, 'post', null);
+    await request(`/api/notification/deleteToken`, 'post', null);
     navigation.navigate('Login' as never);
   };
 

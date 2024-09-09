@@ -27,7 +27,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: jwt-secret
-                  key: JWT_KEY
+                  key: "jwt"
             - name: DB_HOST
               value: "postgres-game-srv"
             - name: DB_PORT

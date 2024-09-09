@@ -77,4 +77,12 @@ build:
       manual:
       - src: "src/**/*.ts"
         dest: .
+  - image: tvphuc/notification-service
+    context: backend/notification-service
+    docker:
+      dockerfile: Dockerfile
+    sync:
+      manual:
+      - src: "src/**/*.ts"
+        dest: .
  
