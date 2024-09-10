@@ -20,7 +20,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: jwt-secret
-                  key: "jwt"
+                  key: "JWT_KEY"
             - name: TWILIO_ACCOUNT_SID
               value: "AC1229af94be58e8f1292f265d9f1aab08"
             - name: TWILIO_AUTH_TOKEN

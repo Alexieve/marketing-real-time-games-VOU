@@ -25,7 +25,7 @@ spec:
               valueFrom:
                 secretKeyRef:
                   name: jwt-secret
-                  key: "jwt"
+                  key: "JWT_KEY"
             - name: DB_HOST
               value: "postgres-user-srv"
             - name: DB_PORT

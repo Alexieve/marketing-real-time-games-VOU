@@ -17,12 +17,13 @@ const LoginScreen = () => {
   const { control, handleSubmit, formState: { errors } } = useForm();
 
   const onSubmit = async (data: any) => {
-    const mockData = {
-      email: 'vuminhquynh75@gmail.com',
-      password: '123456',
-    };
+    // const mockData = {
+    //   email: 'vuminhquynh75@gmail.com',
+    //   password: '123456',
+    // };
+    console.log(data);
     try {
-      const { user, token } = await request(`/api/auth/login`, 'post', mockData);
+      const { user, token } = await request(`/api/auth/login`, 'post', data);
       dispatch(authActions.login({ user, token }));
       let deviceToken = await AsyncStorage.getItem('token');
       // console.log(deviceToken);
